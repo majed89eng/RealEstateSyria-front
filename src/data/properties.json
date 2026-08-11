@@ -412,5 +412,227 @@
     "whatsappNumber": "+963988123456",
     "createdAt": "2026-07-30",
     "description": "استراحة وشاليه صيفي هادئ ومجهز بالكامل في أشرفية صحنايا / الوادي الأخضر. يحتوي على مسبح خاص مفلتر، مساحات خضراء، طاقة شمسية تشغل الشاليه بالكامل، وبئر ماء عذب."
+  },
+  {
+    "id": "SY-ALP-201",
+    "title": "شقة راقية ومطلة في حي الشهباء - حلب",
+    "contractType": "sale",
+    "propertyType": "apartment",
+    "governorate": "حلب",
+    "region": "الشهباء",
+    "locationDetails": "حلب - الشهباء القديمة قرب جامع الرحمن",
+    "price": 3800000000,
+    "formattedPrice": "3,800,000,000 ل.س",
+    "currency": "ل.س",
+    "area": 190,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "floor": "طابق ثالث",
+    "direction": "قبلي غربي",
+    "ownershipType": "طابو سبز (2400 سهم)",
+    "features": [
+      "إكساء ديلوكس",
+      "طاقة شمسية للإنارة",
+      "مصعد شغال",
+      "كراج سيارات",
+      "طابو سبز"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "featured": true,
+    "whatsappNumber": "+963988123456",
+    "createdAt": "2026-08-08",
+    "description": "شقة سكنية ممتازة في أرقى أحياء مدينة حلب (حي الشهباء). إكساء ديلوكس رخام وخشب، اتجاه مميز وطابو سبز جاهز للفراغ المباشر."
+  },
+  {
+    "id": "SY-HMS-301",
+    "title": "شقة حديثة في حي الإنشاءات - حمص",
+    "contractType": "sale",
+    "propertyType": "apartment",
+    "governorate": "حمص",
+    "region": "الإنشاءات",
+    "locationDetails": "حمص - شارع الإنشاءات الرئيسي قرب المشفى الجراحي",
+    "price": 2200000000,
+    "formattedPrice": "2,200,000,000 ل.س",
+    "currency": "ل.س",
+    "area": 165,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "floor": "طابق ثاني",
+    "direction": "شرقي شمالي",
+    "ownershipType": "طابو سبز",
+    "features": [
+      "طاقة شمسية",
+      "مصعد شغال",
+      "موقد حطب وتدفئة",
+      "شرفات واسعة"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "featured": true,
+    "whatsappNumber": "+963988123456",
+    "createdAt": "2026-08-09",
+    "description": "شقة ممتازة في حي الإنشاءات بمدينة حمص. كسوة جديدة بالكامل مع نظام إنارة بالحي وشبكة طاقة شمسية."
+  },
+  {
+    "id": "SY-LTK-401",
+    "title": "شاليه وإستراحة فاخرة مطلة على البحر - الشاطئ الأزرق اللاذقية",
+    "contractType": "sale",
+    "propertyType": "chalet",
+    "governorate": "اللاذقية",
+    "region": "الشاطئ الأزرق",
+    "locationDetails": "اللاذقية - الشاطئ الأزرق قرب مجمع الميريديان",
+    "price": 4500000000,
+    "formattedPrice": "4,500,000,000 ل.س",
+    "currency": "ل.س",
+    "area": 250,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "floor": "أرضي مع حديقة",
+    "direction": "غربي قبلي",
+    "ownershipType": "طابو سبز",
+    "features": [
+      "إطلالة بحرية مباشرة",
+      "حديقة ومسبح خاص",
+      "طاقة شمسية",
+      "فرش سوبر ديلوكس"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "featured": true,
+    "whatsappNumber": "+963988123456",
+    "createdAt": "2026-08-10",
+    "description": "شاليه بحري فاخر في الشاطئ الأزرق باللاذقية، يضم حديقة واسعة مطلة على الشاطئ مباشرة ومجهزة بكافة سبل الراحة والاسترخاء."
+  },
+  {
+    "id": "SY-TRT-501",
+    "title": "شقة سكنية على الكورنيش البحري - طرطوس",
+    "contractType": "rent",
+    "propertyType": "apartment",
+    "governorate": "طرطوس",
+    "region": "الكورنيش البحري",
+    "locationDetails": "طرطوس - الكورنيش البحري مقابلة للمرفأ السياحي",
+    "price": 12000000,
+    "formattedPrice": "12,000,000 ل.س / شهرياً",
+    "currency": "ل.س",
+    "area": 140,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "floor": "طابق رابع مع مصعد",
+    "direction": "غربي",
+    "ownershipType": "طابو سبز",
+    "features": [
+      "إطلالة بانورامية على البحر",
+      "مفروشة بالكامل",
+      "مصعد شغال",
+      "طاقة شمسية"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "featured": false,
+    "whatsappNumber": "+963988123456",
+    "createdAt": "2026-08-07",
+    "description": "شقة للإيجار السياحي والسكني على كورنيش طرطوس البحري، إطلالة غروب ساحرة ومجهزة بأفخم أنواع الأثاث."
+  },
+  {
+    "id": "SY-HMA-601",
+    "title": "منزل عربي واسع قرب النواعير - حماة",
+    "contractType": "sale",
+    "propertyType": "villa",
+    "governorate": "حماة",
+    "region": "الشريعة",
+    "locationDetails": "حماة - حي الشريعة الهادئ قرب حديقة النواعير",
+    "price": 2900000000,
+    "formattedPrice": "2,900,000,000 ل.س",
+    "currency": "ل.س",
+    "area": 310,
+    "bedrooms": 4,
+    "bathrooms": 3,
+    "floor": "طابق أرضي مستقل",
+    "direction": "قبلي شرقي",
+    "ownershipType": "طابو سبز",
+    "features": [
+      "فسحة سماوية وبحرة",
+      "حديقة منزلية",
+      "طاقة شمسية",
+      "طابو سبز"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "featured": false,
+    "whatsappNumber": "+963988123456",
+    "createdAt": "2026-08-05",
+    "description": "منزل مستقل بطراز شرقي حديث في مدينة حماة، يحتوي على أرض ديار وبحرة رخامية مع حديقة مثمرة."
+  },
+  {
+    "id": "SY-SWD-701",
+    "title": "شقة ديلوكس في حي المرج - السويداء",
+    "contractType": "sale",
+    "propertyType": "apartment",
+    "governorate": "السويداء",
+    "region": "المرج",
+    "locationDetails": "السويداء - حي المرج قرب ساحة السير",
+    "price": 1650000000,
+    "formattedPrice": "1,650,000,000 ل.س",
+    "currency": "ل.س",
+    "area": 150,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "floor": "طابق أول",
+    "direction": "قبلي",
+    "ownershipType": "طابو سبز",
+    "features": [
+      "إكساء ممتاز",
+      "تدفئة مستقلة",
+      "طاقة شمسية",
+      "خزان ماء سعة كبيرة"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "featured": false,
+    "whatsappNumber": "+963988123456",
+    "createdAt": "2026-08-04",
+    "description": "شقة سكنية ممتازة في مدينة السويداء، إكساء حديث وموقع هادئ قريب من الخدمات العامة."
+  },
+  {
+    "id": "SY-DRA-801",
+    "title": "منزل سكني مستقل مع حديقة - درعا المحطة",
+    "contractType": "sale",
+    "propertyType": "villa",
+    "governorate": "درعا",
+    "region": "درعا المحطة",
+    "locationDetails": "درعا المحطة - بالقرب من المجمع الحكومي",
+    "price": 1850000000,
+    "formattedPrice": "1,850,000,000 ل.س",
+    "currency": "ل.س",
+    "area": 220,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "floor": "طابق أرضي",
+    "direction": "شرقي قبلي",
+    "ownershipType": "طابو سبز",
+    "features": [
+      "حديقة واسعة",
+      "طاقة شمسية",
+      "كراج خاص",
+      "بئر ماء"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "featured": false,
+    "whatsappNumber": "+963988123456",
+    "createdAt": "2026-08-02",
+    "description": "بيت مستقل مع حديقة وكراج سيارة في درعا المحطة، إكساء جيد جداً وجاهز للسكن الفوري."
   }
 ]

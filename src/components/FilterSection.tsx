@@ -34,11 +34,23 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
               <select
                 value={filters.governorate}
                 onChange={(e) => onUpdateFilter('governorate', e.target.value as Governorate)}
-                className="w-full sm:w-44 bg-slate-50 border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                className="w-full sm:w-48 bg-slate-50 border border-slate-300 text-slate-800 text-sm font-semibold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
               >
-                <option value="الكل">كل المحافظات</option>
+                <option value="الكل">جميع المحافظات (14)</option>
                 <option value="دمشق">محافظة دمشق</option>
                 <option value="ريف دمشق">محافظة ريف دمشق</option>
+                <option value="حلب">محافظة حلب</option>
+                <option value="حمص">محافظة حمص</option>
+                <option value="حماة">محافظة حماة</option>
+                <option value="اللاذقية">محافظة اللاذقية</option>
+                <option value="طرطوس">محافظة طرطوس</option>
+                <option value="إدلب">محافظة إدلب</option>
+                <option value="درعا">محافظة درعا</option>
+                <option value="السويداء">محافظة السويداء</option>
+                <option value="القنيطرة">محافظة القنيطرة</option>
+                <option value="دير الزور">محافظة دير الزور</option>
+                <option value="الرقة">محافظة الرقة</option>
+                <option value="الحسكة">محافظة الحسكة</option>
               </select>
             </div>
 

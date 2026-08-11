@@ -2,14 +2,29 @@ export type ContractType = 'all' | 'sale' | 'rent';
 
 export type PropertyType = 'all' | 'apartment' | 'villa' | 'commercial' | 'chalet' | 'land';
 
-export type Governorate = 'الكل' | 'دمشق' | 'ريف دمشق';
+export type Governorate =
+  | 'الكل'
+  | 'دمشق'
+  | 'ريف دمشق'
+  | 'حلب'
+  | 'حمص'
+  | 'حماة'
+  | 'اللاذقية'
+  | 'طرطوس'
+  | 'إدلب'
+  | 'درعا'
+  | 'السويداء'
+  | 'القنيطرة'
+  | 'دير الزور'
+  | 'الرقة'
+  | 'الحسكة';
 
 export interface Property {
   id: string;
   title: string;
   contractType: 'sale' | 'rent';
   propertyType: 'apartment' | 'villa' | 'commercial' | 'chalet' | 'land';
-  governorate: 'دمشق' | 'ريف دمشق';
+  governorate: Exclude<Governorate, 'الكل'>;
   region: string;
   locationDetails: string;
   price: number; // Numeric value in SYP or USD for sorting/filtering
