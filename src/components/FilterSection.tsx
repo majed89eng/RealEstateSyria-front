@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { SlidersHorizontal, RotateCcw, Check, Sun, ShieldCheck, ArrowUpDown } from 'lucide-react';
 import { FilterOptions, Governorate, PropertyType } from '../types/property';

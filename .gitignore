@@ -1,10 +1,14 @@
-# Dependencies
-node_modules
-.pnpm-store
+# Next.js build outputs
+.next/
+out/
+build/
+*.tsbuildinfo
 
-# Production build outputs
-dist
-dist-ssr
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Production outputs
 *.local
 
 # Logs
@@ -14,7 +18,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Editor / IDE directories
+# Editor / IDE
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -40,5 +44,6 @@ Thumbs.db
 .env.test.local
 .env.production.local
 
-# Vite cache
+# Cache
 .vite
+.next

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Sparkles, Bot, RefreshCw, CheckCircle } from 'lucide-react';
 import { useAIAssistant } from '../hooks/useAIAssistant';

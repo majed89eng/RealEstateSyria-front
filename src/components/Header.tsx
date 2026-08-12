@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Building2, MessageCircle, Menu, X, Sparkles } from 'lucide-react';
 
