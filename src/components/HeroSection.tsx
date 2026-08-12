@@ -121,21 +121,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   onChange={(e) => onGovernorateChange(e.target.value as Governorate)}
                   className="w-full bg-slate-900/90 text-white border border-slate-700 rounded-2xl pr-11 pl-4 py-3.5 focus:outline-none focus:border-emerald-500 font-medium text-sm transition-all appearance-none cursor-pointer"
                 >
-                  <option value="الكل">كل المحافظات (14 محافظة)</option>
+                  <option value="الكل">جميع المحافظات المتاحة</option>
                   <option value="دمشق">محافظة دمشق</option>
                   <option value="ريف دمشق">محافظة ريف دمشق</option>
                   <option value="حلب">محافظة حلب</option>
                   <option value="حمص">محافظة حمص</option>
                   <option value="حماة">محافظة حماة</option>
-                  <option value="اللاذقية">محافظة اللاذقية</option>
-                  <option value="طرطوس">محافظة طرطوس</option>
-                  <option value="إدلب">محافظة إدلب</option>
-                  <option value="درعا">محافظة درعا</option>
-                  <option value="السويداء">محافظة السويداء</option>
-                  <option value="القنيطرة">محافظة القنيطرة</option>
-                  <option value="دير الزور">محافظة دير الزور</option>
-                  <option value="الرقة">محافظة الرقة</option>
-                  <option value="الحسكة">محافظة الحسكة</option>
                 </select>
               </div>
 

@@ -27,36 +27,12 @@ export const GovernoratesSection: React.FC<GovernoratesSectionProps> = ({
       count: '24+ عقار',
     },
     {
-      name: 'الشهباء والعزيزية (حلب)',
-      gov: 'حلب' as Governorate,
-      regionName: 'الشهباء',
-      tagline: 'أحياء حلب الفاخرة والمناطق التجارية',
-      img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80',
+      name: 'مشروع دمر وضاحية قدسيا',
+      gov: 'دمشق' as Governorate,
+      regionName: 'مشروع دمر',
+      tagline: 'إطلالات جبلية وهواء نقي وخدمات هادئة',
+      img: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80',
       count: '18+ عقار',
-    },
-    {
-      name: 'الإنشاءات والدبلان (حمص)',
-      gov: 'حمص' as Governorate,
-      regionName: 'الإنشاءات',
-      tagline: 'قلب حمص التجاري والأحياء الراقية',
-      img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
-      count: '14+ عقار',
-    },
-    {
-      name: 'الشاطئ الأزرق والكورنيش (اللاذقية)',
-      gov: 'اللاذقية' as Governorate,
-      regionName: 'الشاطئ الأزرق',
-      tagline: 'شاليهات وإطلالات بحرية ساحرة',
-      img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
-      count: '16+ عقار وشاليه',
-    },
-    {
-      name: 'الكورنيش البحري والفروسية (طرطوس)',
-      gov: 'طرطوس' as Governorate,
-      regionName: 'الكورنيش البحري',
-      tagline: 'شقق وشاليهات بحرية ممتازة',
-      img: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80',
-      count: '12+ عقار',
     },
     {
       name: 'يعفور والصبورة (ريف دمشق)',
@@ -73,6 +49,22 @@ export const GovernoratesSection: React.FC<GovernoratesSectionProps> = ({
       tagline: 'عقارات اقتصادية وحيوية قرب العاصمة',
       img: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80',
       count: '30+ عقار',
+    },
+    {
+      name: 'الشهباء والعزيزية (حلب)',
+      gov: 'حلب' as Governorate,
+      regionName: 'الشهباء',
+      tagline: 'أحياء حلب الفاخرة والمناطق التجارية',
+      img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80',
+      count: '18+ عقار',
+    },
+    {
+      name: 'الإنشاءات والدبلان (حمص)',
+      gov: 'حمص' as Governorate,
+      regionName: 'الإنشاءات',
+      tagline: 'قلب حمص التجاري والأحياء الراقية',
+      img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
+      count: '14+ عقار',
     },
     {
       name: 'الحاضر والشريعة (حماة)',
@@ -93,24 +85,24 @@ export const GovernoratesSection: React.FC<GovernoratesSectionProps> = ({
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
               <MapPin className="w-4 h-4" />
-              <span>التغطية الجغرافية الوطنية</span>
+              <span>التغطية الجغرافية</span>
             </div>
             <h2 className="text-3xl font-extrabold font-alexandria text-slate-900">
               استكشف العقارات حسب المناطق والمحافظات
             </h2>
             <p className="text-sm text-slate-600">
-              تصفية سريعة للعقارات المتاحة في أكثر الأحياء والمناطق طلباً في سوريا (14 محافظة)
+              تصفية سريعة للعقارات المتاحة في (دمشق، ريف دمشق، حلب، حمص، حماة)
             </p>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-sm">
             <Globe className="w-4 h-4 text-emerald-600" />
-            <span>تغطية شاملة لجميع المحافظات الـ 14</span>
+            <span>تغطية المحافظات الخمس الرئيسية</span>
           </div>
         </div>
 
         {/* Region Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {regionsList.map((item, idx) => (
             <div
               key={idx}
