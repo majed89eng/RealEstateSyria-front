@@ -24,13 +24,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onSearchSubmit,
 }) => {
   const popularRegions = [
-    { name: 'المزة', gov: 'دمشق' },
     { name: 'أبو رمانة', gov: 'دمشق' },
-    { name: 'المالكي', gov: 'دمشق' },
+    { name: 'المزة', gov: 'دمشق' },
+    { name: 'الشهباء', gov: 'حلب' },
+    { name: 'الإنشاءات', gov: 'حمص' },
+    { name: 'الشاطئ الأزرق', gov: 'اللاذقية' },
+    { name: 'الكورنيش', gov: 'طرطوس' },
     { name: 'مشروع دمر', gov: 'دمشق' },
-    { name: 'كفرسوسة', gov: 'دمشق' },
-    { name: 'قدسيا', gov: 'ريف دمشق' },
-    { name: 'جرمانا', gov: 'ريف دمشق' },
     { name: 'يعفور', gov: 'ريف دمشق' },
   ];
 
@@ -53,19 +53,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-md text-emerald-400 text-sm font-medium animate-pulse">
             <Sparkles className="w-4 h-4" />
-            <span>المنصة العقارية الأكثر موثوقية في دمشق وريفها</span>
+            <span>المنصة العقارية الأكثر موثوقية في كافة المحافظات السورية (14 محافظة)</span>
           </div>
 
           {/* Heading */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight font-alexandria leading-tight sm:leading-tight">
             اكتشف أفضل العقارات والمنازل في{' '}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300">
-              دمشق وريفها
+              جميع المحافظات السورية
             </span>
           </h1>
 
           <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
-            تصفح أرقى الشقق، الفيلات، والمكاتب التجارية بأسعار دقيقة ومواصفات حقيقية، مع إمكانية التواصل المباشر مع المسؤولين عبر واتساب.
+            تصفح أرقى الشقق، الفيلات، والمكاتب التجارية بأسعار دقيقة ومواصفات حقيقية في دمشق، حلب، حمص، الساحل وكافة المحافظات، مع إمكانية التواصل المباشر عبر واتساب.
           </p>
 
           {/* Search Box Box Glassmorphism */}
@@ -121,9 +121,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   onChange={(e) => onGovernorateChange(e.target.value as Governorate)}
                   className="w-full bg-slate-900/90 text-white border border-slate-700 rounded-2xl pr-11 pl-4 py-3.5 focus:outline-none focus:border-emerald-500 font-medium text-sm transition-all appearance-none cursor-pointer"
                 >
-                  <option value="الكل">كل المحافظات (دمشق وريفها)</option>
+                  <option value="الكل">كل المحافظات (14 محافظة)</option>
                   <option value="دمشق">محافظة دمشق</option>
                   <option value="ريف دمشق">محافظة ريف دمشق</option>
+                  <option value="حلب">محافظة حلب</option>
+                  <option value="حمص">محافظة حمص</option>
+                  <option value="حماة">محافظة حماة</option>
+                  <option value="اللاذقية">محافظة اللاذقية</option>
+                  <option value="طرطوس">محافظة طرطوس</option>
+                  <option value="إدلب">محافظة إدلب</option>
+                  <option value="درعا">محافظة درعا</option>
+                  <option value="السويداء">محافظة السويداء</option>
+                  <option value="القنيطرة">محافظة القنيطرة</option>
+                  <option value="دير الزور">محافظة دير الزور</option>
+                  <option value="الرقة">محافظة الرقة</option>
+                  <option value="الحسكة">محافظة الحسكة</option>
                 </select>
               </div>
 
