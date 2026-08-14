@@ -163,9 +163,13 @@ export const propertyService = {
         score += 20;
         reasons.push('نوع العقار: فيلا / مزرعة');
       }
-      if ((queryLower.includes('مكتب') || queryLower.includes('محل') || queryLower.includes('تجاري')) && prop.propertyType === 'commercial') {
+      if ((queryLower.includes('مكتب') || queryLower.includes('محل') || queryLower.includes('تجاري') || queryLower.includes('مخزن') || queryLower.includes('مستودع')) && prop.propertyType === 'commercial') {
         score += 20;
-        reasons.push('نوع العقار: تجاري / مكتب');
+        reasons.push('نوع العقار: تجاري / مخزن');
+      }
+      if ((queryLower.includes('أرض') || queryLower.includes('ارض') || queryLower.includes('أراضي') || queryLower.includes('اراضي')) && prop.propertyType === 'land') {
+        score += 20;
+        reasons.push('نوع العقار: أرض / قطعة أرض');
       }
 
       // Feature matching

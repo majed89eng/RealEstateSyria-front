@@ -73,7 +73,8 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
                 <option value="all">جميع أنواع العقارات</option>
                 <option value="apartment">شقة سكنية</option>
                 <option value="villa">فيلا / مزرعة</option>
-                <option value="commercial">مكتب / تجاري</option>
+                <option value="commercial">محل / مخزن / تجاري</option>
+                <option value="land">أرض / قطعة أرض</option>
                 <option value="chalet">شاليه / استراحة</option>
               </select>
             </div>
