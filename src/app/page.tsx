@@ -11,6 +11,7 @@ import { AIAssistant } from '@/components/AIAssistant';
 import { GovernoratesSection } from '@/components/GovernoratesSection';
 import { WhyUsSection } from '@/components/WhyUsSection';
 import { Footer } from '@/components/Footer';
+import { FloatingActionHub } from '@/components/FloatingActionHub';
 import { Governorate } from '@/types/property';
 
 export default function HomePage() {
@@ -51,13 +52,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
-      
       {/* Fixed Header */}
       <Header onOpenAI={handleOpenAIAssistant} />
 
       {/* Main Content Areas */}
       <main className="flex-grow">
-        
         {/* Hero Section */}
         <HeroSection
           searchQuery={filters.searchQuery}
@@ -94,7 +93,6 @@ export default function HomePage() {
 
         {/* Why Choose Us Trust Signals */}
         <WhyUsSection />
-
       </main>
 
       {/* Footer */}
@@ -107,6 +105,8 @@ export default function HomePage() {
         onClose={closePropertyDetail}
       />
 
+      {/* Floating Action Hub (Favorites, Comparison, Live WhatsApp Bubble) */}
+      <FloatingActionHub allProperties={properties} />
     </div>
   );
 }

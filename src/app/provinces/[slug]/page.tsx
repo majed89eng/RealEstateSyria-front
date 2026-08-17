@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { SYRIAN_LOCATIONS } from '@/data/locations';
 import { propertyService } from '@/services/propertyService';
 import { PropertyCard } from '@/components/PropertyCard';
+import { FloatingActionHub } from '@/components/FloatingActionHub';
 import { MapPin, Building2, ChevronRight } from 'lucide-react';
 
 interface Props {
@@ -195,6 +196,9 @@ export default async function SingleProvincePage({ params }: Props) {
             )}
           </div>
         </div>
+
+        {/* Floating Action Hub */}
+        <FloatingActionHub allProperties={properties} />
       </main>
 
       <Footer />

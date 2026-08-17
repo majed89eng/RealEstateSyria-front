@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { CurrencyProvider } from '../context/CurrencyContext';
+import { FavoritesProvider } from '../context/FavoritesContext';
 
 export const metadata: Metadata = {
   title: 'عقارات سوريا | المنصة العقارية الأولى في دمشق وريفها وسائر المحافظات',
@@ -36,7 +37,9 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className="bg-slate-50 text-slate-900 font-cairo antialiased selection:bg-emerald-500 selection:text-white">
-        <CurrencyProvider>{children}</CurrencyProvider>
+        <CurrencyProvider>
+          <FavoritesProvider>{children}</FavoritesProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );

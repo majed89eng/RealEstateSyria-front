@@ -29,12 +29,16 @@ import {
   Sparkles,
   Eye,
   Info,
+  Heart,
+  Scale,
 } from 'lucide-react';
 import { Property } from '@/types/property';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useFavorites } from '@/context/FavoritesContext';
 import { propertyService } from '@/services/propertyService';
 import { leadService } from '@/services/leadService';
 import { PropertyCard } from '@/components/PropertyCard';
+import { FloatingActionHub } from '@/components/FloatingActionHub';
 
 interface Props {
   property: Property;
@@ -43,9 +47,15 @@ interface Props {
 
 export const PropertyPageClient: React.FC<Props> = ({ property, similarProperties }) => {
   const { currency, formatPrice } = useCurrency();
+  const { isFavorite, toggleFavorite, isInComparison, addToComparison, removeFromComparison } =
+    useFavorites();
+
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [isFullscreenLightbox, setIsFullscreenLightbox] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+
+  const favorited = isFavorite(property.id);
+  const inCompare = isInComparison(property.id);
 
   // Viewing Request Form State
   const [leadName, setLeadName] = useState<string>('');
@@ -153,12 +163,19 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           </div>
         </div>
 
-        {/* Price & Share Box */}
-        <div className="flex flex-col items-start md:items-end gap-3 min-w-[240px]">
-          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm w-full text-left md:text-right">
-            <span className="text-xs text-slate-400 font-semibold block mb-1">
-              {property.contractType === 'rent' ? 'الإيجار المطلوب' : 'السعر المطلوب'}
-            </span>
+        {/* Price & Actions Box */}
+        <div className="flex flex-col items-start md:items-end gap-3 min-w-[260px]">
+          <div className="p-4 rounded-3xl bg-white border border-slate-200 shadow-sm w-full text-left md:text-right">
+            <div className="flex items-center justify-between gap-4 mb-1">
+              <span className="text-xs text-slate-400 font-semibold">
+                {property.contractType === 'rent' ? 'الإيجار المطلوب' : 'السعر المطلوب'}
+              </span>
+              {property.area > 0 && property.contractType === 'sale' && !isUnavailable && (
+                <span className="text-[11px] text-slate-500 font-mono font-bold">
+                  ≈ {formatPrice(Math.round(property.priceUsd / property.area))}/م²
+                </span>
+              )}
+            </div>
             <span
               className={`text-2xl sm:text-3xl font-black font-alexandria tracking-tight ${
                 isUnavailable ? 'text-slate-400 line-through' : 'text-emerald-700'
@@ -168,14 +185,54 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleCopyLink}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors w-full justify-center"
-          >
-            {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
-            <span>{copiedLink ? 'تم نسخ رابط العقار!' : 'مشاركة هذا العقار'}</span>
-          </button>
+          <div className="grid grid-cols-3 gap-2 w-full">
+            {/* Toggle Favorite Button */}
+            <button
+              type="button"
+              onClick={() => toggleFavorite(property.id)}
+              className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
+                favorited
+                  ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-sm'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+              }`}
+              title={favorited ? 'إزالة من المفضلة' : 'حفظ في المفضلة'}
+            >
+              <Heart className={`w-4 h-4 ${favorited ? 'fill-rose-500 text-rose-500' : ''}`} />
+              <span className="hidden sm:inline">{favorited ? 'محفوظ' : 'حفظ'}</span>
+            </button>
+
+            {/* Toggle Compare Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (inCompare) {
+                  removeFromComparison(property.id);
+                } else {
+                  addToComparison(property);
+                }
+              }}
+              className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
+                inCompare
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+              }`}
+              title={inCompare ? 'مدرج بالمقارنة' : 'إضافة للمقارنة'}
+            >
+              <Scale className="w-4 h-4 text-emerald-600" />
+              <span className="hidden sm:inline">{inCompare ? 'مقارن' : 'مقارنة'}</span>
+            </button>
+
+            {/* Share Link Button */}
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors"
+              title="مشاركة رابط العقار"
+            >
+              {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
+              <span className="hidden sm:inline">{copiedLink ? 'منسوخ' : 'مشاركة'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -510,6 +567,9 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           </div>
         </div>
       )}
+
+      {/* Floating Action Hub (Favorites & Comparison & WhatsApp Bubble) */}
+      <FloatingActionHub allProperties={[property, ...(similarProperties || [])]} />
     </div>
   );
 };

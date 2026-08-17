@@ -8,6 +8,7 @@ import { Footer } from '@/components/Footer';
 import { FilterSection } from '@/components/FilterSection';
 import { PropertyGrid } from '@/components/PropertyGrid';
 import { PropertyDetailModal } from '@/components/PropertyDetailModal';
+import { FloatingActionHub } from '@/components/FloatingActionHub';
 import { Building2, Search, Sparkles, ChevronRight } from 'lucide-react';
 
 export default function PropertiesCatalogPage() {
@@ -155,6 +156,9 @@ export default function PropertiesCatalogPage() {
           isOpen={isDetailModalOpen}
           onClose={closePropertyDetail}
         />
+
+        {/* Floating Action Hub (Favorites & Comparison & WhatsApp Bubble) */}
+        <FloatingActionHub allProperties={properties} />
       </main>
 
       <Footer />
