@@ -8,20 +8,30 @@ const initialFilters: FilterOptions = {
   propertyType: 'all',
   governorate: 'الكل',
   region: 'الكل',
-  minPrice: undefined,
-  maxPrice: undefined,
+  neighborhood: 'الكل',
+  minPriceUsd: undefined,
+  maxPriceUsd: undefined,
+  minArea: undefined,
+  maxArea: undefined,
   bedrooms: 'all',
+  finishingStatus: 'all',
+  availabilityStatus: 'all',
   hasSolar: false,
   hasTaboGreen: false,
   hasElevator: false,
+  hasGarage: false,
+  hasGenerator: false,
   sortBy: 'newest',
 };
 
-export function useProperties() {
+export function useProperties(customFilters?: Partial<FilterOptions>) {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<FilterOptions>(initialFilters);
+  const [filters, setFilters] = useState<FilterOptions>({
+    ...initialFilters,
+    ...customFilters,
+  });
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
 
@@ -45,9 +55,13 @@ export function useProperties() {
 
   const updateFilter = <K extends keyof FilterOptions>(key: K, value: FilterOptions[K]) => {
     setFilters((prev) => {
-      // If changing governorate, reset region to 'الكل'
+      // If changing governorate, reset region and neighborhood
       if (key === 'governorate' && prev.governorate !== value) {
-        return { ...prev, governorate: value as any, region: 'الكل' };
+        return { ...prev, governorate: value as any, region: 'الكل', neighborhood: 'الكل' };
+      }
+      // If changing region, reset neighborhood
+      if (key === 'region' && prev.region !== value) {
+        return { ...prev, region: value as any, neighborhood: 'الكل' };
       }
       return { ...prev, [key]: value };
     });
@@ -72,6 +86,7 @@ export function useProperties() {
     loading,
     error,
     filters,
+    setFilters,
     updateFilter,
     resetFilters,
     selectedProperty,

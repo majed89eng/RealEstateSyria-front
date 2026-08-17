@@ -1,6 +1,24 @@
 export type ContractType = 'all' | 'sale' | 'rent';
 
-export type PropertyType = 'all' | 'apartment' | 'villa' | 'commercial' | 'chalet' | 'land';
+export type PropertyType =
+  | 'all'
+  | 'apartment'
+  | 'villa'
+  | 'commercial'
+  | 'chalet'
+  | 'land'
+  | 'shop'
+  | 'office'
+  | 'warehouse'
+  | 'building'
+  | 'farm'
+  | 'other';
+
+export type AvailabilityStatus = 'available' | 'reserved' | 'sold' | 'rented' | 'inactive';
+
+export type FinishingStatus = 'shell' | 'semi_finished' | 'finished' | 'luxury';
+
+export type CurrencyCode = 'USD' | 'SYP' | 'EUR';
 
 export type Governorate =
   | 'الكل'
@@ -8,30 +26,80 @@ export type Governorate =
   | 'ريف دمشق'
   | 'حلب'
   | 'حمص'
-  | 'حماة';
+  | 'حماة'
+  | 'اللاذقية'
+  | 'طرطوس';
+
+export interface LocationHierarchy {
+  provinceId: string;
+  provinceNameAr: string;
+  provinceNameEn: string;
+  provinceSlug: string;
+  cities: {
+    cityId: string;
+    cityNameAr: string;
+    cityNameEn: string;
+    citySlug: string;
+    neighborhoods: {
+      neighborhoodId: string;
+      neighborhoodNameAr: string;
+      neighborhoodNameEn: string;
+      neighborhoodSlug: string;
+    }[];
+  }[];
+}
 
 export interface Property {
   id: string;
+  propertyCode: string; // Unique human reference e.g. "REF-1024"
+  slug: string; // SEO-friendly unique slug e.g. "modern-apartment-qudsaya-ref-1024"
   title: string;
   contractType: 'sale' | 'rent';
-  propertyType: 'apartment' | 'villa' | 'commercial' | 'chalet' | 'land';
+  propertyType: Exclude<PropertyType, 'all'>;
+  availabilityStatus: AvailabilityStatus;
+  finishingStatus: FinishingStatus;
+  
+  // Location
   governorate: Exclude<Governorate, 'الكل'>;
-  region: string;
+  region: string; // City / Area
+  neighborhood?: string;
   locationDetails: string;
-  price: number; // Numeric value in SYP or USD for sorting/filtering
-  formattedPrice: string; // e.g. "450,000,000 ل.س" or "$85,000"
-  currency: 'ل.س' | '$';
+  address?: string;
+  lat?: number;
+  lng?: number;
+
+  // Price & Currency (USD is canonical source of truth)
+  priceUsd: number;
+  displayCurrencyPreference?: CurrencyCode;
+  
+  // Specs
   area: number; // m2
   bedrooms: number;
   bathrooms: number;
   floor: string;
+  totalFloors?: number;
   direction: string; // e.g. "قبلي شرقي"
   ownershipType: string; // e.g. "طابو سبز (2400 سهم)"
+
+  // Amenities
+  hasSolar?: boolean;
+  hasElevator?: boolean;
+  hasGarage?: boolean;
+  hasGenerator?: boolean;
+
   features: string[];
   images: string[];
+  videoUrl?: string;
   featured?: boolean;
+  isActive?: boolean;
+  viewsCount?: number;
+
+  // Contact
+  contactPhone?: string;
   whatsappNumber: string;
+  
   createdAt: string;
+  updatedAt?: string;
   description: string;
 }
 
@@ -41,14 +109,28 @@ export interface FilterOptions {
   propertyType: PropertyType;
   governorate: Governorate;
   region: string;
-  minPrice?: number;
-  maxPrice?: number;
+  neighborhood?: string;
+  minPriceUsd?: number;
+  maxPriceUsd?: number;
   minArea?: number;
+  maxArea?: number;
   bedrooms?: number | 'all';
+  finishingStatus?: FinishingStatus | 'all';
+  availabilityStatus?: AvailabilityStatus | 'all';
   hasSolar?: boolean;
   hasTaboGreen?: boolean;
   hasElevator?: boolean;
-  sortBy: 'newest' | 'price_asc' | 'price_desc' | 'area_desc';
+  hasGarage?: boolean;
+  hasGenerator?: boolean;
+  sortBy: 'newest' | 'price_asc' | 'price_desc' | 'area_desc' | 'most_viewed';
+}
+
+export interface ExchangeRate {
+  currencyCode: CurrencyCode;
+  rateToUsd: number; // e.g. 15000 for SYP (1 USD = 15,000 SYP), 0.92 for EUR
+  symbol: string;
+  nameAr: string;
+  updatedAt: string;
 }
 
 export interface AIQueryMatch {

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { AIQueryResult } from '../types/property';
-import { propertyService } from '../services/propertyService';
 
 export function useAIAssistant() {
   const [query, setQuery] = useState<string>('');
@@ -13,8 +12,18 @@ export function useAIAssistant() {
 
     setLoading(true);
     try {
-      const res = await propertyService.searchWithAI(q);
-      setResult(res);
+      const response = await fetch('/api/ai-assistant', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: q }),
+      });
+
+      if (response.ok) {
+        const data: AIQueryResult = await response.json();
+        setResult(data);
+      }
     } catch (err) {
       console.error('AI search error:', err);
     } finally {

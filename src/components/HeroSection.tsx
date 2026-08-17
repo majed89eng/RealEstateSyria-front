@@ -87,30 +87,30 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      goToNext();
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [currentSlide]);
-
-  const goToNext = () => {
+  const goToNext = React.useCallback(() => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
       setIsTransitioning(false);
     }, 400);
-  };
+  }, [isTransitioning]);
 
-  const goToPrev = () => {
+  const goToPrev = React.useCallback(() => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
       setIsTransitioning(false);
     }, 400);
-  };
+  }, [isTransitioning]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const slide = heroSlides[currentSlide];
 

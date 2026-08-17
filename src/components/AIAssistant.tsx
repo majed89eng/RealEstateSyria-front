@@ -99,7 +99,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ onOpenDetail }) => {
                   }}
                   className="text-xs px-3 py-1.5 rounded-xl bg-slate-900/70 hover:bg-amber-500/20 hover:text-amber-300 border border-slate-700/80 transition-all font-medium text-slate-300 text-right"
                 >
-                  "{prompt}"
+                  {`"${prompt}"`}
                 </button>
               ))}
             </div>
