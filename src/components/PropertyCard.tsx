@@ -18,6 +18,8 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
+  HardHat,
+  Clock,
 } from 'lucide-react';
 import { Property } from '../types/property';
 import { propertyService } from '../services/propertyService';
@@ -29,54 +31,60 @@ interface PropertyCardProps {
   onOpenDetail?: (property: Property) => void;
 }
 
-export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onOpenDetail }) => {
-  const { currency, formatPrice } = useCurrency();
-  const { isFavorite, toggleFavorite, isInComparison, addToComparison, removeFromComparison } =
-    useFavorites();
-
+export const PropertyCard: React.FC<PropertyCardProps> = ({
+  property,
+  onOpenDetail,
+}) => {
+  const { formatPrice, currency } = useCurrency();
+  const { isFavorite, toggleFavorite, isInComparison, addToComparison, removeFromComparison } = useFavorites();
   const [activeImageIdx, setActiveImageIdx] = useState<number>(0);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const images =
-    property.images && property.images.length > 0
-      ? property.images
-      : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'];
+  const images = property.images && property.images.length > 0
+    ? property.images
+    : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'];
 
-  const whatsappUrl = propertyService.generateWhatsAppUrl(property, undefined, currency);
+  const isUnavailable =
+    property.availabilityStatus === 'sold' ||
+    property.availabilityStatus === 'rented' ||
+    property.availabilityStatus === 'reserved';
 
   const isSold = property.availabilityStatus === 'sold';
   const isRented = property.availabilityStatus === 'rented';
   const isReserved = property.availabilityStatus === 'reserved';
-  const isUnavailable = isSold || isRented;
 
   const favorited = isFavorite(property.id);
   const inCompare = isInComparison(property.id);
 
-  // Price per square meter calculation
+  const whatsappUrl = propertyService.generateWhatsAppUrl(property, undefined, currency);
+
+  // Calculate Price per Square Meter
   const pricePerSqm =
     property.area > 0 && property.contractType === 'sale'
       ? Math.round(property.priceUsd / property.area)
       : null;
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (onOpenDetail) {
-      e.preventDefault();
-      onOpenDetail(property);
-    }
-  };
-
   const handleNextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setActiveImageIdx((prev) => (prev + 1) % images.length);
   };
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setActiveImageIdx((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleFavorite(property.id);
   };
 
   const handleToggleCompare = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     if (inCompare) {
       removeFromComparison(property.id);
     } else {
@@ -84,45 +92,52 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onOpenDeta
     }
   };
 
-  const handleToggleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleFavorite(property.id);
+  const handleCardClick = () => {
+    if (onOpenDetail) {
+      onOpenDetail(property);
+    }
   };
 
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group bg-white rounded-3xl overflow-hidden border shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 relative ${
-        isUnavailable ? 'border-slate-300 opacity-90' : 'border-slate-200/80 hover:border-emerald-500/30'
-      }`}
+      className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between relative"
     >
-      {/* Interactive Image Container with Carousel on Hover */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-900 cursor-pointer" onClick={handleCardClick}>
+      {/* Top Media Section with Interactive Carousel */}
+      <div className="relative aspect-4/3 overflow-hidden bg-slate-900 select-none">
+        {/* Main Active Image */}
         <img
           src={images[activeImageIdx]}
-          alt={`${property.title} - صورة ${activeImageIdx + 1}`}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          alt={property.title}
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 cursor-pointer"
+          onClick={handleCardClick}
+          loading="lazy"
         />
 
-        {/* Ambient Dark Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/40 pointer-events-none" />
+        {/* Ambient Dark Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/30 pointer-events-none" />
 
         {/* Carousel Navigation Arrows (visible on hover) */}
-        {images.length > 1 && isHovered && (
-          <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 flex items-center justify-between z-20 pointer-events-auto">
+        {images.length > 1 && (
+          <div
+            className={`absolute inset-x-2 top-1/2 -translate-y-1/2 flex items-center justify-between pointer-events-none transition-opacity duration-200 ${
+              isHovered ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
             <button
               type="button"
               onClick={handlePrevImage}
-              className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-md transition-all duration-200"
+              className="p-1.5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white backdrop-blur-md shadow-lg pointer-events-auto transition-transform hover:scale-110 active:scale-95"
               title="الصورة السابقة"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
+
             <button
               type="button"
               onClick={handleNextImage}
-              className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-md transition-all duration-200"
+              className="p-1.5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white backdrop-blur-md shadow-lg pointer-events-auto transition-transform hover:scale-110 active:scale-95"
               title="الصورة التالية"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -144,8 +159,15 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onOpenDeta
           </div>
         )}
 
-        {/* Top Right Badges (Contract Type & Featured) */}
+        {/* Top Right Badges (Contract Type, Off-Plan & Featured) */}
         <div className="absolute top-3 right-3 flex flex-wrap items-center gap-1.5 z-10">
+          {property.isOffPlan && (
+            <span className="px-2.5 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950 shadow-md flex items-center gap-1">
+              <HardHat className="w-3.5 h-3.5" />
+              على المخطط
+            </span>
+          )}
+
           {isSold ? (
             <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-red-600 text-white shadow-md">
               تم البيع
@@ -224,23 +246,23 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onOpenDeta
       </div>
 
       {/* Body Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+      <div className="p-5 flex-1 flex flex-col justify-between space-y-3.5">
         <div className="space-y-1.5">
           {/* Title */}
           <h3
             onClick={handleCardClick}
-            className="text-base font-extrabold text-slate-900 group-hover:text-emerald-600 transition-colors line-clamp-2 leading-snug cursor-pointer font-alexandria"
+            className="text-base font-extrabold text-slate-900 group-hover:text-emerald-600 transition-colors line-clamp-2 leading-normal cursor-pointer font-alexandria"
           >
             {property.title}
           </h3>
 
-          <p className="text-xs text-slate-500 line-clamp-1 leading-relaxed">
+          <p className="text-xs text-slate-500 line-clamp-1 leading-normal">
             {property.locationDetails}
           </p>
         </div>
 
         {/* Key Specs Grid Pills */}
-        <div className="grid grid-cols-3 gap-2 py-2.5 border-y border-slate-100 text-slate-700 text-xs">
+        <div className="grid grid-cols-3 gap-2 py-2 border-y border-slate-100 text-slate-700 text-xs">
           <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-xl border border-slate-100 justify-center">
             <Maximize2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
             <span className="font-bold">{property.area} م²</span>
@@ -262,6 +284,26 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onOpenDeta
             )}
           </div>
         </div>
+
+        {/* Off-Plan Project Investment Strip */}
+        {property.isOffPlan && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-2.5 space-y-1.5 text-xs">
+            <div className="flex items-center justify-between font-bold text-amber-950">
+              <span className="flex items-center gap-1 text-[11px]">
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
+                تسليم: {property.handoverDate || 'قريباً'}
+              </span>
+              <span className="text-[10px] bg-amber-500/20 px-2 py-0.5 rounded-full text-amber-900 font-black">
+                {property.constructionProgress || 30}% إنجاز
+              </span>
+            </div>
+            {property.paymentPlan && (
+              <p className="text-[11px] text-amber-900/80 font-semibold truncate">
+                💳 {property.paymentPlan}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Footer: Price, Price/m² & Actions */}
         <div className="flex items-center justify-between gap-2 pt-1">

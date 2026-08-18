@@ -35,9 +35,8 @@ import {
   TrendingUp,
   DollarSign,
   Activity,
-  Layers,
-  ArrowUpRight,
   Sun,
+  HardHat,
 } from 'lucide-react';
 import { Property, Governorate, PropertyType, FinishingStatus, AvailabilityStatus } from '@/types/property';
 import { Lead, LeadStatus } from '@/types/lead';
@@ -84,6 +83,10 @@ export default function AdminDashboardPage() {
   const [formHasElevator, setFormHasElevator] = useState<boolean>(true);
   const [formHasGarage, setFormHasGarage] = useState<boolean>(false);
   const [formHasGenerator, setFormHasGenerator] = useState<boolean>(false);
+  const [formIsOffPlan, setFormIsOffPlan] = useState<boolean>(false);
+  const [formHandoverDate, setFormHandoverDate] = useState<string>('');
+  const [formPaymentPlan, setFormPaymentPlan] = useState<string>('');
+  const [formConstructionProgress, setFormConstructionProgress] = useState<number>(35);
   const [formDescription, setFormDescription] = useState<string>('');
   const [formImages, setFormImages] = useState<string[]>([]);
   const [formFeatured, setFormFeatured] = useState<boolean>(false);
@@ -153,6 +156,10 @@ export default function AdminDashboardPage() {
     setFormHasElevator(true);
     setFormHasGarage(false);
     setFormHasGenerator(false);
+    setFormIsOffPlan(false);
+    setFormHandoverDate('');
+    setFormPaymentPlan('');
+    setFormConstructionProgress(35);
     setFormDescription('شقة سكنية ممتازة بموقع راقٍ وقريبة من كافة الخدمات.');
     setFormImages([
       'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
@@ -186,6 +193,10 @@ export default function AdminDashboardPage() {
     setFormHasElevator(!!prop.hasElevator);
     setFormHasGarage(!!prop.hasGarage);
     setFormHasGenerator(!!prop.hasGenerator);
+    setFormIsOffPlan(!!prop.isOffPlan);
+    setFormHandoverDate(prop.handoverDate || '');
+    setFormPaymentPlan(prop.paymentPlan || '');
+    setFormConstructionProgress(prop.constructionProgress || 35);
     setFormDescription(prop.description);
     setFormImages(prop.images || []);
     setFormFeatured(!!prop.featured);
@@ -263,6 +274,10 @@ export default function AdminDashboardPage() {
             hasElevator: formHasElevator,
             hasGarage: formHasGarage,
             hasGenerator: formHasGenerator,
+            isOffPlan: formIsOffPlan,
+            handoverDate: formHandoverDate,
+            paymentPlan: formPaymentPlan,
+            constructionProgress: Number(formConstructionProgress),
             description: formDescription,
             images: finalImages,
             featured: formFeatured,
@@ -299,7 +314,13 @@ export default function AdminDashboardPage() {
         hasElevator: formHasElevator,
         hasGarage: formHasGarage,
         hasGenerator: formHasGenerator,
-        features: ['طاقة شمسية', 'طابو سبز', 'إكساء حديث'],
+        isOffPlan: formIsOffPlan,
+        handoverDate: formHandoverDate,
+        paymentPlan: formPaymentPlan,
+        constructionProgress: Number(formConstructionProgress),
+        features: formIsOffPlan
+          ? ['بيع على المخطط', 'أقساط ميسرة', 'طابو سبز']
+          : ['طاقة شمسية', 'طابو سبز', 'إكساء حديث'],
         description: formDescription,
         images: finalImages,
         featured: formFeatured,
@@ -1235,7 +1256,71 @@ export default function AdminDashboardPage() {
                   />
                   <span className="text-amber-400 font-bold">عقار مميز (Featured)</span>
                 </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formIsOffPlan}
+                    onChange={(e) => setFormIsOffPlan(e.target.checked)}
+                    className="rounded text-amber-500"
+                  />
+                  <span className="text-amber-300 font-bold flex items-center gap-1">
+                    <HardHat className="w-3.5 h-3.5 text-amber-400" />
+                    مشروع على المخطط (قيد الإنشاء)
+                  </span>
+                </label>
               </div>
+
+              {/* Off-Plan Fields if checked */}
+              {formIsOffPlan && (
+                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-3">
+                  <h4 className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                    <HardHat className="w-4 h-4" />
+                    بيانات البيع على المخطط والتقسيط
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        موعد التسليم المتوقع
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="الربع الرابع 2026"
+                        value={formHandoverDate}
+                        onChange={(e) => setFormHandoverDate(e.target.value)}
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        نسبة الإنجاز الفعلي (%)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={formConstructionProgress}
+                        onChange={(e) => setFormConstructionProgress(Number(e.target.value))}
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                        خطة السداد والأقساط
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="دفعة 20% وأقساط على 36 شهراً"
+                        value={formPaymentPlan}
+                        onChange={(e) => setFormPaymentPlan(e.target.value)}
+                        className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Local Image Upload & Dropzone */}
               <div className="space-y-2">

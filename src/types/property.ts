@@ -58,6 +58,12 @@ export interface Property {
   propertyType: Exclude<PropertyType, 'all'>;
   availabilityStatus: AvailabilityStatus;
   finishingStatus: FinishingStatus;
+
+  // Off-Plan / Under Construction Fields
+  isOffPlan?: boolean; // هل العقار بيع على المخطط / قيد الإنشاء
+  handoverDate?: string; // موعد التسليم المتوقع e.g. "الربع الرابع 2026"
+  paymentPlan?: string; // خطة السداد e.g. "دفعة 25% وأقساط ميسرة على 3 سنوات"
+  constructionProgress?: number; // نسبة الإنجاز الفعلي (0 إلى 100)
   
   // Location
   governorate: Exclude<Governorate, 'الكل'>;
@@ -117,6 +123,7 @@ export interface FilterOptions {
   bedrooms?: number | 'all';
   finishingStatus?: FinishingStatus | 'all';
   availabilityStatus?: AvailabilityStatus | 'all';
+  isOffPlan?: boolean;
   hasSolar?: boolean;
   hasTaboGreen?: boolean;
   hasElevator?: boolean;

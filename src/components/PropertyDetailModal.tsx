@@ -22,6 +22,8 @@ import {
   ExternalLink,
   Send,
   Calendar,
+  HardHat,
+  Clock,
 } from 'lucide-react';
 import { Property } from '../types/property';
 import { propertyService } from '../services/propertyService';
@@ -227,7 +229,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           {/* Title & Location & Price */}
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-6 border-b border-slate-200">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900 font-alexandria leading-snug">
+              <h2 className="text-2xl font-bold text-slate-900 font-alexandria leading-normal">
                 {property.title}
               </h2>
               <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
@@ -310,6 +312,52 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Off-Plan Project Investment Section */}
+          {property.isOffPlan && (
+            <div className="bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent rounded-2xl p-4 sm:p-5 border border-amber-500/30 space-y-3.5">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm sm:text-base font-bold text-amber-950 font-alexandria flex items-center gap-2">
+                  <HardHat className="w-5 h-5 text-amber-600" />
+                  <span>تفاصيل الشراء على المخطط وخطة التقسيط</span>
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-500 text-slate-950 shadow-sm">
+                  قيد الإنشاء
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl bg-white/90 border border-amber-200/80 space-y-0.5">
+                  <span className="text-[11px] text-amber-800 font-bold block">موعد التسليم المتوقع</span>
+                  <span className="text-sm font-extrabold text-slate-900 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-amber-600" />
+                    {property.handoverDate || 'قريباً'}
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/90 border border-amber-200/80 space-y-1">
+                  <span className="text-[11px] text-amber-800 font-bold block">نسبة الإنجاز الفعلي</span>
+                  <div className="flex justify-between text-[11px] font-black text-slate-800">
+                    <span>مرحلة التشييد</span>
+                    <span className="text-amber-700">{property.constructionProgress || 35}%</span>
+                  </div>
+                  <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className="bg-amber-500 h-1.5 rounded-full"
+                      style={{ width: `${property.constructionProgress || 35}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/90 border border-amber-200/80 space-y-0.5">
+                  <span className="text-[11px] text-amber-800 font-bold block">تسهيلات السداد</span>
+                  <span className="text-xs font-bold text-slate-900 leading-snug block">
+                    {property.paymentPlan || 'متوفر خطط دفع ميسرة'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Features Badges */}
           <div className="space-y-3">

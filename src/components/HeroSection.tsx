@@ -215,7 +215,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           </div>
 
-          <p className="text-white font-extrabold text-sm leading-snug font-alexandria">{slide.title}</p>
+          <p className="text-white font-extrabold text-sm leading-normal font-alexandria">{slide.title}</p>
 
           <div className="flex items-center gap-1 text-slate-400 text-xs font-medium">
             <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
@@ -245,14 +245,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
               {/* Main Headline */}
               <div className={`transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-3' : 'opacity-100 translate-y-0'}`}>
-                <h1 className="text-3xl sm:text-4xl xl:text-5xl font-black text-white leading-tight font-alexandria tracking-tight">
-                  اعثر على <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">عقارك المثالي</span>
-                  <br />
-                  <span className="text-slate-200 text-2xl sm:text-3xl font-extrabold">
+                <h1 className="font-black font-alexandria space-y-3.5">
+                  <span className="block text-2xl sm:text-3xl xl:text-4xl text-white leading-[1.45]">
+                    اعثر على{' '}
+                    <span className="text-emerald-400">
+                      عقارك المثالي
+                    </span>
+                  </span>
+                  <span className="block text-slate-200 text-lg sm:text-xl xl:text-2xl font-extrabold leading-[1.45]">
                     بأسعار حقيقية وتواصل مباشر
                   </span>
                 </h1>
-                <p className="mt-3 text-slate-300 text-xs sm:text-sm leading-relaxed max-w-lg">
+                <p className="mt-4 text-slate-300 text-xs sm:text-sm leading-relaxed max-w-lg">
                   تصفح أرقى الشقق، الفيلات والمزارع في دمشق وريف دمشق وسائر المحافظات مع تفاصيل دقيقة للطاقة وسندات الملكية.
                 </p>
               </div>

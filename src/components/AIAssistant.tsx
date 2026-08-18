@@ -47,20 +47,20 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ onOpenDetail }) => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
+        <div className="text-center max-w-3xl mx-auto space-y-3.5 mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-emerald-500/15 to-teal-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold shadow-lg backdrop-blur-md">
             <Sparkles className="w-4 h-4 text-amber-400 animate-spin-slow" />
             <span>مساعد عقارات سوريا الذكي (AI Assistant)</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl xl:text-5xl font-black font-alexandria tracking-tight">
+          <h2 className="text-2xl sm:text-3xl xl:text-4xl font-black font-alexandria leading-[1.45]">
             ابحث بلغتك الطبيعية مع{' '}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-emerald-400 to-teal-300">
+            <span className="text-emerald-400">
               الذكاء الاصطناعي
             </span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal max-w-xl mx-auto">
+          <p className="text-xs sm:text-sm text-slate-300 leading-[1.75] font-normal max-w-xl mx-auto pt-1">
             اكتب طلبك باللهجة السورية أو الفصحى، وسيقوم المساعد الذكي بتحليل السعر، المنطقة، والطاقة وسند الملكية لاقتراح أنسب العروض المطابقة فورياً.
           </p>
         </div>

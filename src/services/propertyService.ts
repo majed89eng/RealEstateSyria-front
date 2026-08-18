@@ -121,6 +121,11 @@ export const propertyService = {
       }
     }
 
+    // Off-Plan (Under Construction) Filter
+    if (filters.isOffPlan !== undefined && filters.isOffPlan) {
+      result = result.filter((p) => p.isOffPlan === true);
+    }
+
     // Amenities toggles
     if (filters.hasSolar) {
       result = result.filter((p) => p.hasSolar || p.features.some((f) => f.includes('طاقة شمسية')));
@@ -334,6 +339,20 @@ export const propertyService = {
       ) {
         score += 10;
         reasons.push('يوجد كراج خاص');
+      }
+
+      // Off-plan & Installments check
+      if (
+        (queryLower.includes('مخطط') ||
+          queryLower.includes('قيد الإنشاء') ||
+          queryLower.includes('أقساط') ||
+          queryLower.includes('تقسيط') ||
+          queryLower.includes('اكتتاب') ||
+          queryLower.includes('مشروع')) &&
+        prop.isOffPlan
+      ) {
+        score += 35;
+        reasons.push('مشروع استثماري على المخطط بأقساط ميسرة');
       }
 
       // Price keywords check

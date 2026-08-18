@@ -8,15 +8,34 @@
   html {
     scroll-behavior: smooth;
     font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    line-height: 1.75;
+    letter-spacing: -0.01em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    line-height: 1.75;
   }
 }
 
 .font-cairo {
   font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.75;
 }
 
 .font-alexandria {
   font-family: 'Alexandria', 'Cairo', system-ui, sans-serif;
+  line-height: 1.45;
 }
 
 /* Custom Scrollbar */
