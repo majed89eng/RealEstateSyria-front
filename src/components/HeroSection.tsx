@@ -7,12 +7,12 @@ import {
   Building,
   ChevronLeft,
   ChevronRight,
-  Star,
   ShieldCheck,
   Sun,
   Clock,
   Sparkles,
-  Zap,
+  Layers,
+  Compass,
 } from 'lucide-react';
 import { ContractType, Governorate } from '../types/property';
 
@@ -27,46 +27,52 @@ interface HeroSectionProps {
   onSearchSubmit: () => void;
 }
 
+// General Lifestyle & Sector-Focused Hero Slides (Not tied to a single specific property)
 const heroSlides = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=85',
-    badge: '🏡 فيلات وقصور دمشقية',
-    title: 'فيلا فاخرة بإطلالة خضراء',
-    location: 'أبو رمانة - دمشق',
-    price: '٥٦٠,٠٠٠ $',
-    tag: 'طابو سبز 2400',
-    rating: '4.9',
+    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=90',
+    categoryBadge: '🏡 الفيلات والقصور الفاخرة',
+    title: 'فيلات راقية وقصور مستقلة',
+    subtitle: 'يعفور، الصبورة، وأرقى ضواحي دمشق',
+    highlightTag: 'طابو سبز 2400 سهم • حدائق ومسابح خاصة',
+    countBadge: '+45 فيلا وقصر متاح',
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=2000&q=85',
-    badge: '🌿 مزارع وفيلات راقية',
-    title: 'مزرعة ملكية مجهزة بالكامل',
-    location: 'يعفور - ريف دمشق',
-    price: '٩٥٠,٠٠٠ $',
-    tag: 'طاقة شمسية كاملة',
-    rating: '5.0',
+    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=90',
+    categoryBadge: '🏢 الشقق السكنية والبنتهاوس',
+    title: 'شقق سكنية وإكساء ديلوكس',
+    subtitle: 'أبو رمانة، المزة، المالكي، ومشروع دمر',
+    highlightTag: 'طاقة شمسية 24/7 • مصاعد وكراجات',
+    countBadge: '+80 شقة سكنية منسقة',
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=85',
-    badge: '🏢 شقق سكنية راقية',
-    title: 'شقة سوبر ديلوكس حديثة',
-    location: 'فيلات المزة الشرقية',
-    price: '٣٥٠,٠٠٠ $',
-    tag: 'للبيع',
-    rating: '4.8',
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=90',
+    categoryBadge: '🏗️ مشاريع التطوير والبيع على المخطط',
+    title: 'المشاريع الاستثمارية الحديثة',
+    subtitle: 'أبراج ماروتا سيتي وباسيليا سيتي',
+    highlightTag: 'أقساط ميسرة حتى 3 سنوات • عوائد واعدة',
+    countBadge: 'مشاريع قيد الإنشاء',
   },
   {
     id: 4,
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=2000&q=85',
-    badge: '🏙️ مكاتب وأبراج تجارية',
-    title: 'مكتب تجاري حديث مجهز',
-    location: 'كفرسوسة - دمشق',
-    price: '٢,٢٠٠ $ / شهر',
-    tag: 'للإيجار',
-    rating: '4.9',
+    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1600&q=90',
+    categoryBadge: '🌿 المزارع والاستراحات الريفية',
+    title: 'مزارع واستراحات استجمامية',
+    subtitle: 'غوطة دمشق، ريف حمص، وحلب',
+    highlightTag: 'طبيعة خلابة • آبار ومنظومات ري مستقلة',
+    countBadge: '+30 مزرعة واستراحة',
+  },
+  {
+    id: 5,
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1600&q=90',
+    categoryBadge: '🏙️ المقرات والمكاتب التجارية',
+    title: 'مكاتب ومقرات شركات وأعمال',
+    subtitle: 'كفرسوسة، ساحة الأمويين، والمراكز الحيوية',
+    highlightTag: 'تراخيص تجارية • مواقف وخدمات متكاملة',
+    countBadge: '+25 مقر تجاري',
   },
 ];
 
@@ -125,7 +131,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
       setIsTransitioning(false);
-    }, 400);
+    }, 300);
   }, [isTransitioning]);
 
   const goToPrev = React.useCallback(() => {
@@ -134,7 +140,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     setTimeout(() => {
       setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
       setIsTransitioning(false);
-    }, 400);
+    }, 300);
   }, [isTransitioning]);
 
   useEffect(() => {
@@ -147,243 +153,258 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const slide = heroSlides[currentSlide];
 
   return (
-    <div id="hero" className="relative min-h-[90vh] flex flex-col pt-24 overflow-hidden bg-slate-950">
-      {/* Background Slides */}
-      <div className="absolute inset-0 z-0">
-        {heroSlides.map((s, i) => (
-          <div
-            key={s.id}
-            className="absolute inset-0 transition-opacity duration-1000"
-            style={{ opacity: i === currentSlide ? 1 : 0 }}
-          >
-            <img
-              src={s.image}
-              alt={s.title}
-              className="w-full h-full object-cover transform scale-105 transition-transform duration-10000 ease-out"
-              loading={i === 0 ? 'eager' : 'lazy'}
-            />
-          </div>
-        ))}
+    <section
+      id="hero"
+      className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white pt-24 sm:pt-28 pb-10 overflow-hidden"
+    >
+      {/* Dynamic Ambient Background Aura Glows */}
+      <div className="absolute top-1/4 -right-32 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-10 -left-32 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
 
-        {/* Ambient Dark Gradient Layer */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/40 to-slate-950 z-10" />
-        <div
-          className="absolute inset-0 z-10"
-          style={{
-            background:
-              'linear-gradient(to left, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.85) 45%, rgba(2,6,23,0.35) 75%, rgba(2,6,23,0.1) 100%)',
-          }}
-        />
-      </div>
-
-      {/* Slider Controls */}
-      <button
-        onClick={goToPrev}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-slate-900/60 hover:bg-emerald-600 text-white backdrop-blur-md border border-white/15 flex items-center justify-center transition-all shadow-xl"
-        aria-label="السابق"
-      >
-        <ChevronLeft className="w-5 h-5" />
-      </button>
-
-      {/* Slider Indicator Dots */}
-      <div className="absolute bottom-32 left-1/4 -translate-x-1/2 z-20 flex gap-2">
-        {heroSlides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentSlide(i)}
-            className={`rounded-full transition-all duration-500 ${
-              i === currentSlide ? 'w-8 h-2 bg-emerald-400' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Floating Hero Preview Card */}
-      <div
-        className={`absolute bottom-24 left-10 z-20 hidden xl:block transition-all duration-500 ${
-          isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
-        }`}
-      >
-        <div className="bg-slate-950/70 backdrop-blur-2xl border border-white/20 rounded-3xl p-5 shadow-2xl max-w-[260px] space-y-2.5 ring-1 ring-white/10">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-              {slide.badge}
-            </span>
-            <div className="flex items-center gap-1 text-amber-400 text-xs font-black">
-              <Star className="w-3 h-3 fill-amber-400" />
-              <span>{slide.rating}</span>
-            </div>
-          </div>
-
-          <p className="text-white font-extrabold text-sm leading-normal font-alexandria">{slide.title}</p>
-
-          <div className="flex items-center gap-1 text-slate-400 text-xs font-medium">
-            <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="truncate">{slide.location}</span>
-          </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-white/10">
-            <span className="text-emerald-400 font-black text-sm font-alexandria">{slide.price}</span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-              {slide.tag}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Grid Content */}
-      <div className="relative z-20 flex-1 flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            {/* Right Column: High-Impact Typography & Frosted Glass Search Panel */}
-            <div className="text-right space-y-6">
-              {/* Top Trust Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                <span>المنصة العقارية الأكثر موثوقية وتنسيقاً في سوريا</span>
-              </div>
-
-              {/* Main Headline */}
-              <div className={`transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-y-3' : 'opacity-100 translate-y-0'}`}>
-                <h1 className="font-black font-alexandria space-y-3.5">
-                  <span className="block text-2xl sm:text-3xl xl:text-4xl text-white leading-[1.45]">
-                    اعثر على{' '}
-                    <span className="text-emerald-400">
-                      عقارك المثالي
-                    </span>
-                  </span>
-                  <span className="block text-slate-200 text-lg sm:text-xl xl:text-2xl font-extrabold leading-[1.45]">
-                    بأسعار حقيقية وتواصل مباشر
-                  </span>
-                </h1>
-                <p className="mt-4 text-slate-300 text-xs sm:text-sm leading-relaxed max-w-lg">
-                  تصفح أرقى الشقق، الفيلات والمزارع في دمشق وريف دمشق وسائر المحافظات مع تفاصيل دقيقة للطاقة وسندات الملكية.
-                </p>
-              </div>
-
-              {/* Frosted Glass Search Card */}
-              <div className="bg-slate-900/85 backdrop-blur-2xl rounded-3xl border border-slate-700/80 shadow-2xl p-5 ring-1 ring-white/10 space-y-4">
-                {/* Contract Type Tabs */}
-                <div className="flex items-center gap-1.5 p-1 bg-slate-950/80 rounded-2xl w-fit border border-slate-800">
-                  {[
-                    { val: 'all', label: 'كافة العروض' },
-                    { val: 'sale', label: 'عقارات للبيع' },
-                    { val: 'rent', label: 'عقارات للإيجار' },
-                  ].map((tab) => (
-                    <button
-                      key={tab.val}
-                      type="button"
-                      onClick={() => onContractTypeChange(tab.val as ContractType)}
-                      className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                        contractType === tab.val
-                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Input Controls */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
-                  <div className="sm:col-span-4 relative">
-                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                      <MapPin className="w-4 h-4 text-emerald-500" />
-                    </div>
-                    <select
-                      value={governorate}
-                      onChange={(e) => onGovernorateChange(e.target.value as Governorate)}
-                      className="w-full bg-slate-800/90 text-white border border-slate-700 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-semibold transition-all appearance-none cursor-pointer"
-                    >
-                      <option value="الكل">كل المحافظات</option>
-                      <option value="دمشق">محافظة دمشق</option>
-                      <option value="ريف دمشق">محافظة ريف دمشق</option>
-                      <option value="حلب">محافظة حلب</option>
-                      <option value="حمص">محافظة حمص</option>
-                      <option value="حماة">محافظة حماة</option>
-                    </select>
-                  </div>
-
-                  <div className="sm:col-span-5 relative">
-                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                      <Building className="w-4 h-4 text-emerald-500" />
-                    </div>
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => onSearchChange(e.target.value)}
-                      placeholder="ابحث بالحي، المنطقة أو الرمز..."
-                      className="w-full bg-slate-800/90 text-white placeholder-slate-400 border border-slate-700 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-medium transition-all"
-                      onKeyDown={(e) => e.key === 'Enter' && onSearchSubmit()}
-                    />
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <button
-                      type="button"
-                      onClick={onSearchSubmit}
-                      className="w-full h-full min-h-[44px] flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/30 hover:scale-[1.02] active:scale-95"
-                    >
-                      <Search className="w-4 h-4" />
-                      <span>بحث العقارات</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Popular Region Quick Chips */}
-                <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center gap-1.5">
-                  <span className="text-[11px] text-slate-400 font-semibold">أشهر المناطق:</span>
-                  {popularRegions.map((reg) => (
-                    <button
-                      key={reg.name}
-                      type="button"
-                      onClick={() => {
-                        onGovernorateChange(reg.gov as Governorate);
-                        onRegionSelect(reg.name);
-                        onSearchSubmit();
-                      }}
-                      className="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-emerald-600 hover:text-white border border-slate-700/80 text-slate-300 text-xs transition-all font-medium"
-                    >
-                      {reg.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
+      {/* Main Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Split Hero 2-Column Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center py-4 sm:py-8">
+          
+          {/* ================= RIGHT COLUMN: Headlines & Search Panel (lg:col-span-7) ================= */}
+          <div className="lg:col-span-7 text-right space-y-5 order-2 lg:order-1">
+            {/* Top Trust Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <span>المنصة العقارية الأكثر موثوقية وتنسيقاً في سوريا</span>
             </div>
 
-            {/* Left Column: Visual breathing space */}
-            <div className="hidden lg:flex items-end justify-start h-full pb-6">
-              <div className={`transition-all duration-500 ${isTransitioning ? 'opacity-0 -translate-y-2' : 'opacity-100 translate-y-0'}`}>
-                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/15 text-white text-xs font-bold shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  {slide.badge} • {slide.location}
+            {/* Main Headline */}
+            <div className="space-y-2.5">
+              <h1 className="font-black font-alexandria space-y-3.5">
+                <span className="block text-2xl sm:text-3xl xl:text-4xl text-white leading-[1.45]">
+                  اعثر على <span className="text-emerald-400">عقارك المثالي</span>
                 </span>
+                <span className="block text-slate-200 text-lg sm:text-xl xl:text-2xl font-extrabold leading-[1.45]">
+                  بأسعار حقيقية وتواصل مباشر
+                </span>
+              </h1>
+              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl">
+                تصفح أرقى الشقق، الفيلات، والمشاريع قيد الإنشاء في دمشق وريف دمشق وسائر المحافظات مع تدقيق سندات الملكية وأنظمة الطاقة.
+              </p>
+            </div>
+
+            {/* Frosted Glass Search Card */}
+            <div className="bg-slate-900/90 backdrop-blur-2xl rounded-3xl border border-slate-700/80 shadow-2xl p-5 ring-1 ring-white/10 space-y-4">
+              {/* Contract Type Tabs */}
+              <div className="flex items-center gap-1.5 p-1 bg-slate-950/80 rounded-2xl w-fit border border-slate-800">
+                {[
+                  { val: 'all', label: 'كافة العروض' },
+                  { val: 'sale', label: 'عقارات للبيع' },
+                  { val: 'rent', label: 'عقارات للإيجار' },
+                ].map((tab) => (
+                  <button
+                    key={tab.val}
+                    type="button"
+                    onClick={() => onContractTypeChange(tab.val as ContractType)}
+                    className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      contractType === tab.val
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Input Controls */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                <div className="sm:col-span-4 relative">
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    <MapPin className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <select
+                    value={governorate}
+                    onChange={(e) => onGovernorateChange(e.target.value as Governorate)}
+                    className="w-full bg-slate-800/90 text-white border border-slate-700 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-semibold transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="الكل">كل المحافظات</option>
+                    <option value="دمشق">محافظة دمشق</option>
+                    <option value="ريف دمشق">محافظة ريف دمشق</option>
+                    <option value="حلب">محافظة حلب</option>
+                    <option value="حمص">محافظة حمص</option>
+                    <option value="حماة">محافظة حماة</option>
+                  </select>
+                </div>
+
+                <div className="sm:col-span-5 relative">
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                    <Building className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                    placeholder="ابحث بالحي، المنطقة أو الرمز..."
+                    className="w-full bg-slate-800/90 text-white placeholder-slate-400 border border-slate-700 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-medium transition-all"
+                    onKeyDown={(e) => e.key === 'Enter' && onSearchSubmit()}
+                  />
+                </div>
+
+                <div className="sm:col-span-3">
+                  <button
+                    type="button"
+                    onClick={onSearchSubmit}
+                    className="w-full h-full min-h-[46px] flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/30 hover:scale-[1.02] active:scale-95 cursor-pointer"
+                  >
+                    <Search className="w-4 h-4" />
+                    <span>بحث العقارات</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Popular Region Quick Chips */}
+              <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] text-slate-400 font-semibold">أشهر المناطق:</span>
+                {popularRegions.map((reg) => (
+                  <button
+                    key={reg.name}
+                    type="button"
+                    onClick={() => {
+                      onGovernorateChange(reg.gov as Governorate);
+                      onRegionSelect(reg.name);
+                      onSearchSubmit();
+                    }}
+                    className="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-emerald-600 hover:text-white border border-slate-700/80 text-slate-300 text-xs transition-all font-medium cursor-pointer"
+                  >
+                    {reg.name}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* ================= LEFT COLUMN: General Lifestyle / Category Showcase Frame (lg:col-span-5) ================= */}
+          <div className="lg:col-span-5 order-1 lg:order-2">
+            <div className="relative group rounded-3xl sm:rounded-4xl overflow-hidden border border-slate-700/80 shadow-2xl shadow-emerald-950/30 bg-slate-900 aspect-[4/3] sm:aspect-[16/11] select-none ring-1 ring-white/15">
+              
+              {/* Full-Bright Category Image with Smooth Cross-Fade Transition */}
+              {heroSlides.map((s, i) => (
+                <div
+                  key={s.id}
+                  className="absolute inset-0 transition-opacity duration-700 ease-out"
+                  style={{ opacity: i === currentSlide ? 1 : 0 }}
+                >
+                  <img
+                    src={s.image}
+                    alt={s.title}
+                    className="w-full h-full object-cover transform transition-transform duration-7000 ease-out group-hover:scale-105"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                  />
+                </div>
+              ))}
+
+              {/* Soft, Transparent Bottom Gradient Just for Text Legibility */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-transparent pointer-events-none" />
+
+              {/* Top Floating Glass Badges */}
+              <div className="absolute top-4 inset-x-4 flex items-center justify-between z-10">
+                <span className="px-3 py-1 rounded-full text-xs font-black bg-slate-950/80 text-emerald-400 border border-emerald-500/40 backdrop-blur-md shadow-md">
+                  {slide.categoryBadge}
+                </span>
+
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-950/80 text-amber-300 border border-slate-700 backdrop-blur-md shadow-md flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{slide.countBadge}</span>
+                  </span>
+
+                  <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-slate-950/80 text-slate-300 border border-slate-700 backdrop-blur-md shadow-md">
+                    {currentSlide + 1} / {heroSlides.length}
+                  </span>
+                </div>
+              </div>
+
+              {/* Left / Right Interactive Slider Navigation Buttons */}
+              <div className="absolute inset-y-0 inset-x-3 flex items-center justify-between pointer-events-none z-10">
+                <button
+                  type="button"
+                  onClick={goToPrev}
+                  className="w-9 h-9 rounded-full bg-slate-950/80 hover:bg-emerald-600 text-white backdrop-blur-md border border-white/20 flex items-center justify-center pointer-events-auto transition-all duration-200 shadow-xl hover:scale-110 active:scale-95"
+                  title="القسم السابق"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={goToNext}
+                  className="w-9 h-9 rounded-full bg-slate-950/80 hover:bg-emerald-600 text-white backdrop-blur-md border border-white/20 flex items-center justify-center pointer-events-auto transition-all duration-200 shadow-xl hover:scale-110 active:scale-95"
+                  title="القسم التالي"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Bottom Category Showcase Info */}
+              <div className="absolute bottom-4 inset-x-4 z-10 space-y-2">
+                {/* Title & Subtitle */}
+                <div className="space-y-0.5">
+                  <h3 className="text-base sm:text-lg font-black text-white font-alexandria line-clamp-1 drop-shadow-md">
+                    {slide.title}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-xs text-slate-300">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{slide.subtitle}</span>
+                  </div>
+                </div>
+
+                {/* Highlight Tag & Dot Indicators Row */}
+                <div className="flex items-center justify-between pt-2 border-t border-white/15">
+                  <span className="text-[11px] font-bold text-amber-300 bg-slate-950/80 px-2.5 py-1 rounded-xl border border-slate-700/80 backdrop-blur-md">
+                    {slide.highlightTag}
+                  </span>
+
+                  {/* Dot Indicators */}
+                  <div className="flex items-center gap-1.5">
+                    {heroSlides.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setCurrentSlide(i)}
+                        className={`rounded-full transition-all duration-300 ${
+                          i === currentSlide
+                            ? 'w-6 h-1.5 bg-emerald-400'
+                            : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
+                        }`}
+                        title={`الانتقال إلى ${heroSlides[i].title}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {/* Trust Stats Counter Bar */}
-      <div className="relative z-20 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* ================= BOTTOM: Trust Stats Counter Bar ================= */}
+      <div className="relative z-20 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-xl mt-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {trustStats.map((stat) => {
               const IconComp = stat.icon;
               return (
                 <div
                   key={stat.value}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-900/60 border border-slate-800/60"
+                  className="flex items-center gap-3 p-2.5 sm:p-3 rounded-2xl bg-slate-900/60 border border-slate-800/60"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
-                    <IconComp className={`w-5 h-5 ${stat.color}`} />
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
+                    <IconComp className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
                   </div>
                   <div>
-                    <span className="text-sm font-black font-alexandria text-white block">
+                    <span className="text-xs sm:text-sm font-black font-alexandria text-white block">
                       {stat.value}
                     </span>
-                    <span className="text-[11px] text-slate-400 block leading-tight">
+                    <span className="text-[10px] sm:text-[11px] text-slate-400 block leading-tight">
                       {stat.label}
                     </span>
                   </div>
@@ -393,6 +414,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

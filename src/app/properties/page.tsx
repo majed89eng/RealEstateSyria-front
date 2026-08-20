@@ -8,8 +8,19 @@ import { Footer } from '@/components/Footer';
 import { FilterSection } from '@/components/FilterSection';
 import { PropertyGrid } from '@/components/PropertyGrid';
 import { PropertyDetailModal } from '@/components/PropertyDetailModal';
+import { InteractivePropertyMap } from '@/components/InteractivePropertyMap';
+import { PropertyAlertModal } from '@/components/PropertyAlertModal';
 import { FloatingActionHub } from '@/components/FloatingActionHub';
-import { Building2, Search, Sparkles, ChevronRight } from 'lucide-react';
+import {
+  Building2,
+  Search,
+  Sparkles,
+  ChevronRight,
+  LayoutGrid,
+  Map,
+  Bell,
+  Compass,
+} from 'lucide-react';
 
 export default function PropertiesCatalogPage() {
   const {
@@ -24,6 +35,8 @@ export default function PropertiesCatalogPage() {
     closePropertyDetail,
   } = useProperties();
 
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 9;
 
@@ -34,14 +47,14 @@ export default function PropertiesCatalogPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-white font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
       <Header />
 
       <main className="flex-grow pt-24 pb-16">
         {/* Page Banner Header */}
-        <div className="bg-slate-900 text-white py-12 mb-6 border-b border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-2 text-xs text-slate-400 mb-3">
+        <div className="bg-slate-900 text-white py-10 mb-6 border-b border-slate-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 text-right">
+            <div className="flex items-center gap-2 text-xs text-slate-400">
               <Link href="/" className="hover:text-emerald-400 transition-colors">
                 الرئيسية
               </Link>
@@ -50,28 +63,53 @@ export default function PropertiesCatalogPage() {
             </div>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="space-y-2">
-                <h1 className="text-3xl sm:text-4xl font-extrabold font-alexandria">
+              <div className="space-y-1.5">
+                <h1 className="text-3xl sm:text-4xl font-black font-alexandria">
                   كافة العقارات المتاحة في سوريا
                 </h1>
-                <p className="text-slate-300 text-sm max-w-2xl">
-                  تصفح أحدث الشقق، الفيلات، المزارع والمكاتب التجارية في دمشق وريف دمشق وحلب وحمص مع تسعير دقيق وتواصل مباشر.
+                <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
+                  تصفح أحدث الشقق، الفيلات، المزارع والمكاتب التجارية في دمشق وريف دمشق وحلب وسائر المحافظات مع تسعير دقيق وتواصل مباشر.
                 </p>
               </div>
 
-              {/* Quick Search Input */}
-              <div className="relative min-w-[280px]">
-                <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="ابحث بالاسم أو الرمز المرجعي..."
-                  value={filters.searchQuery}
-                  onChange={(e) => {
-                    updateFilter('searchQuery', e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full bg-slate-800/90 border border-slate-700 text-white placeholder-slate-400 text-xs rounded-xl pr-10 pl-3.5 py-3 focus:outline-none focus:border-emerald-500"
-                />
+              {/* View Switcher & Custom Alert CTA */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex items-center gap-1 p-1 bg-slate-800 rounded-2xl border border-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('grid')}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      viewMode === 'grid'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>عرض الشبكة</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('map')}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      viewMode === 'map'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Map className="w-3.5 h-3.5" />
+                    <span>الخريطة التفاعلية</span>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsAlertModalOpen(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-bold text-xs transition-colors"
+                >
+                  <Bell className="w-3.5 h-3.5" />
+                  <span>نبّهني بطلب جديد</span>
+                </button>
               </div>
             </div>
           </div>
@@ -91,62 +129,71 @@ export default function PropertiesCatalogPage() {
           resultCount={properties.length}
         />
 
-        {/* Properties Grid Container */}
+        {/* Properties Content: Grid or Interactive Map */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <PropertyGrid
-            properties={paginatedProperties}
-            loading={loading}
-            onOpenDetail={openPropertyDetail}
-            onResetFilters={resetFilters}
-          />
+          {viewMode === 'map' ? (
+            <InteractivePropertyMap
+              properties={properties}
+              onOpenDetail={openPropertyDetail}
+            />
+          ) : (
+            <>
+              <PropertyGrid
+                properties={paginatedProperties}
+                loading={loading}
+                onOpenDetail={openPropertyDetail}
+                onResetFilters={resetFilters}
+              />
 
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-12 pt-6 border-t border-slate-200">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => {
-                  setCurrentPage((p) => Math.max(p - 1, 1));
-                  window.scrollTo({ top: 200, behavior: 'smooth' });
-                }}
-                className="px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 disabled:opacity-40 transition-colors"
-              >
-                السابق
-              </button>
-
-              <div className="flex items-center gap-1.5">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-12 pt-6 border-t border-slate-800">
                   <button
-                    key={pageNum}
                     type="button"
+                    disabled={currentPage === 1}
                     onClick={() => {
-                      setCurrentPage(pageNum);
+                      setCurrentPage((p) => Math.max(p - 1, 1));
                       window.scrollTo({ top: 200, behavior: 'smooth' });
                     }}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
-                      currentPage === pageNum
-                        ? 'bg-emerald-600 text-white shadow-md'
-                        : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
-                    }`}
+                    className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-bold hover:bg-slate-800 disabled:opacity-40 transition-colors"
                   >
-                    {pageNum}
+                    السابق
                   </button>
-                ))}
-              </div>
 
-              <button
-                type="button"
-                disabled={currentPage === totalPages}
-                onClick={() => {
-                  setCurrentPage((p) => Math.min(p + 1, totalPages));
-                  window.scrollTo({ top: 200, behavior: 'smooth' });
-                }}
-                className="px-4 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 disabled:opacity-40 transition-colors"
-              >
-                التالي
-              </button>
-            </div>
+                  <div className="flex items-center gap-1.5">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        type="button"
+                        onClick={() => {
+                          setCurrentPage(pageNum);
+                          window.scrollTo({ top: 200, behavior: 'smooth' });
+                        }}
+                        className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                          currentPage === pageNum
+                            ? 'bg-emerald-600 text-white shadow-md'
+                            : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={currentPage === totalPages}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.min(p + 1, totalPages));
+                      window.scrollTo({ top: 200, behavior: 'smooth' });
+                    }}
+                    className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-bold hover:bg-slate-800 disabled:opacity-40 transition-colors"
+                  >
+                    التالي
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -157,7 +204,14 @@ export default function PropertiesCatalogPage() {
           onClose={closePropertyDetail}
         />
 
-        {/* Floating Action Hub (Favorites & Comparison & WhatsApp Bubble) */}
+        {/* Property Alert Modal */}
+        <PropertyAlertModal
+          isOpen={isAlertModalOpen}
+          onClose={() => setIsAlertModalOpen(false)}
+          defaultGovernorate={filters.governorate === 'الكل' ? 'دمشق' : filters.governorate}
+        />
+
+        {/* Floating Action Hub */}
         <FloatingActionHub allProperties={properties} />
       </main>
 

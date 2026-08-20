@@ -14,7 +14,7 @@ export type PropertyType =
   | 'farm'
   | 'other';
 
-export type AvailabilityStatus = 'available' | 'reserved' | 'sold' | 'rented' | 'inactive';
+export type AvailabilityStatus = 'available' | 'reserved' | 'sold' | 'rented' | 'inactive' | 'pending_approval';
 
 export type FinishingStatus = 'shell' | 'semi_finished' | 'finished' | 'luxury';
 
@@ -58,6 +58,12 @@ export interface Property {
   propertyType: Exclude<PropertyType, 'all'>;
   availabilityStatus: AvailabilityStatus;
   finishingStatus: FinishingStatus;
+
+  // Submission & Moderation Fields
+  isApproved?: boolean; // هل تم اعتماده من الإدارة
+  submitterName?: string; // اسم صاحب العقار أو الوسيط
+  submitterPhone?: string; // هاتف المعلن
+  submissionDate?: string;
 
   // Off-Plan / Under Construction Fields
   isOffPlan?: boolean; // هل العقار بيع على المخطط / قيد الإنشاء

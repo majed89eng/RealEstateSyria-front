@@ -34,12 +34,17 @@ function getAllProperties(): Property[] {
 export const propertyService = {
   /**
    * Fetch properties with dynamic filtering and sorting.
+   * Only approved & active properties are returned for public views.
    */
-  async getProperties(filters?: Partial<FilterOptions>): Promise<Property[]> {
+  async getProperties(filters?: Partial<FilterOptions>, includePending: boolean = false): Promise<Property[]> {
     // Simulate slight API latency
     await new Promise((resolve) => setTimeout(resolve, 80));
 
-    let result = getAllProperties().filter((p) => p.isActive !== false);
+    let result = getAllProperties().filter((p) => {
+      if (p.isActive === false) return false;
+      if (!includePending && (p.availabilityStatus === 'pending_approval' || p.isApproved === false)) return false;
+      return true;
+    });
 
     if (!filters) return result;
 
@@ -413,5 +418,86 @@ export const propertyService = {
 
     const textToEncode = customMsg || defaultMsg;
     return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(textToEncode)}`;
+  },
+
+  /**
+   * Generates WhatsApp direct URL specifically for requesting a video walkthrough of the property.
+   */
+  generateVideoRequestWhatsAppUrl(property: Property): string {
+    const rawPhone = property.whatsappNumber.replace(/[^0-9+]/g, '');
+    const cleanPhone = rawPhone.startsWith('+') ? rawPhone.substring(1) : rawPhone;
+    const msg = `مرحباً، اطلعت على العقار كود (${property.propertyCode} - ${property.title}) في منصتكم (${property.region} - ${property.governorate}).\n\nأود التكرم بتزويدي بمقطع فيديو مصور وتفصيلي للعقار عبر واتساب لمعاينته عن بُعد. وشكراً!`;
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+  },
+
+  /**
+   * Submit a public property for moderation. Saved with availabilityStatus: 'pending_approval' and isApproved: false.
+   */
+  async submitPublicProperty(
+    propertyData: Omit<Property, 'id' | 'propertyCode' | 'slug' | 'createdAt' | 'availabilityStatus' | 'isApproved'>
+  ): Promise<Property> {
+    const nextRefNum = 800 + Math.floor(Math.random() * 900);
+    const code = `SUB-${nextRefNum}`;
+    const slug =
+      propertyData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\u0621-\u064A]+/g, '-')
+        .replace(/(^-|-$)/g, '') +
+      '-' +
+      code.toLowerCase();
+
+    const newProperty: Property = {
+      ...propertyData,
+      id: `SUB-${Date.now()}`,
+      propertyCode: code,
+      slug,
+      availabilityStatus: 'pending_approval',
+      isApproved: false,
+      isActive: true,
+      viewsCount: 0,
+      createdAt: new Date().toISOString().split('T')[0],
+      submissionDate: new Date().toISOString(),
+    };
+
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        const customProps: Property[] = stored ? JSON.parse(stored) : [];
+        const updated = [newProperty, ...customProps];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Error saving public submission:', e);
+      }
+    }
+
+    return newProperty;
+  },
+
+  /**
+   * Approve a pending property submission (sets isApproved: true and availabilityStatus: 'available')
+   */
+  async approveProperty(propertyId: string): Promise<boolean> {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        let customProps: Property[] = stored ? JSON.parse(stored) : [];
+        customProps = customProps.map((p) => {
+          if (p.id === propertyId) {
+            return {
+              ...p,
+              availabilityStatus: 'available',
+              isApproved: true,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          return p;
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(customProps));
+        return true;
+      } catch (e) {
+        console.error('Error approving property:', e);
+      }
+    }
+    return false;
   },
 };

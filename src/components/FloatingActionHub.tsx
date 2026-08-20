@@ -25,10 +25,10 @@ import { useCurrency } from '../context/CurrencyContext';
 import { Property } from '../types/property';
 
 interface Props {
-  allProperties: Property[];
+  allProperties?: Property[];
 }
 
-export const FloatingActionHub: React.FC<Props> = ({ allProperties }) => {
+export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
   const {
     favorites,
     toggleFavorite,

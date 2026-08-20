@@ -77,11 +77,11 @@ export const exchangeRateService = {
       return `$${converted.toLocaleString('en-US')}`;
     }
     if (currency === 'SYP') {
-      return `${converted.toLocaleString('ar-SY')} ل.س`;
+      return `${converted.toLocaleString('en-US')} ل.س`;
     }
     if (currency === 'EUR') {
       return `€${converted.toLocaleString('en-US')}`;
     }
-    return `${converted.toLocaleString()}`;
+    return `${converted.toLocaleString('en-US')}`;
   }
 };

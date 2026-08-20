@@ -37,6 +37,7 @@ import {
   Activity,
   Sun,
   HardHat,
+  CheckCircle2,
 } from 'lucide-react';
 import { Property, Governorate, PropertyType, FinishingStatus, AvailabilityStatus } from '@/types/property';
 import { Lead, LeadStatus } from '@/types/lead';
@@ -116,7 +117,7 @@ export default function AdminDashboardPage() {
 
   const loadAllData = async () => {
     setLoadingProps(true);
-    const data = await propertyService.getProperties();
+    const data = await propertyService.getProperties(undefined, true);
     setProperties(data);
     setLoadingProps(false);
 
@@ -338,6 +339,23 @@ export default function AdminDashboardPage() {
     setIsModalOpen(false);
   };
 
+  // Approve Property Submission
+  const handleApproveProperty = async (id: string) => {
+    await propertyService.approveProperty(id);
+    const updated = properties.map((p) => {
+      if (p.id === id) {
+        return {
+          ...p,
+          availabilityStatus: 'available' as AvailabilityStatus,
+          isApproved: true,
+        };
+      }
+      return p;
+    });
+    setProperties(updated);
+    localStorage.setItem('syria_realestate_custom_properties', JSON.stringify(updated));
+  };
+
   // Delete Property
   const handleDeleteProperty = (id: string) => {
     if (window.confirm('هل أنت متأكد من حذف هذا العقار؟')) {
@@ -454,6 +472,7 @@ export default function AdminDashboardPage() {
   const forSaleCount = properties.filter((p) => p.contractType === 'sale').length;
   const forRentCount = properties.filter((p) => p.contractType === 'rent').length;
   const solarCount = properties.filter((p) => p.hasSolar).length;
+  const pendingCount = properties.filter((p) => p.availabilityStatus === 'pending_approval' || p.isApproved === false).length;
   const newLeadsCount = leads.filter((l) => l.status === 'new').length;
 
   const govCounts: Record<string, number> = {};
@@ -511,7 +530,7 @@ export default function AdminDashboardPage() {
         <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-4">
           <button
             onClick={() => setActiveTab('properties')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all relative ${
               activeTab === 'properties'
                 ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/25'
                 : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -519,6 +538,11 @@ export default function AdminDashboardPage() {
           >
             <Building2 className="w-4 h-4" />
             <span>إدارة العقارات ({properties.length})</span>
+            {pendingCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950 animate-pulse">
+                {pendingCount} مراجعة
+              </span>
+            )}
           </button>
 
           <button
@@ -597,6 +621,25 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
+            {/* Pending Moderation Alert Banner */}
+            {pendingCount > 0 && (
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5 text-amber-300 font-bold">
+                  <Clock className="w-5 h-5 text-amber-400 shrink-0" />
+                  <span>
+                    يوجد لديك <strong className="text-white underline">{pendingCount}</strong> عقارات جديدة مرسلة من الزوار بانتظار المراجعة والاعتماد قبل ظهورها في الموقع.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFilterStatus('pending_approval')}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-colors shrink-0 shadow-md"
+                >
+                  عرض طلبات المراجعة فقط ({pendingCount})
+                </button>
+              </div>
+            )}
+
             {/* Filter & Search Bar */}
             <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
               <div className="relative flex-1 min-w-[240px]">
@@ -610,18 +653,29 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-2">
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-xl px-3 py-2.5 focus:outline-none"
-                >
-                  <option value="all">كل الحالات</option>
-                  <option value="available">المتاح فقط</option>
-                  <option value="sold">تم البيع</option>
-                  <option value="rented">تم التأجير</option>
-                  <option value="inactive">المعطل (مخفي)</option>
-                </select>
+              <div className="flex flex-wrap items-center gap-2">
+                {[
+                  { val: 'all', label: `الكل (${properties.length})` },
+                  { val: 'pending_approval', label: `🔔 قيد المراجعة (${pendingCount})` },
+                  { val: 'available', label: 'المتاح' },
+                  { val: 'sold', label: 'تم البيع' },
+                  { val: 'rented', label: 'تم التأجير' },
+                ].map((s) => (
+                  <button
+                    key={s.val}
+                    type="button"
+                    onClick={() => setFilterStatus(s.val)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      filterStatus === s.val
+                        ? s.val === 'pending_approval'
+                          ? 'bg-amber-500 text-slate-950 font-black'
+                          : 'bg-emerald-600 text-white'
+                        : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -662,32 +716,68 @@ export default function AdminDashboardPage() {
                         <td className="p-4 font-medium">
                           {prop.region} - {prop.governorate}
                         </td>
-                        <td className="p-4 font-bold text-emerald-400">
-                          ${prop.priceUsd.toLocaleString()}
+                        <td className="p-4 font-bold text-emerald-400 font-mono">
+                          ${prop.priceUsd.toLocaleString('en-US')}
                         </td>
-                        <td className="p-4 font-bold text-slate-400">
-                          {(prop.priceUsd * sypRate).toLocaleString('ar-SY')} ل.س
+                        <td className="p-4 font-bold text-slate-400 font-mono">
+                          {(prop.priceUsd * sypRate).toLocaleString('en-US')} ل.س
                         </td>
                         <td className="p-4">
                           <span
                             className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                              prop.availabilityStatus === 'available'
+                              prop.availabilityStatus === 'pending_approval' || prop.isApproved === false
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
+                                : prop.availabilityStatus === 'available'
                                 ? 'bg-emerald-500/20 text-emerald-300'
                                 : prop.availabilityStatus === 'sold'
                                 ? 'bg-red-500/20 text-red-300'
-                                : 'bg-amber-500/20 text-amber-300'
+                                : 'bg-blue-500/20 text-blue-300'
                             }`}
                           >
-                            {prop.availabilityStatus === 'available'
+                            {prop.availabilityStatus === 'pending_approval' || prop.isApproved === false
+                              ? '🔔 قيد المراجعة'
+                              : prop.availabilityStatus === 'available'
                               ? 'متاح'
                               : prop.availabilityStatus === 'sold'
                               ? 'مباع'
                               : 'مؤجر'}
                           </span>
+                          {prop.submitterName && (
+                            <span className="block text-[10px] text-amber-400/90 mt-1">
+                              المعلن: {prop.submitterName}
+                            </span>
+                          )}
                         </td>
                         <td className="p-4 text-slate-400">{prop.viewsCount || 0}</td>
                         <td className="p-4">
                           <div className="flex items-center justify-center gap-1.5">
+                            {/* Approve Button if Pending */}
+                            {(prop.availabilityStatus === 'pending_approval' || prop.isApproved === false) && (
+                              <button
+                                onClick={() => handleApproveProperty(prop.id)}
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold shadow-md shadow-emerald-600/30 transition-transform hover:scale-105"
+                                title="قبول ونشر العقار فوراً في الموقع"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>قبول ونشر</span>
+                              </button>
+                            )}
+
+                            {/* Contact Submitter via WhatsApp */}
+                            {prop.submitterPhone && (
+                              <a
+                                href={`https://wa.me/${prop.submitterPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                                  `مرحباً ${prop.submitterName || 'عزيزنا المالك'}، نتواصل معك بخصوص عقارك (${prop.propertyCode} - ${prop.title}) المرسل عبر منصة عقارات سوريا.`
+                                )}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-400 transition-colors"
+                                title="تواصل مع المالك عبر واتساب"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+
                             <button
                               onClick={() => handleOpenEditModal(prop)}
                               className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors"
@@ -787,8 +877,8 @@ export default function AdminDashboardPage() {
                               <option value="closed">مغلق (تم الاتفاق)</option>
                             </select>
                           </td>
-                          <td className="p-4 text-slate-500 text-[11px]">
-                            {new Date(lead.createdAt).toLocaleDateString('ar-SY')}
+                          <td className="p-4 text-slate-400 text-[11px] font-mono">
+                            {new Date(lead.createdAt).toISOString().split('T')[0]}
                           </td>
                           <td className="p-4 text-center">
                             <a
@@ -999,7 +1089,7 @@ export default function AdminDashboardPage() {
                 <div className="flex justify-between">
                   <span>بالليرة السورية:</span>
                   <span className="font-bold font-mono">
-                    {(100000 * sypRate).toLocaleString('ar-SY')} ل.س
+                    {(100000 * sypRate).toLocaleString('en-US')} ل.س
                   </span>
                 </div>
                 <div className="flex justify-between">

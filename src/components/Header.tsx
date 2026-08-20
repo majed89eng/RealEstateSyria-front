@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Check,
   ShieldCheck,
+  Plus,
 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { CurrencyCode } from '../types/property';
@@ -100,12 +101,27 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAI }) => {
               العقارات
             </Link>
             <Link
+              href="/add-property"
+              className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all text-xs"
+            >
+              <Plus className="w-3 h-3 text-emerald-400" />
+              <span>أضف عقارك مجاناً</span>
+            </Link>
+            <Link
               href="/provinces"
               className={`transition-colors hover:text-emerald-500 ${
                 scrolled ? 'text-slate-700' : 'text-slate-200'
               }`}
             >
               المحافظات
+            </Link>
+            <Link
+              href="/agencies"
+              className={`transition-colors hover:text-emerald-500 ${
+                scrolled ? 'text-slate-700' : 'text-slate-200'
+              }`}
+            >
+              المكاتب المعتمدة
             </Link>
             <Link
               href="/ai-assistant"
@@ -196,14 +212,24 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAI }) => {
               )}
             </div>
 
+            {/* Add Property CTA Button */}
+            <Link
+              href="/add-property"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs transition-all duration-200 shadow-md shadow-emerald-600/25 hover:scale-105 active:scale-95 border border-emerald-400/30 shrink-0"
+              title="أضف عقارك مجاناً للمراجعة والنشر"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>أضف عقارك</span>
+            </Link>
+
             {/* Compact WhatsApp CTA */}
             <a
               href={whatsappDirectUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all duration-200 shadow-sm shadow-emerald-600/20 hover:scale-[1.02] active:scale-95 shrink-0"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 transition-all duration-200 shadow-sm hover:scale-[1.02] active:scale-95 shrink-0"
             >
-              <MessageCircle className="w-3.5 h-3.5" />
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
               <span>واتساب</span>
             </a>
           </div>
@@ -275,6 +301,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAI }) => {
               </div>
             </div>
 
+            {/* Add Property Button in Mobile Menu */}
+            <Link
+              href="/add-property"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs text-center shadow-lg shadow-emerald-600/30 mb-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span>أضف عقارك مجاناً (إعلان جديد)</span>
+            </Link>
+
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
@@ -295,6 +331,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAI }) => {
               className="text-sm font-semibold hover:text-emerald-400 py-2 border-b border-slate-800"
             >
               المحافظات والمناطق
+            </Link>
+            <Link
+              href="/agencies"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-semibold hover:text-emerald-400 py-2 border-b border-slate-800"
+            >
+              دليل المكاتب المعتمدة
             </Link>
             <Link
               href="/ai-assistant"

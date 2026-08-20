@@ -68,8 +68,18 @@ export const Footer: React.FC<FooterProps> = ({ onSelectRegion }) => {
                 </Link>
               </li>
               <li>
+                <Link href="/add-property" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors flex items-center gap-1">
+                  <span>+ أضف عقارك مجاناً</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/provinces" className="hover:text-emerald-400 transition-colors">
                   المحافظات والمناطق
+                </Link>
+              </li>
+              <li>
+                <Link href="/agencies" className="hover:text-emerald-400 transition-colors">
+                  دليل المكاتب المعتمدة
                 </Link>
               </li>
               <li>

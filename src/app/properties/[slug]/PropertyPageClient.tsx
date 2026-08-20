@@ -27,11 +27,11 @@ import {
   Phone,
   Send,
   Sparkles,
-  Eye,
-  Info,
   Heart,
   Scale,
   HardHat,
+  Video,
+  Printer,
 } from 'lucide-react';
 import { Property } from '@/types/property';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -40,6 +40,8 @@ import { propertyService } from '@/services/propertyService';
 import { leadService } from '@/services/leadService';
 import { PropertyCard } from '@/components/PropertyCard';
 import { FloatingActionHub } from '@/components/FloatingActionHub';
+import { NeighborhoodAmenitiesGuide } from '@/components/NeighborhoodAmenitiesGuide';
+import { PropertyPdfExport } from '@/components/PropertyPdfExport';
 
 interface Props {
   property: Property;
@@ -186,12 +188,12 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 w-full">
+          <div className="flex flex-wrap items-center gap-2 w-full">
             {/* Toggle Favorite Button */}
             <button
               type="button"
               onClick={() => toggleFavorite(property.id)}
-              className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
                 favorited
                   ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-sm'
                   : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
@@ -199,7 +201,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               title={favorited ? 'إزالة من المفضلة' : 'حفظ في المفضلة'}
             >
               <Heart className={`w-4 h-4 ${favorited ? 'fill-rose-500 text-rose-500' : ''}`} />
-              <span className="hidden sm:inline">{favorited ? 'محفوظ' : 'حفظ'}</span>
+              <span>{favorited ? 'محفوظ' : 'حفظ'}</span>
             </button>
 
             {/* Toggle Compare Button */}
@@ -212,7 +214,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                   addToComparison(property);
                 }
               }}
-              className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
                 inCompare
                   ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm'
                   : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
@@ -220,19 +222,34 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               title={inCompare ? 'مدرج بالمقارنة' : 'إضافة للمقارنة'}
             >
               <Scale className="w-4 h-4 text-emerald-600" />
-              <span className="hidden sm:inline">{inCompare ? 'مقارن' : 'مقارنة'}</span>
+              <span>{inCompare ? 'مقارن' : 'مقارنة'}</span>
             </button>
 
             {/* Share Link Button */}
             <button
               type="button"
               onClick={handleCopyLink}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors"
               title="مشاركة رابط العقار"
             >
               {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
-              <span className="hidden sm:inline">{copiedLink ? 'منسوخ' : 'مشاركة'}</span>
+              <span>{copiedLink ? 'منسوخ' : 'مشاركة'}</span>
             </button>
+
+            {/* Video Request CTA */}
+            <a
+              href={propertyService.generateVideoRequestWhatsAppUrl(property)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 font-bold text-xs shadow-sm transition-transform hover:scale-105"
+              title="طلب مقطع فيديو مصور للعقار عبر واتساب"
+            >
+              <Video className="w-4 h-4 text-amber-600" />
+              <span>طلب فيديو عبر واتساب</span>
+            </a>
+
+            {/* PDF Export Component */}
+            <PropertyPdfExport property={property} />
           </div>
         </div>
       </div>
@@ -454,6 +471,12 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               {property.description}
             </p>
           </div>
+
+          {/* Neighborhood Amenities & Services Guide */}
+          <NeighborhoodAmenitiesGuide
+            governorate={property.governorate}
+            region={property.region}
+          />
         </div>
 
         {/* Right Column: Sticky Contact & Viewing Request Form (4 Cols) */}

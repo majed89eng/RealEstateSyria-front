@@ -24,11 +24,15 @@ import {
   Calendar,
   HardHat,
   Clock,
+  Video,
+  Printer,
 } from 'lucide-react';
 import { Property } from '../types/property';
 import { propertyService } from '../services/propertyService';
 import { useCurrency } from '../context/CurrencyContext';
 import { leadService } from '../services/leadService';
+import { NeighborhoodAmenitiesGuide } from './NeighborhoodAmenitiesGuide';
+import { PropertyPdfExport } from './PropertyPdfExport';
 
 interface PropertyDetailModalProps {
   property: Property | null;
@@ -380,14 +384,20 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           </div>
 
           {/* Description */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             <h3 className="text-base font-bold text-slate-900 font-alexandria">
-              تفاصيل إضافية ووصف العقار
+              الوصف الكامل والتفاصيل
             </h3>
-            <p className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-100 whitespace-pre-line">
+            <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-2xl border border-slate-200">
               {property.description}
             </p>
           </div>
+
+          {/* Neighborhood Amenities Guide */}
+          <NeighborhoodAmenitiesGuide
+            governorate={property.governorate}
+            region={property.region}
+          />
 
           {/* Quick Lead Form Drawer in Modal */}
           {showLeadForm && (
@@ -451,22 +461,37 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
         </div>
 
         {/* Modal Bottom Action Bar */}
-        <div className="sticky bottom-0 bg-white border-t border-slate-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="sticky bottom-0 bg-white border-t border-slate-200 px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            {/* WhatsApp Video Walkthrough Request */}
+            <a
+              href={propertyService.generateVideoRequestWhatsAppUrl(property)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 text-xs font-bold transition-all shadow-sm"
+              title="طلب فيديو مصور للعقار عبر واتساب"
+            >
+              <Video className="w-4 h-4 text-amber-600" />
+              <span>طلب فيديو عبر واتساب</span>
+            </a>
+
+            {/* Printable PDF Brochure Button */}
+            <PropertyPdfExport property={property} />
+
             <button
               type="button"
               onClick={handleCopyLink}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
             >
               {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
-              <span>{copiedLink ? 'تم نسخ الرابط' : 'مشاركة'}</span>
+              <span>{copiedLink ? 'تم النسخ' : 'مشاركة'}</span>
             </button>
 
             {!showLeadForm && (
               <button
                 type="button"
                 onClick={() => setShowLeadForm(true)}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors"
+                className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors"
               >
                 <Calendar className="w-4 h-4 text-emerald-400" />
                 <span>حجز معاينة</span>
