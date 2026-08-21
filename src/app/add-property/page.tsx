@@ -861,7 +861,7 @@ export default function AddPropertyPage() {
                       <span>ضمان الجودة والمراجعة السريعة</span>
                     </div>
                     <p className="text-[11px] leading-relaxed text-slate-300">
-                      بالنقر على زر الإرسال أدناه، سيتم حفظ عقارك بحالة <strong className="text-amber-300">"قيد المراجعة"</strong>، حيث يقوم فريق المنصة بالتحقق من البيانات ونشره فوراً وتزويدك برابط العقار على واتساب.
+                      بالنقر على زر الإرسال أدناه، سيتم حفظ عقارك بحالة <strong className="text-amber-300">&quot;قيد المراجعة&quot;</strong>، حيث يقوم فريق المنصة بالتحقق من البيانات ونشره فوراً وتزويدك برابط العقار على واتساب.
                     </p>
                   </div>
 
