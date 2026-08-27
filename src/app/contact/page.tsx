@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   Building2,
   ChevronRight,
+  ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 
 export default function ContactPage() {
@@ -48,129 +50,142 @@ export default function ContactPage() {
     }, 600);
   };
 
+  const whatsappDirectUrl =
+    'https://wa.me/963988123456?text=' +
+    encodeURIComponent('مرحباً، أود الاستفسار والتواصل مع إدارة منصة عقارات سوريا.');
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
       <Header />
 
-      <main className="flex-grow pt-24 pb-16">
-        {/* Banner */}
-        <div className="bg-slate-900 text-white py-12 mb-10 border-b border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-2 text-xs text-slate-400 mb-3">
+      <main className="flex-grow">
+        {/* Page Banner */}
+        <section className="relative pt-28 pb-14 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-b border-slate-800/80 overflow-hidden">
+          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4 text-center">
+            <div className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-2">
               <Link href="/" className="hover:text-emerald-400 transition-colors">
                 الرئيسية
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-500" />
+              <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-600" />
               <span className="text-emerald-400 font-bold">اتصل بنا</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-extrabold font-alexandria">
-              تواصل مع فريق عقارات سوريا
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/30">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>فريق دعم المنصة جاهز لمساعدتكم</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl font-black font-alexandria text-white tracking-tight">
+              تواصل مع <span className="text-emerald-400">إدارة المنصة</span>
             </h1>
-            <p className="text-slate-300 text-sm max-w-2xl mt-2">
-              يسعدنا تلقي استفساراتكم وملاحظاتكم أو مساعدتكم في إيجاد العقار المطلوب بأسرع وقت.
+
+            <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
+              يسعدنا تلقي استفساراتكم وملاحظاتكم أو مساعدتكم في إيجاد العقار المطلوب بأسرع وقت وبسرية تامة.
             </p>
           </div>
-        </div>
+        </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Content Section */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Contact Information & Channels (5 Cols) */}
+            {/* Contact Info Cards (5 Cols) */}
             <div className="lg:col-span-5 space-y-6">
-              {/* WhatsApp Direct Card */}
-              <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-6 text-white shadow-xl space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                    <MessageCircle className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <h2 className="font-bold text-lg font-alexandria">محادثة واتساب الفورية</h2>
-                    <span className="text-xs text-emerald-100">الرد خلال دقائق</span>
-                  </div>
+              <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
+                <div>
+                  <h2 className="text-lg font-bold text-white font-alexandria">معلومات الاتصال المباشر</h2>
+                  <p className="text-xs text-slate-400 mt-1">تواصل معنا عبر القنوات الرسمية التالية:</p>
                 </div>
 
-                <p className="text-xs text-emerald-50 leading-relaxed">
-                  طريقتنا الأسرع للتواصل المباشر مع مديري المنصة للاستفسار عن أي عقار أو طلب معاينة ميدانية فورية.
-                </p>
+                <div className="space-y-4 text-xs sm:text-sm">
+                  {/* WhatsApp */}
+                  <a
+                    href={whatsappDirectUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-300 border border-emerald-500/30 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform">
+                      <MessageCircle className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-emerald-400 block font-semibold">محادثة واتساب فورية:</span>
+                      <span className="font-bold text-white font-mono" dir="ltr">+963 988 123 456</span>
+                    </div>
+                  </a>
 
-                <a
-                  href="https://wa.me/963988123456?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B9%D9%82%D8%A7%D8%B1%D9%8A%D8%A9"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white text-emerald-900 font-extrabold text-sm transition-transform hover:scale-[1.02] active:scale-95 shadow-md"
-                >
-                  <MessageCircle className="w-5 h-5 text-emerald-600" />
-                  <span>محادثة واتساب مباشرة (+963988123456)</span>
-                </a>
-              </div>
+                  {/* Phone */}
+                  <a
+                    href="tel:+963988123456"
+                    className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-950/80 hover:bg-slate-800 text-slate-200 border border-slate-800 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 shrink-0 group-hover:scale-105 transition-transform">
+                      <Phone className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-slate-400 block font-semibold">الاتصال الهاتفي:</span>
+                      <span className="font-bold text-white font-mono" dir="ltr">+963 988 123 456</span>
+                    </div>
+                  </a>
 
-              {/* Info Details List */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4 text-sm text-slate-700">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                    <Phone className="w-5 h-5 text-emerald-600" />
+                  {/* Email */}
+                  <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-950/80 text-slate-200 border border-slate-800">
+                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 shrink-0">
+                      <Mail className="w-5 h-5 text-teal-400" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-slate-400 block font-semibold">البريد الإلكتروني:</span>
+                      <span className="font-bold text-white font-mono">info@realestate-syria.com</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-xs text-slate-400 block font-medium">الهاتف المباشر:</span>
-                    <span className="font-bold text-slate-900 dir-ltr inline-block font-mono">+963 988 123 456</span>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                    <Mail className="w-5 h-5 text-emerald-600" />
+                  {/* Location */}
+                  <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-950/80 text-slate-200 border border-slate-800">
+                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 shrink-0">
+                      <MapPin className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-slate-400 block font-semibold">المقر الرئيسي:</span>
+                      <span className="font-bold text-white">دمشق، المزة، أوتوستراد المزة</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-xs text-slate-400 block font-medium">البريد الإلكتروني:</span>
-                    <span className="font-bold text-slate-900 font-mono">info@realestate-syria.com</span>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <span className="text-xs text-slate-400 block font-medium">الموقع والتغطية:</span>
-                    <span className="font-bold text-slate-900">دمشق وريف دمشق وسائر المحافظات السورية</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                    <Clock className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <span className="text-xs text-slate-400 block font-medium">أوقات العمل والمعاينات:</span>
-                    <span className="font-bold text-slate-900">السبت - الخميس (9:00 صباحاً - 8:00 مساءً)</span>
+                  {/* Working Hours */}
+                  <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-950/80 text-slate-200 border border-slate-800">
+                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 shrink-0">
+                      <Clock className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <span className="text-[11px] text-slate-400 block font-semibold">أوقات العمل واستقبال الاستفسارات:</span>
+                      <span className="font-bold text-white">السبت - الخميس: 9:00 ص - 8:00 م</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Interactive Lead Contact Form (7 Cols) */}
+            {/* Contact Form (7 Cols) */}
             <div className="lg:col-span-7">
-              <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm space-y-6">
-                <div className="space-y-1">
-                  <h2 className="text-2xl font-bold text-slate-900 font-alexandria">
-                    أرسل لنا استفسارك أو طلبك الخاص
-                  </h2>
-                  <p className="text-slate-500 text-xs sm:text-sm">
-                    سجل بياناتك وسيتم التواصل معك من قبل فريقنا لمتابعة طلبك وتزويدك بالعروض المطابقة.
-                  </p>
+              <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
+                <div>
+                  <h2 className="text-lg font-bold text-white font-alexandria">أرسل لنا رسالة مباشرة</h2>
+                  <p className="text-xs text-slate-400 mt-1">سيقوم فريقنا بالرد عليك ومتابعة استفسارك في أقرب وقت.</p>
                 </div>
 
                 {submitted ? (
-                  <div className="p-8 rounded-3xl bg-emerald-50 border border-emerald-200 text-center space-y-4">
-                    <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-                    <h3 className="text-xl font-bold text-emerald-900">تم استلام طلبكم بنجاح!</h3>
-                    <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-                      شكراً لتواصلكم معنا. تم تسجيل طلبكم في نظام خدمة العملاء وسيقوم أحد مسؤولي المنصة بالاتصال بكم قريباً.
-                    </p>
+                  <div className="p-8 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-center space-y-4 animate-in zoom-in-95 duration-200">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center mx-auto">
+                      <CheckCircle2 className="w-8 h-8" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold text-white">تم استلام رسالتك بنجاح!</h3>
+                      <p className="text-xs text-slate-300">شكراً لتواصلك معنا، سيتواصل معك أحد مسؤولي المنصة قريباً.</p>
+                    </div>
                     <button
                       type="button"
                       onClick={() => setSubmitted(false)}
-                      className="px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors"
+                      className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white"
                     >
                       إرسال استفسار آخر
                     </button>
@@ -179,75 +194,68 @@ export default function ContactPage() {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                          الاسم الكامل *
-                        </label>
+                        <label className="block text-xs font-bold text-slate-300 mb-1.5">الاسم الكريم *</label>
                         <input
                           type="text"
                           required
-                          placeholder="مثال: حسام الخالد"
+                          placeholder="مثال: المهندس وسيم العلي"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                          رقم الهاتف / الواتساب *
-                        </label>
+                        <label className="block text-xs font-bold text-slate-300 mb-1.5">رقم الهاتف أو الواتساب *</label>
                         <input
                           type="tel"
                           required
-                          placeholder="09XXXXXXXX"
+                          placeholder="+963 944 123 456"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          dir="ltr"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-right"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        البريد الإلكتروني (اختياري)
-                      </label>
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">البريد الإلكتروني (اختياري)</label>
                       <input
                         type="email"
                         placeholder="name@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-right"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        تفاصيل الرسالة أو مواصفات العقار المطلوب *
-                      </label>
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">نص الرسالة أو الاستفسار *</label>
                       <textarea
                         rows={4}
                         required
-                        placeholder="أبحث عن شقة 3 غرف في ريف دمشق بسعر مناسب..."
+                        placeholder="اكتب تفاصيل استفسارك أو طلبك هنا..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 leading-relaxed"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/25 hover:scale-[1.01] active:scale-95 disabled:opacity-50"
+                      className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
-                      <span>{isSubmitting ? 'جاري الإرسال...' : 'إرسال الرسالة الآن'}</span>
+                      <span>{isSubmitting ? 'جاري الإرسال...' : 'إرسال الرسالة للإدارة'}</span>
                     </button>
                   </form>
                 )}
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       <Footer />

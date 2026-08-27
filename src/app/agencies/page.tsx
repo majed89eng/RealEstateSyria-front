@@ -42,10 +42,10 @@ export default function AgenciesDirectoryPage() {
     <div className="min-h-screen bg-slate-950 text-white font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
       <Header />
 
-      <main className="flex-grow pt-24 pb-16">
+      <main className="flex-grow">
         
         {/* Page Banner Header */}
-        <div className="bg-gradient-to-b from-slate-900 via-slate-900/80 to-slate-950 py-12 mb-8 border-b border-slate-800 relative overflow-hidden">
+        <section className="bg-gradient-to-b from-slate-900 via-slate-900/80 to-slate-950 pt-28 pb-12 mb-8 border-b border-slate-800 relative overflow-hidden">
           {/* Ambient Glows */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -104,7 +104,7 @@ export default function AgenciesDirectoryPage() {
               ))}
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Agencies Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

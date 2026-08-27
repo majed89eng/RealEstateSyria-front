@@ -60,24 +60,23 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
   const favorited = isFavorite(property.id);
   const inCompare = isInComparison(property.id);
 
-  // Viewing Request Form State
+  // Form State
   const [leadName, setLeadName] = useState<string>('');
   const [leadPhone, setLeadPhone] = useState<string>('');
   const [leadNotes, setLeadNotes] = useState<string>('');
   const [isSubmittingLead, setIsSubmittingLead] = useState<boolean>(false);
   const [leadSubmittedSuccess, setLeadSubmittedSuccess] = useState<boolean>(false);
 
-  const images = property.images && property.images.length > 0
-    ? property.images
-    : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'];
+  const images =
+    property.images && property.images.length > 0
+      ? property.images
+      : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'];
 
-  const whatsappUrl = propertyService.generateWhatsAppUrl(property, undefined, currency);
-
+  const whatsappUrl = propertyService.generateWhatsAppUrl(property, currency);
   const isSold = property.availabilityStatus === 'sold';
   const isRented = property.availabilityStatus === 'rented';
   const isUnavailable = isSold || isRented;
 
-  // Check if updated within 7 days
   const isRecentlyUpdated = () => {
     if (!property.updatedAt) return false;
     const diffDays = (new Date().getTime() - new Date(property.updatedAt).getTime()) / (1000 * 3600 * 24);
@@ -119,7 +118,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
   return (
     <div className="space-y-10">
       {/* Top Banner: Title, Code, Status & Share */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-slate-200">
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-slate-800/80">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-3 py-1 rounded-xl text-xs font-mono font-bold bg-slate-900 text-amber-300 border border-slate-700 shadow-sm">
@@ -134,7 +133,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                   ? 'bg-amber-600 text-white'
                   : property.contractType === 'sale'
                   ? 'bg-emerald-600 text-white'
-                  : 'bg-blue-600 text-white'
+                  : 'bg-teal-600 text-white'
               }`}
             >
               {isSold
@@ -147,19 +146,19 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
             </span>
 
             {isRecentlyUpdated() && (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-700 border border-amber-500/30 flex items-center gap-1">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5" />
                 تم التحديث مؤخراً
               </span>
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 font-alexandria leading-[1.4]">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-alexandria leading-[1.4]">
             {property.title}
           </h1>
 
-          <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
-            <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
+          <div className="flex items-center gap-2 text-slate-400 text-xs sm:text-sm font-medium">
+            <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>
               {property.locationDetails} ({property.region} - {property.governorate})
             </span>
@@ -168,7 +167,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
 
         {/* Price & Actions Box */}
         <div className="flex flex-col items-start md:items-end gap-3 min-w-[260px]">
-          <div className="p-4 rounded-3xl bg-white border border-slate-200 shadow-sm w-full text-left md:text-right">
+          <div className="p-4 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl w-full text-left md:text-right">
             <div className="flex items-center justify-between gap-4 mb-1">
               <span className="text-xs text-slate-400 font-semibold">
                 {property.contractType === 'rent' ? 'الإيجار المطلوب' : 'السعر المطلوب'}
@@ -181,7 +180,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
             </div>
             <span
               className={`text-2xl sm:text-3xl font-black font-alexandria tracking-tight ${
-                isUnavailable ? 'text-slate-400 line-through' : 'text-emerald-700'
+                isUnavailable ? 'text-slate-500 line-through' : 'text-emerald-400'
               }`}
             >
               {formatPrice(property.priceUsd)}
@@ -195,8 +194,8 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               onClick={() => toggleFavorite(property.id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
                 favorited
-                  ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-sm'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                  ? 'bg-rose-950/60 border-rose-500/40 text-rose-400 shadow-sm'
+                  : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
               }`}
               title={favorited ? 'إزالة من المفضلة' : 'حفظ في المفضلة'}
             >
@@ -216,12 +215,12 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               }}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl text-xs font-bold border transition-all ${
                 inCompare
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                  ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300 shadow-sm'
+                  : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
               }`}
               title={inCompare ? 'مدرج بالمقارنة' : 'إضافة للمقارنة'}
             >
-              <Scale className="w-4 h-4 text-emerald-600" />
+              <Scale className="w-4 h-4 text-emerald-400" />
               <span>{inCompare ? 'مقارن' : 'مقارنة'}</span>
             </button>
 
@@ -229,10 +228,10 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
             <button
               type="button"
               onClick={handleCopyLink}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-bold hover:bg-slate-800 transition-colors"
               title="مشاركة رابط العقار"
             >
-              {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
+              {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
               <span>{copiedLink ? 'منسوخ' : 'مشاركة'}</span>
             </button>
 
@@ -241,10 +240,10 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               href={propertyService.generateVideoRequestWhatsAppUrl(property)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 font-bold text-xs shadow-sm transition-transform hover:scale-105"
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-bold text-xs shadow-sm transition-transform hover:scale-105"
               title="طلب مقطع فيديو مصور للعقار عبر واتساب"
             >
-              <Video className="w-4 h-4 text-amber-600" />
+              <Video className="w-4 h-4 text-amber-400" />
               <span>طلب فيديو عبر واتساب</span>
             </a>
 
@@ -261,7 +260,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           {/* Gallery Section */}
           <div className="space-y-3">
             {/* Big Active Image */}
-            <div className="relative aspect-[16/10] bg-slate-900 rounded-3xl overflow-hidden group shadow-lg">
+            <div className="relative aspect-[16/10] bg-slate-900 rounded-3xl overflow-hidden group shadow-2xl border border-slate-800">
               <img
                 src={images[activeImageIndex]}
                 alt={`${property.title} - صورة ${activeImageIndex + 1}`}
@@ -274,14 +273,14 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                   <button
                     type="button"
                     onClick={() => setActiveImageIndex((prev) => (prev + 1) % images.length)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white backdrop-blur-sm transition-all"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/70 hover:bg-slate-950/90 text-white backdrop-blur-sm transition-all"
                   >
                     <ChevronRight className="w-6 h-6" />
                   </button>
                   <button
                     type="button"
                     onClick={() => setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length)}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/60 hover:bg-slate-950/90 text-white backdrop-blur-sm transition-all"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/70 hover:bg-slate-950/90 text-white backdrop-blur-sm transition-all"
                   >
                     <ChevronLeft className="w-6 h-6" />
                   </button>
@@ -299,7 +298,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               </button>
 
               {/* Counter */}
-              <div className="absolute bottom-4 right-4 px-3.5 py-1.5 rounded-xl bg-slate-900/80 text-white text-xs font-semibold backdrop-blur-md">
+              <div className="absolute bottom-4 right-4 px-3.5 py-1.5 rounded-xl bg-slate-900/80 text-white text-xs font-semibold backdrop-blur-md font-mono">
                 {activeImageIndex + 1} / {images.length}
               </div>
             </div>
@@ -314,8 +313,8 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                     onClick={() => setActiveImageIndex(idx)}
                     className={`relative w-28 h-20 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all ${
                       activeImageIndex === idx
-                        ? 'border-emerald-600 ring-4 ring-emerald-500/20'
-                        : 'border-transparent opacity-70 hover:opacity-100'
+                        ? 'border-emerald-500 ring-4 ring-emerald-500/20'
+                        : 'border-slate-800 opacity-60 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="مصغرة" className="w-full h-full object-cover" />
@@ -326,64 +325,64 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           </div>
 
           {/* Key Specs Matrix Cards */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 font-alexandria flex items-center gap-2">
-              <Building className="w-5 h-5 text-emerald-600" />
+          <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-4">
+            <h2 className="text-lg font-bold text-white font-alexandria flex items-center gap-2">
+              <Building className="w-5 h-5 text-emerald-400" />
               <span>المواصفات الفنية والهندسية</span>
             </h2>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-xs text-slate-500 block font-medium">المساحة الإجمالية</span>
-                <span className="text-base font-bold text-slate-800 flex items-center gap-1.5">
-                  <Maximize2 className="w-4 h-4 text-emerald-600" />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 pt-2">
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block font-medium">المساحة الإجمالية</span>
+                <span className="text-base font-bold text-white flex items-center gap-1.5">
+                  <Maximize2 className="w-4 h-4 text-emerald-400" />
                   {property.area} م²
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-xs text-slate-500 block font-medium">غرف النوم</span>
-                <span className="text-base font-bold text-slate-800 flex items-center gap-1.5">
-                  <Bed className="w-4 h-4 text-emerald-600" />
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block font-medium">غرف النوم</span>
+                <span className="text-base font-bold text-white flex items-center gap-1.5">
+                  <Bed className="w-4 h-4 text-emerald-400" />
                   {property.bedrooms} غرف
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-xs text-slate-500 block font-medium">الحمامات</span>
-                <span className="text-base font-bold text-slate-800 flex items-center gap-1.5">
-                  <Bath className="w-4 h-4 text-emerald-600" />
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block font-medium">الحمامات</span>
+                <span className="text-base font-bold text-white flex items-center gap-1.5">
+                  <Bath className="w-4 h-4 text-emerald-400" />
                   {property.bathrooms} حمام
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-xs text-slate-500 block font-medium">الطابق</span>
-                <span className="text-base font-bold text-slate-800 flex items-center gap-1.5">
-                  <Layers className="w-4 h-4 text-emerald-600" />
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block font-medium">الطابق</span>
+                <span className="text-base font-bold text-white flex items-center gap-1.5">
+                  <Layers className="w-4 h-4 text-emerald-400" />
                   {property.floor}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-xs text-slate-500 block font-medium">الاتجاه</span>
-                <span className="text-base font-bold text-slate-800 flex items-center gap-1.5">
-                  <Compass className="w-4 h-4 text-emerald-600" />
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block font-medium">الاتجاه</span>
+                <span className="text-base font-bold text-white flex items-center gap-1.5">
+                  <Compass className="w-4 h-4 text-emerald-400" />
                   {property.direction}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1 col-span-2">
-                <span className="text-xs text-slate-500 block font-medium">نوع الملكية وسند التمليك</span>
-                <span className="text-base font-bold text-emerald-700 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 col-span-2">
+                <span className="text-xs text-slate-400 block font-medium">نوع الملكية وسند التمليك</span>
+                <span className="text-sm sm:text-base font-bold text-emerald-400 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   {property.ownershipType}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-xs text-slate-500 block font-medium">حالة الإكساء</span>
-                <span className="text-base font-bold text-slate-800">
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block font-medium">حالة الإكساء</span>
+                <span className="text-base font-bold text-white">
                   {property.finishingStatus === 'luxury'
                     ? 'سوبر ديلوكس'
                     : property.finishingStatus === 'finished'
@@ -398,10 +397,10 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
 
           {/* Off-Plan Project Investment Section */}
           {property.isOffPlan && (
-            <div className="bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent rounded-3xl p-6 border border-amber-500/30 shadow-sm space-y-4">
+            <div className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 rounded-3xl p-6 border border-amber-500/30 shadow-xl space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-amber-950 font-alexandria flex items-center gap-2">
-                  <HardHat className="w-5 h-5 text-amber-600" />
+                <h2 className="text-lg font-bold text-amber-300 font-alexandria flex items-center gap-2">
+                  <HardHat className="w-5 h-5 text-amber-400" />
                   <span>تفاصيل الشراء على المخطط وخطة التقسيط</span>
                 </h2>
                 <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950 shadow-sm">
@@ -410,21 +409,21 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl bg-white/90 border border-amber-200/80 space-y-1">
-                  <span className="text-xs text-amber-800 font-bold block">موعد التسليم المتوقع</span>
-                  <span className="text-sm sm:text-base font-extrabold text-slate-900 flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-amber-600" />
+                <div className="p-4 rounded-2xl bg-slate-950 border border-amber-500/20 space-y-1">
+                  <span className="text-xs text-amber-400 font-bold block">موعد التسليم المتوقع</span>
+                  <span className="text-sm sm:text-base font-extrabold text-white flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-amber-400" />
                     {property.handoverDate || 'قريباً'}
                   </span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-white/90 border border-amber-200/80 space-y-1.5">
-                  <span className="text-xs text-amber-800 font-bold block">نسبة الإنجاز الفعلي</span>
-                  <div className="flex justify-between text-xs font-black text-slate-800">
+                <div className="p-4 rounded-2xl bg-slate-950 border border-amber-500/20 space-y-1.5">
+                  <span className="text-xs text-amber-400 font-bold block">نسبة الإنجاز الفعلي</span>
+                  <div className="flex justify-between text-xs font-black text-slate-200">
                     <span>مرحلة التشييد</span>
-                    <span className="text-amber-700">{property.constructionProgress || 35}%</span>
+                    <span className="text-amber-400">{property.constructionProgress || 35}%</span>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
                     <div
                       className="bg-amber-500 h-2 rounded-full transition-all duration-1000"
                       style={{ width: `${property.constructionProgress || 35}%` }}
@@ -432,9 +431,9 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-white/90 border border-amber-200/80 space-y-1">
-                  <span className="text-xs text-amber-800 font-bold block">تسهيلات السداد والأقساط</span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-900 leading-snug block">
+                <div className="p-4 rounded-2xl bg-slate-950 border border-amber-500/20 space-y-1">
+                  <span className="text-xs text-amber-400 font-bold block">تسهيلات السداد والأقساط</span>
+                  <span className="text-xs sm:text-sm font-bold text-white leading-snug block">
                     {property.paymentPlan || 'متوفر خطط دفع ميسرة'}
                   </span>
                 </div>
@@ -443,9 +442,9 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           )}
 
           {/* Features and Amenities */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 font-alexandria flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+          <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-4">
+            <h2 className="text-lg font-bold text-white font-alexandria flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
               <span>المميزات والخدمات المتوفرة</span>
             </h2>
 
@@ -453,9 +452,9 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               {property.features.map((feat, i) => (
                 <span
                   key={i}
-                  className="px-4 py-2 rounded-2xl bg-emerald-50 text-emerald-900 border border-emerald-200/80 text-xs sm:text-sm font-bold flex items-center gap-2"
+                  className="px-4 py-2 rounded-2xl bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold flex items-center gap-2"
                 >
-                  <Check className="w-4 h-4 text-emerald-600" />
+                  <Check className="w-4 h-4 text-emerald-400" />
                   {feat}
                 </span>
               ))}
@@ -463,11 +462,11 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           </div>
 
           {/* Description */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
-            <h2 className="text-lg font-bold text-slate-900 font-alexandria">
+          <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-3">
+            <h2 className="text-lg font-bold text-white font-alexandria">
               الوصف الكامل والتفاصيل
             </h2>
-            <p className="text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-100">
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line bg-slate-950 p-5 rounded-2xl border border-slate-800">
               {property.description}
             </p>
           </div>
@@ -482,9 +481,9 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
         {/* Right Column: Sticky Contact & Viewing Request Form (4 Cols) */}
         <div className="lg:col-span-4 space-y-6">
           {/* Direct WhatsApp CTA Card */}
-          <div className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-6 text-white shadow-xl space-y-4">
+          <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 rounded-3xl p-6 text-white shadow-2xl space-y-4 border border-emerald-500/40">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-md">
                 <MessageCircle className="w-7 h-7" />
               </div>
               <div>
@@ -503,7 +502,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white text-emerald-900 font-black text-sm transition-transform hover:scale-[1.02] active:scale-95 shadow-md"
+              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white text-emerald-950 font-black text-sm transition-transform hover:scale-[1.02] active:scale-95 shadow-lg"
             >
               <MessageCircle className="w-5 h-5 text-emerald-600" />
               <span>{isUnavailable ? 'طلب عقار مشابه' : 'تواصل عبر واتساب'}</span>
@@ -511,59 +510,67 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           </div>
 
           {/* Lead Booking / Inquiry Form */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <div className="flex items-center gap-2 text-slate-800 font-alexandria font-bold text-base">
-              <Calendar className="w-5 h-5 text-emerald-600" />
+          <div className="bg-slate-900/90 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
+            <div className="flex items-center gap-2 text-white font-alexandria font-bold text-base">
+              <Calendar className="w-5 h-5 text-emerald-400" />
               <span>حجز موعد معاينة أو استفسار</span>
             </div>
 
             {leadSubmittedSuccess ? (
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-center space-y-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-                <p className="text-sm font-bold">تم استلام طلبكم بنجاح!</p>
-                <p className="text-xs text-slate-600">سيتواصل معكم مستشارنا العقاري خلال ساعات العمل.</p>
+              <div className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-center space-y-3 animate-in zoom-in-95 duration-150">
+                <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
+                <h3 className="text-sm font-bold text-white">تم استلام طلب المعاينة بنجاح!</h3>
+                <p className="text-xs text-slate-300">سنتواصل معك هاتفياً أو عبر واتساب لتأكيد الموعد.</p>
+                <button
+                  type="button"
+                  onClick={() => setLeadSubmittedSuccess(false)}
+                  className="text-xs text-emerald-400 font-bold hover:underline"
+                >
+                  إرسال طلب آخر
+                </button>
               </div>
             ) : (
-              <form onSubmit={handleLeadSubmit} className="space-y-3">
+              <form onSubmit={handleLeadSubmit} className="space-y-3.5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">الاسم الكامل *</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">الاسم الكريم *</label>
                   <input
                     type="text"
                     required
-                    placeholder="مثال: م. أحمد السعدي"
+                    placeholder="مثال: المهندس طارق"
                     value={leadName}
                     onChange={(e) => setLeadName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">رقم الهاتف / الواتساب *</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">رقم الهاتف أو الواتساب *</label>
                   <input
                     type="tel"
                     required
-                    placeholder="09XXXXXXXX"
+                    placeholder="+963 944 123 456"
                     value={leadPhone}
                     onChange={(e) => setLeadPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    dir="ltr"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-right"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">ملاحظات أو موعد مفضل (اختياري)</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">ملاحظات أو الموعد المفضل</label>
                   <textarea
                     rows={3}
-                    placeholder="أرغب بالمعاينة يوم الجمعة بعد الظهر..."
+                    placeholder="مثال: يفضل المعاينة في نهاية الأسبوع..."
                     value={leadNotes}
                     onChange={(e) => setLeadNotes(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmittingLead}
-                  className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmittingLead ? 'جاري الإرسال...' : 'إرسال طلب المعاينة'}</span>
@@ -575,71 +582,89 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
       </div>
 
       {/* Similar Properties Section */}
-      {similarProperties && similarProperties.length > 0 && (
-        <div className="pt-10 border-t border-slate-200 space-y-6">
+      {similarProperties.length > 0 && (
+        <div className="pt-10 border-t border-slate-800/80 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 font-alexandria">
-              عقارات مشابهة في {property.governorate}
+            <h2 className="text-xl sm:text-2xl font-bold font-alexandria text-white">
+              عقارات مشابهة في {property.region}
             </h2>
             <Link
-              href="/properties"
-              className="text-xs sm:text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
+              href={`/properties?gov=${encodeURIComponent(property.governorate)}`}
+              className="text-xs text-emerald-400 font-bold hover:underline"
             >
-              عرض كافة العقارات ←
+              عرض المزيد
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {similarProperties.map((prop) => (
-              <PropertyCard key={prop.id} property={prop} />
+            {similarProperties.map((p) => (
+              <PropertyCard key={p.id} property={p} />
             ))}
           </div>
         </div>
       )}
 
-      {/* Fullscreen Lightbox Overlay */}
+      {/* Fullscreen Lightbox Modal */}
       {isFullscreenLightbox && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4">
-          <button
-            type="button"
-            onClick={() => setIsFullscreenLightbox(false)}
-            className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white"
-          >
-            ✕
-          </button>
-
-          <div className="max-w-6xl max-h-[85vh] overflow-hidden rounded-2xl">
-            <img
-              src={images[activeImageIndex]}
-              alt="صورة كاملة"
-              className="max-w-full max-h-[85vh] object-contain"
-            />
-          </div>
-
-          <div className="mt-4 flex items-center gap-4 text-white text-sm">
-            <button
-              type="button"
-              onClick={() => setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length)}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            <span>
-              {activeImageIndex + 1} من {images.length}
+        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col justify-between p-4 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="flex items-center justify-between text-white p-2">
+            <span className="text-xs font-mono font-bold bg-slate-900 px-3 py-1 rounded-full border border-slate-700">
+              {activeImageIndex + 1} / {images.length}
             </span>
             <button
               type="button"
-              onClick={() => setActiveImageIndex((prev) => (prev + 1) % images.length)}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20"
+              onClick={() => setIsFullscreenLightbox(false)}
+              className="p-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white transition-colors"
             >
-              <ChevronLeft className="w-5 h-5" />
+              ✕ إغلاق
             </button>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center p-2 relative">
+            <img
+              src={images[activeImageIndex]}
+              alt="صورة كاملة"
+              className="max-h-[85vh] max-w-[95vw] object-contain rounded-2xl"
+            />
+            {images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActiveImageIndex((prev) => (prev + 1) % images.length)}
+                  className="absolute right-4 p-4 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white"
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length)}
+                  className="absolute left-4 p-4 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Thumbnails in Lightbox */}
+          <div className="flex items-center justify-center gap-2 overflow-x-auto py-2">
+            {images.map((img, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveImageIndex(idx)}
+                className={`w-16 h-12 rounded-xl overflow-hidden border-2 transition-all ${
+                  activeImageIndex === idx ? 'border-emerald-500' : 'border-transparent opacity-50'
+                }`}
+              >
+                <img src={img} alt="مصغرة" className="w-full h-full object-cover" />
+              </button>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Floating Action Hub (Favorites & Comparison & WhatsApp Bubble) */}
-      <FloatingActionHub allProperties={[property, ...(similarProperties || [])]} />
+      <FloatingActionHub allProperties={[property, ...similarProperties]} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { exchangeRateService } from '../services/exchangeRateService';
 interface FavoritesContextType {
   favorites: string[]; // Property IDs
   toggleFavorite: (propertyId: string) => void;
+  clearFavorites: () => void;
   isFavorite: (propertyId: string) => boolean;
   favoritesCount: number;
 
@@ -46,6 +47,15 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.error('Error loading favorites from storage:', e);
     }
   }, []);
+
+  const clearFavorites = () => {
+    setFavorites([]);
+    try {
+      localStorage.removeItem(FAVORITES_STORAGE_KEY);
+    } catch (e) {
+      console.error('Error clearing favorites:', e);
+    }
+  };
 
   const toggleFavorite = (propertyId: string) => {
     setFavorites((prev) => {
@@ -113,6 +123,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       value={{
         favorites,
         toggleFavorite,
+        clearFavorites,
         isFavorite,
         favoritesCount: favorites.length,
         comparisonList,

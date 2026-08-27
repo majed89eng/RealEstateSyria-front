@@ -30,11 +30,15 @@ import {
 import { Governorate, PropertyType, FinishingStatus, ContractType } from '@/types/property';
 import { propertyService } from '@/services/propertyService';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useAuth } from '@/context/AuthContext';
 import { SYRIAN_LOCATIONS } from '@/data/locations';
 import { FloatingActionHub } from '@/components/FloatingActionHub';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 export default function AddPropertyPage() {
   const { currency, formatPrice, convertPrice } = useCurrency();
+  const { user, isAuthenticated, addMyListing } = useAuth();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -72,9 +76,22 @@ export default function AddPropertyPage() {
   const [images, setImages] = useState<string[]>([]);
   
   // Submitter Details
-  const [submitterName, setSubmitterName] = useState<string>('');
-  const [submitterPhone, setSubmitterPhone] = useState<string>('');
-  const [submitterRole, setSubmitterRole] = useState<'owner' | 'broker' | 'developer'>('owner');
+  const [submitterName, setSubmitterName] = useState<string>(user?.name || '');
+  const [submitterPhone, setSubmitterPhone] = useState<string>(user?.phone || user?.whatsapp || '');
+  const [submitterRole, setSubmitterRole] = useState<'owner' | 'broker' | 'developer'>(
+    user?.role === 'agency' ? 'broker' : 'owner'
+  );
+
+  // Auto-populate when user signs in or changes
+  React.useEffect(() => {
+    if (user) {
+      setSubmitterName(user.name);
+      setSubmitterPhone(user.phone || user.whatsapp);
+      if (user.role === 'agency') {
+        setSubmitterRole('broker');
+      }
+    }
+  }, [user]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -162,6 +179,11 @@ export default function AddPropertyPage() {
         submitterPhone,
       });
 
+      // Attach to current user session listings if authenticated
+      if (isAuthenticated) {
+        addMyListing(submitted.id);
+      }
+
       setGeneratedRefCode(submitted.propertyCode);
       setIsSubmitted(true);
     } catch (err) {
@@ -173,7 +195,10 @@ export default function AddPropertyPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white pt-24 pb-16 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 text-white font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+      <Header />
+
+      <main className="flex-grow pt-28 pb-16 relative overflow-hidden">
       {/* Background Aurora Gradients */}
       <div className="absolute top-1/4 -right-32 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 -left-32 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
@@ -901,6 +926,9 @@ export default function AddPropertyPage() {
       </div>
 
       <FloatingActionHub />
-    </main>
+      </main>
+
+      <Footer />
+    </div>
   );
 }

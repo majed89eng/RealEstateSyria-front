@@ -41,9 +41,11 @@ import {
 } from 'lucide-react';
 import { Property, Governorate, PropertyType, FinishingStatus, AvailabilityStatus } from '@/types/property';
 import { Lead, LeadStatus } from '@/types/lead';
+import { PropertyRequest, PropertyRequestStatus } from '@/types/propertyRequest';
 import { propertyService } from '@/services/propertyService';
 import { exchangeRateService } from '@/services/exchangeRateService';
 import { leadService } from '@/services/leadService';
+import { propertyRequestService } from '@/services/propertyRequestService';
 import { useCurrency } from '@/context/CurrencyContext';
 import { SYRIAN_LOCATIONS } from '@/data/locations';
 
@@ -51,7 +53,7 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const { currency, formatPrice, rates, updateRate } = useCurrency();
 
-  const [activeTab, setActiveTab] = useState<'properties' | 'leads' | 'analytics' | 'rates'>('properties');
+  const [activeTab, setActiveTab] = useState<'properties' | 'leads' | 'requests' | 'analytics' | 'rates'>('properties');
   const [adminUser, setAdminUser] = useState<{ name: string; email: string; role: string } | null>(null);
 
   // Properties State
@@ -59,6 +61,14 @@ export default function AdminDashboardPage() {
   const [loadingProps, setLoadingProps] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+
+  // Property Requests State (مطلوب عقار)
+  const [requests, setRequests] = useState<PropertyRequest[]>([]);
+  const [reqSearchQuery, setReqSearchQuery] = useState<string>('');
+  const [reqFilterStatus, setReqFilterStatus] = useState<string>('all');
+  const [reqFilterGov, setReqFilterGov] = useState<string>('all');
+  const [reqFilterType, setReqFilterType] = useState<string>('all');
+  const [matchingPropertyModalReq, setMatchingPropertyModalReq] = useState<PropertyRequest | null>(null);
 
   // Property Modal State (Add / Edit)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -122,6 +132,7 @@ export default function AdminDashboardPage() {
     setLoadingProps(false);
 
     setLeads(leadService.getLeads());
+    setRequests(propertyRequestService.getRequests());
 
     setSypRate(exchangeRateService.getRate('SYP'));
     setEurRate(exchangeRateService.getRate('EUR'));
@@ -382,6 +393,65 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Property Request Status Change
+  const handleUpdateRequestStatus = (id: string, newStatus: PropertyRequestStatus) => {
+    const success = propertyRequestService.updateRequest(id, { status: newStatus });
+    if (success) {
+      setRequests(propertyRequestService.getRequests());
+    }
+  };
+
+  // Save Request Admin Notes
+  const handleSaveRequestNotes = (id: string, notes: string) => {
+    const success = propertyRequestService.updateRequest(id, { adminNotes: notes });
+    if (success) {
+      setRequests(propertyRequestService.getRequests());
+      alert('تم حفظ ملاحظات الإدارة بنجاح.');
+    }
+  };
+
+  // Delete Request
+  const handleDeleteRequest = (id: string) => {
+    if (!window.confirm('هل أنت متأكد من حذف هذا الطلب العقاري نهائياً؟')) return;
+    const success = propertyRequestService.deleteRequest(id);
+    if (success) {
+      setRequests(propertyRequestService.getRequests());
+    }
+  };
+
+  // Export Property Requests to CSV
+  const exportRequestsToCsv = () => {
+    if (requests.length === 0) {
+      alert('لا توجد طلبات لتصديرها.');
+      return;
+    }
+    const headers = ['الرمز', 'الاسم', 'الهاتف', 'الواتساب', 'المحافظة', 'المناطق المفضلة', 'العملية', 'نوع العقار', 'الميزانية القصوى USD', 'المساحة م²', 'الحالة', 'تاريخ الطلب'];
+    const rows = requests.map((r) => [
+      r.requestCode,
+      `"${r.requesterName.replace(/"/g, '""')}"`,
+      `"${r.requesterPhone}"`,
+      `"${r.requesterWhatsapp || ''}"`,
+      r.governorate,
+      `"${(r.preferredRegions || []).join('، ').replace(/"/g, '""')}"`,
+      r.contractType === 'sale' ? 'شراء' : 'إيجار',
+      r.propertyType,
+      r.maxBudgetUsd,
+      r.minArea || '',
+      r.status,
+      r.createdAt,
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `property_requests_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Export Leads to CSV (with UTF-8 BOM for Excel)
   const exportLeadsToCsv = () => {
     if (leads.length === 0) {
@@ -467,6 +537,23 @@ export default function AdminDashboardPage() {
     return matchesSearch && matchesStatus;
   });
 
+  // Filter Property Requests
+  const filteredRequests = requests.filter((r) => {
+    const q = reqSearchQuery.toLowerCase();
+    const matchesSearch =
+      r.requesterName.toLowerCase().includes(q) ||
+      r.requesterPhone.includes(q) ||
+      r.requestCode.toLowerCase().includes(q) ||
+      (r.preferredRegions && r.preferredRegions.some((reg) => reg.toLowerCase().includes(q))) ||
+      r.description.toLowerCase().includes(q);
+
+    const matchesStatus = reqFilterStatus === 'all' || r.status === reqFilterStatus;
+    const matchesGov = reqFilterGov === 'all' || r.governorate === reqFilterGov;
+    const matchesType = reqFilterType === 'all' || r.contractType === reqFilterType;
+
+    return matchesSearch && matchesStatus && matchesGov && matchesType;
+  });
+
   // Calculate Analytics & KPIs
   const totalValueUsd = properties.reduce((sum, p) => sum + (p.contractType === 'sale' ? p.priceUsd : 0), 0);
   const forSaleCount = properties.filter((p) => p.contractType === 'sale').length;
@@ -474,6 +561,9 @@ export default function AdminDashboardPage() {
   const solarCount = properties.filter((p) => p.hasSolar).length;
   const pendingCount = properties.filter((p) => p.availabilityStatus === 'pending_approval' || p.isApproved === false).length;
   const newLeadsCount = leads.filter((l) => l.status === 'new').length;
+  const newRequestsCount = requests.filter((r) => r.status === 'new').length;
+  const buyRequestsCount = requests.filter((r) => r.contractType === 'sale').length;
+  const rentRequestsCount = requests.filter((r) => r.contractType === 'rent').length;
 
   const govCounts: Record<string, number> = {};
   properties.forEach((p) => {
@@ -554,10 +644,27 @@ export default function AdminDashboardPage() {
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>طلبات واستفسارات العملاء ({leads.length})</span>
+            <span>استفسارات العقارات المعروضة ({leads.length})</span>
             {newLeadsCount > 0 && (
               <span className="px-2 py-0.5 rounded-full text-[10px] bg-red-500 text-white font-bold animate-pulse">
                 {newLeadsCount} جديد
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('requests')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all relative ${
+              activeTab === 'requests'
+                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/25'
+                : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>طلبات العقارات الخاصة (مطلوب عقار) ({requests.length})</span>
+            {newRequestsCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500 text-slate-950 font-bold animate-pulse">
+                {newRequestsCount} جديد
               </span>
             )}
           </button>
@@ -898,6 +1005,406 @@ export default function AdminDashboardPage() {
                 </table>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ================= TAB: PROPERTY REQUESTS (مطلوب عقار) ================= */}
+        {activeTab === 'requests' && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Header & Export */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-bold font-alexandria text-white">
+                    طلبات العقارات الخاصة بالعملاء (مطلوب عقار)
+                  </h2>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    خاص بإدارة المنصة 🛡️
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  طلبات الشراء والاستئجار المرسلة مباشرة من الزوار لمطابقتها مع العروض والتواصل الحصري.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={exportRequestsToCsv}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-bold transition-colors"
+                >
+                  <Download className="w-4 h-4 text-emerald-400" />
+                  <span>تصدير الطلبات (CSV)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Metric KPI Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800">
+                <div className="text-xs font-semibold text-slate-400 mb-1">إجمالي طلبات العقارات</div>
+                <div className="text-2xl font-black font-alexandria text-white">{requests.length}</div>
+                <div className="text-[11px] text-slate-500 mt-1">طلبات خاصة واردة للمنصة</div>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800">
+                <div className="text-xs font-semibold text-slate-400 mb-1">طلبات الشراء (تَمَلّك)</div>
+                <div className="text-2xl font-black font-alexandria text-emerald-400">{buyRequestsCount}</div>
+                <div className="text-[11px] text-slate-500 mt-1">مشترين بميزانيات جاهزة</div>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800">
+                <div className="text-xs font-semibold text-slate-400 mb-1">طلبات الاستئجار</div>
+                <div className="text-2xl font-black font-alexandria text-teal-400">{rentRequestsCount}</div>
+                <div className="text-[11px] text-slate-500 mt-1">سكني وتجاري</div>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800">
+                <div className="text-xs font-semibold text-slate-400 mb-1">طلبات جديدة بحاجة لمتابعة</div>
+                <div className="text-2xl font-black font-alexandria text-amber-400">{newRequestsCount}</div>
+                <div className="text-[11px] text-amber-400/80 mt-1">تتطلب اتصال هاتفي أو واتساب</div>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center gap-3">
+              <div className="flex-1 min-w-[220px] relative">
+                <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder="بحث باسم العميل، الهاتف، كود الطلب، أو المنطقة..."
+                  value={reqSearchQuery}
+                  onChange={(e) => setReqSearchQuery(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pr-9 pl-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <select
+                value={reqFilterGov}
+                onChange={(e) => setReqFilterGov(e.target.value)}
+                className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+              >
+                <option value="all">كل المحافظات</option>
+                {SYRIAN_LOCATIONS.map((loc) => (
+                  <option key={loc.provinceNameAr} value={loc.provinceNameAr}>
+                    {loc.provinceNameAr}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={reqFilterType}
+                onChange={(e) => setReqFilterType(e.target.value)}
+                className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+              >
+                <option value="all">الكل (شراء وإيجار)</option>
+                <option value="sale">شراء فقط</option>
+                <option value="rent">إيجار فقط</option>
+              </select>
+
+              <select
+                value={reqFilterStatus}
+                onChange={(e) => setReqFilterStatus(e.target.value)}
+                className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+              >
+                <option value="all">كافة الحالات</option>
+                <option value="new">🟡 جديد (New)</option>
+                <option value="in_progress">🔵 قيد البحث والمتابعة</option>
+                <option value="matched">🟢 تم إيجاد عقار مطابق</option>
+                <option value="closed">⚪ مغلق / منتهي</option>
+              </select>
+            </div>
+
+            {/* Requests Cards List */}
+            {filteredRequests.length === 0 ? (
+              <div className="text-center py-16 bg-slate-900 rounded-3xl border border-slate-800">
+                <Sparkles className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <h3 className="text-base font-bold text-white mb-1">لا توجد طلبات عقارات مطابقة للفلاتر</h3>
+                <p className="text-xs text-slate-400">ستظهر هنا أي طلبات يرسلها الزوار عبر صفحة &quot;اطلب عقارك&quot;.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredRequests.map((req) => {
+                  const whatsappUrl =
+                    'https://wa.me/' +
+                    (req.requesterWhatsapp || req.requesterPhone).replace(/[^0-9]/g, '') +
+                    '?text=' +
+                    encodeURIComponent(`أهلاً بك أخي ${req.requesterName}، معك إدارة منصة عقارات سوريا بخصوص طلبك المرجعي (${req.requestCode}) لتأمين ${req.propertyType} في ${req.governorate}...`);
+
+                  return (
+                    <div
+                      key={req.id}
+                      className={`bg-slate-900 border rounded-3xl p-5 sm:p-6 transition-all space-y-4 ${
+                        req.status === 'new'
+                          ? 'border-amber-500/60 shadow-lg shadow-amber-500/5'
+                          : 'border-slate-800'
+                      }`}
+                    >
+                      {/* Top Row: Requester Info & Actions */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs font-mono">
+                            {req.requestCode}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-sm font-bold text-white">{req.requesterName}</h3>
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                  req.urgency === 'immediate'
+                                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                                    : req.urgency === 'within_month'
+                                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                    : 'bg-slate-800 text-slate-400'
+                                }`}
+                              >
+                                {req.urgency === 'immediate'
+                                  ? '⚡ فوري ومستعجل'
+                                  : req.urgency === 'within_month'
+                                  ? '📅 خلال شهر'
+                                  : '🔍 استكشاف فرص'}
+                              </span>
+                            </div>
+                            <div className="text-[11px] text-slate-400 mt-0.5">
+                              تاريخ الطلب: {new Date(req.createdAt).toLocaleDateString('ar-SY')}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Direct Contact Buttons */}
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={whatsappUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            <span>واتساب العميل</span>
+                          </a>
+
+                          <a
+                            href={`tel:${req.requesterPhone}`}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 transition-colors"
+                          >
+                            <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                            <span dir="ltr">{req.requesterPhone}</span>
+                          </a>
+
+                          <button
+                            onClick={() => handleDeleteRequest(req.id)}
+                            className="p-2 rounded-xl bg-slate-800 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 border border-slate-700"
+                            title="حذف الطلب"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Request Specs Grid */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                        <div>
+                          <span className="text-slate-500 block mb-1">العملية والنوع:</span>
+                          <span className="text-white font-bold">
+                            {req.contractType === 'sale' ? 'شراء' : 'استئجار'} • {req.propertyType}
+                          </span>
+                        </div>
+
+                        <div>
+                          <span className="text-slate-500 block mb-1">المحافظة والمناطق:</span>
+                          <span className="text-white font-bold">
+                            {req.governorate}
+                            {req.preferredRegions && req.preferredRegions.length > 0 && (
+                              <span className="text-emerald-400 text-[11px] block truncate">
+                                ({req.preferredRegions.join('، ')})
+                              </span>
+                            )}
+                          </span>
+                        </div>
+
+                        <div>
+                          <span className="text-slate-500 block mb-1">الميزانية القصوى:</span>
+                          <span className="font-mono font-black text-emerald-400 text-sm">
+                            ${req.maxBudgetUsd.toLocaleString()}
+                          </span>
+                        </div>
+
+                        <div>
+                          <span className="text-slate-500 block mb-1">المساحة والغرف:</span>
+                          <span className="text-white font-bold">
+                            {req.minArea ? `${req.minArea} م² فأكثر` : 'مفتوحة'} • {req.minBedrooms || 2} غرف
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Required Features Tags */}
+                      {req.requiredFeatures && req.requiredFeatures.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-[11px] text-slate-400 font-bold ml-1">شروط ملزمة:</span>
+                          {req.requiredFeatures.map((feat) => (
+                            <span
+                              key={feat}
+                              className="text-[10px] px-2.5 py-1 rounded-lg bg-slate-800 text-emerald-300 border border-emerald-500/20 font-semibold"
+                            >
+                              ✓ {feat}
+                            </span>
+                          ))}
+                          {req.paymentPreference && (
+                            <span className="text-[10px] px-2.5 py-1 rounded-lg bg-slate-800 text-amber-300 border border-amber-500/20 font-semibold">
+                              الدفع: {req.paymentPreference === 'cash' ? 'كاش فوري' : req.paymentPreference === 'installments' ? 'أقساط' : 'أي خيار'}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Description / Client Notes */}
+                      {req.description && (
+                        <div className="text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800 leading-relaxed">
+                          <span className="text-slate-400 font-bold block mb-1">نص تفاصيل الطلب:</span>
+                          &quot;{req.description}&quot;
+                        </div>
+                      )}
+
+                      {/* Admin Controls Bottom Bar */}
+                      <div className="pt-3 border-t border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                          <span className="text-xs text-slate-400 font-bold">حالة الطلب:</span>
+                          <select
+                            value={req.status}
+                            onChange={(e) => handleUpdateRequestStatus(req.id, e.target.value as PropertyRequestStatus)}
+                            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-bold focus:outline-none"
+                          >
+                            <option value="new">🟡 جديد (New)</option>
+                            <option value="in_progress">🔵 قيد البحث والمتابعة</option>
+                            <option value="matched">🟢 تم إيجاد عقار مطابق</option>
+                            <option value="closed">⚪ مغلق / تم البيع</option>
+                            <option value="cancelled">❌ ملغي</option>
+                          </select>
+
+                          <button
+                            type="button"
+                            onClick={() => setMatchingPropertyModalReq(req)}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 text-xs font-bold transition-colors"
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                            <span>مطابقة العقارات المتاحة بالموقع</span>
+                          </button>
+                        </div>
+
+                        {/* Admin Notes Inline Input */}
+                        <div className="flex items-center gap-2 w-full md:w-1/2">
+                          <input
+                            type="text"
+                            placeholder="ملاحظات الإدارة الخاصة (غير مرئية للعميل)..."
+                            defaultValue={req.adminNotes || ''}
+                            onBlur={(e) => handleSaveRequestNotes(req.id, e.target.value)}
+                            className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Property Matcher Modal */}
+            {matchingPropertyModalReq && (
+              <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+                <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95 duration-150">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div>
+                      <h3 className="text-base font-bold text-white flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-amber-400" />
+                        <span>عقارات مطابقة لطلب ({matchingPropertyModalReq.requesterName})</span>
+                      </h3>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        المحافظة: {matchingPropertyModalReq.governorate} • الميزانية القصوى: ${matchingPropertyModalReq.maxBudgetUsd.toLocaleString()}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setMatchingPropertyModalReq(null)}
+                      className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Matched Listings */}
+                  {(() => {
+                    const matchedProps = properties.filter(
+                      (p) =>
+                        p.governorate === matchingPropertyModalReq.governorate &&
+                        p.contractType === matchingPropertyModalReq.contractType &&
+                        p.priceUsd <= matchingPropertyModalReq.maxBudgetUsd * 1.2
+                    );
+
+                    if (matchedProps.length === 0) {
+                      return (
+                        <div className="text-center py-8 bg-slate-950 rounded-2xl border border-slate-800">
+                          <Building2 className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                          <p className="text-xs text-slate-400">لا توجد عقارات في قاعدة البيانات بنفس المواصفات والميزانية حالياً.</p>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                        {matchedProps.map((p) => {
+                          const sendToClientWhatsappUrl =
+                            'https://wa.me/' +
+                            (matchingPropertyModalReq.requesterWhatsapp || matchingPropertyModalReq.requesterPhone).replace(/[^0-9]/g, '') +
+                            '?text=' +
+                            encodeURIComponent(`أهلاً بك أخي ${matchingPropertyModalReq.requesterName}، لدينا عرض عقاري مطابق لطلبك:\n\n*${p.title}*\n*المنطقة:* ${p.region} - ${p.governorate}\n*السعر:* $${p.priceUsd.toLocaleString()}\n*المساحة:* ${p.area} م²\n*الرابط للمعاينة:* https://realestate-syria.com/properties/${p.slug}`);
+
+                          return (
+                            <div
+                              key={p.id}
+                              className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={p.images[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=200&q=80'}
+                                  alt={p.title}
+                                  className="w-14 h-14 rounded-xl object-cover"
+                                />
+                                <div>
+                                  <div className="text-xs font-bold text-white line-clamp-1">{p.title}</div>
+                                  <div className="text-[11px] text-slate-400 mt-0.5">{p.region} • {p.area} م²</div>
+                                  <div className="text-xs font-mono font-bold text-emerald-400 mt-0.5">
+                                    ${p.priceUsd.toLocaleString()}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                <Link
+                                  href={`/properties/${p.slug}`}
+                                  target="_blank"
+                                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                  <span>معاينة</span>
+                                </Link>
+
+                                <a
+                                  href={sendToClientWhatsappUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs"
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5" />
+                                  <span>إرسال العرض للعميل</span>
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

@@ -78,38 +78,13 @@ const heroSlides = [
 
 const popularRegions = [
   { name: 'أبو رمانة', gov: 'دمشق' },
-  { name: 'المزة', gov: 'دمشق' },
+  { name: 'المزة فيلات', gov: 'دمشق' },
   { name: 'يعفور', gov: 'ريف دمشق' },
   { name: 'مشروع دمر', gov: 'دمشق' },
+  { name: 'كفرسوسة', gov: 'دمشق' },
+  { name: 'ماروتا سيتي', gov: 'دمشق' },
   { name: 'الشهباء', gov: 'حلب' },
   { name: 'الإنشاءات', gov: 'حمص' },
-];
-
-const trustStats = [
-  {
-    icon: ShieldCheck,
-    value: '100% طابو محقق',
-    label: 'سندات ملكية مفحوصة وموثقة',
-    color: 'text-emerald-400',
-  },
-  {
-    icon: Sun,
-    value: '85% طاقة شمسية',
-    label: 'منظومات طاقة بديلة متكاملة',
-    color: 'text-amber-400',
-  },
-  {
-    icon: Building,
-    value: '+150 عقار منسق',
-    label: 'في دمشق، ريف دمشق والمحافظات',
-    color: 'text-sky-400',
-  },
-  {
-    icon: Clock,
-    value: 'رد فوري 5 دقائق',
-    label: 'تنسيق مباشر وسريع عبر واتساب',
-    color: 'text-teal-400',
-  },
 ];
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -155,11 +130,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="hero"
-      className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white pt-24 sm:pt-28 pb-10 overflow-hidden"
+      className="relative bg-slate-950 text-white pt-24 sm:pt-28 pb-10 overflow-hidden bg-grid-pattern bg-radial-vignette"
     >
       {/* Dynamic Ambient Background Aura Glows */}
-      <div className="absolute top-1/4 -right-32 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 -left-32 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/4 -right-32 w-[600px] h-[600px] bg-emerald-500/15 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-10 -left-32 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[160px] pointer-events-none" />
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -168,19 +143,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           
           {/* ================= RIGHT COLUMN: Headlines & Search Panel (lg:col-span-7) ================= */}
           <div className="lg:col-span-7 text-right space-y-5 order-2 lg:order-1">
-            {/* Top Trust Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide backdrop-blur-md">
+            {/* Top Trust Badge with Shimmer */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold tracking-wide backdrop-blur-md shimmer-badge-wrapper shadow-lg shadow-emerald-950/40">
               <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
               <span>المنصة العقارية الأكثر موثوقية وتنسيقاً في سوريا</span>
             </div>
 
             {/* Main Headline */}
             <div className="space-y-2.5">
-              <h1 className="font-black font-alexandria space-y-3.5">
-                <span className="block text-2xl sm:text-3xl xl:text-4xl text-white leading-[1.45]">
-                  اعثر على <span className="text-emerald-400">عقارك المثالي</span>
+              <h1 className="font-black font-alexandria space-y-2">
+                <span className="block text-2xl sm:text-4xl xl:text-5xl leading-[1.35] text-gradient-silver">
+                  اعثر على <span className="text-gradient-emerald">عقارك المثالي</span>
                 </span>
-                <span className="block text-slate-200 text-lg sm:text-xl xl:text-2xl font-extrabold leading-[1.45]">
+                <span className="block text-slate-300 text-lg sm:text-2xl xl:text-3xl font-extrabold leading-[1.35]">
                   بأسعار حقيقية وتواصل مباشر
                 </span>
               </h1>
@@ -190,9 +165,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             {/* Frosted Glass Search Card */}
-            <div className="bg-slate-900/90 backdrop-blur-2xl rounded-3xl border border-slate-700/80 shadow-2xl p-5 ring-1 ring-white/10 space-y-4">
+            <div className="glass-panel rounded-3xl p-5 space-y-4">
               {/* Contract Type Tabs */}
-              <div className="flex items-center gap-1.5 p-1 bg-slate-950/80 rounded-2xl w-fit border border-slate-800">
+              <div className="flex items-center gap-1.5 p-1 bg-slate-950/90 rounded-2xl w-fit border border-slate-800">
                 {[
                   { val: 'all', label: 'كافة العروض' },
                   { val: 'sale', label: 'عقارات للبيع' },
@@ -204,7 +179,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     onClick={() => onContractTypeChange(tab.val as ContractType)}
                     className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                       contractType === tab.val
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/40'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
@@ -217,12 +192,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
                 <div className="sm:col-span-4 relative">
                   <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                    <MapPin className="w-4 h-4 text-emerald-500" />
+                    <MapPin className="w-4 h-4 text-emerald-400" />
                   </div>
                   <select
                     value={governorate}
                     onChange={(e) => onGovernorateChange(e.target.value as Governorate)}
-                    className="w-full bg-slate-800/90 text-white border border-slate-700 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-semibold transition-all appearance-none cursor-pointer"
+                    className="w-full bg-slate-950/80 text-white border border-slate-700/80 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-semibold transition-all appearance-none cursor-pointer"
                   >
                     <option value="الكل">كل المحافظات</option>
                     <option value="دمشق">محافظة دمشق</option>
@@ -235,14 +210,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
                 <div className="sm:col-span-5 relative">
                   <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                    <Building className="w-4 h-4 text-emerald-500" />
+                    <Building className="w-4 h-4 text-emerald-400" />
                   </div>
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
                     placeholder="ابحث بالحي، المنطقة أو الرمز..."
-                    className="w-full bg-slate-800/90 text-white placeholder-slate-400 border border-slate-700 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-medium transition-all"
+                    className="w-full bg-slate-950/80 text-white placeholder-slate-500 border border-slate-700/80 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-medium transition-all"
                     onKeyDown={(e) => e.key === 'Enter' && onSearchSubmit()}
                   />
                 </div>
@@ -251,7 +226,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <button
                     type="button"
                     onClick={onSearchSubmit}
-                    className="w-full h-full min-h-[46px] flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm rounded-2xl transition-all duration-200 shadow-lg shadow-emerald-600/30 hover:scale-[1.02] active:scale-95 cursor-pointer"
+                    className="w-full h-full min-h-[46px] flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm rounded-2xl transition-all duration-200 shadow-xl shadow-emerald-600/30 hover:scale-[1.02] active:scale-95 cursor-pointer"
                   >
                     <Search className="w-4 h-4" />
                     <span>بحث العقارات</span>
@@ -260,7 +235,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
 
               {/* Popular Region Quick Chips */}
-              <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center gap-1.5">
+              <div className="pt-2 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
                 <span className="text-[11px] text-slate-400 font-semibold">أشهر المناطق:</span>
                 {popularRegions.map((reg) => (
                   <button
@@ -271,7 +246,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       onRegionSelect(reg.name);
                       onSearchSubmit();
                     }}
-                    className="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-emerald-600 hover:text-white border border-slate-700/80 text-slate-300 text-xs transition-all font-medium cursor-pointer"
+                    className="px-2.5 py-1 rounded-xl bg-slate-950/70 hover:bg-emerald-600 hover:text-white border border-slate-800 text-slate-300 text-xs transition-all font-medium cursor-pointer"
                   >
                     {reg.name}
                   </button>
@@ -282,7 +257,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           {/* ================= LEFT COLUMN: General Lifestyle / Category Showcase Frame (lg:col-span-5) ================= */}
           <div className="lg:col-span-5 order-1 lg:order-2">
-            <div className="relative group rounded-3xl sm:rounded-4xl overflow-hidden border border-slate-700/80 shadow-2xl shadow-emerald-950/30 bg-slate-900 aspect-[4/3] sm:aspect-[16/11] select-none ring-1 ring-white/15">
+            <div className="relative group rounded-3xl sm:rounded-4xl overflow-hidden border border-slate-700/80 shadow-2xl shadow-emerald-950/40 bg-slate-900 aspect-[4/3] sm:aspect-[16/11] select-none ring-1 ring-white/15">
               
               {/* Full-Bright Category Image with Smooth Cross-Fade Transition */}
               {heroSlides.map((s, i) => (
@@ -300,118 +275,82 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </div>
               ))}
 
-              {/* Soft, Transparent Bottom Gradient Just for Text Legibility */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-transparent pointer-events-none" />
+              {/* Glass Dark Vignette for Crisp Contrast */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
 
-              {/* Top Floating Glass Badges */}
-              <div className="absolute top-4 inset-x-4 flex items-center justify-between z-10">
-                <span className="px-3 py-1 rounded-full text-xs font-black bg-slate-950/80 text-emerald-400 border border-emerald-500/40 backdrop-blur-md shadow-md">
+              {/* Top Glass Category Pill Banner */}
+              <div className="absolute top-4 right-4 z-20">
+                <span className="px-3.5 py-1.5 rounded-2xl bg-slate-950/80 text-white text-xs font-black backdrop-blur-md border border-slate-700/80 shadow-lg flex items-center gap-1.5">
                   {slide.categoryBadge}
                 </span>
-
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-950/80 text-amber-300 border border-slate-700 backdrop-blur-md shadow-md flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{slide.countBadge}</span>
-                  </span>
-
-                  <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-slate-950/80 text-slate-300 border border-slate-700 backdrop-blur-md shadow-md">
-                    {currentSlide + 1} / {heroSlides.length}
-                  </span>
-                </div>
               </div>
 
-              {/* Left / Right Interactive Slider Navigation Buttons */}
-              <div className="absolute inset-y-0 inset-x-3 flex items-center justify-between pointer-events-none z-10">
-                <button
-                  type="button"
-                  onClick={goToPrev}
-                  className="w-9 h-9 rounded-full bg-slate-950/80 hover:bg-emerald-600 text-white backdrop-blur-md border border-white/20 flex items-center justify-center pointer-events-auto transition-all duration-200 shadow-xl hover:scale-110 active:scale-95"
-                  title="القسم السابق"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={goToNext}
-                  className="w-9 h-9 rounded-full bg-slate-950/80 hover:bg-emerald-600 text-white backdrop-blur-md border border-white/20 flex items-center justify-center pointer-events-auto transition-all duration-200 shadow-xl hover:scale-110 active:scale-95"
-                  title="القسم التالي"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
+              {/* Top Left Total Count Badge */}
+              <div className="absolute top-4 left-4 z-20">
+                <span className="px-3 py-1 rounded-xl bg-emerald-600/90 text-white text-[11px] font-black backdrop-blur-md shadow-md">
+                  {slide.countBadge}
+                </span>
               </div>
 
-              {/* Bottom Category Showcase Info */}
-              <div className="absolute bottom-4 inset-x-4 z-10 space-y-2">
-                {/* Title & Subtitle */}
-                <div className="space-y-0.5">
-                  <h3 className="text-base sm:text-lg font-black text-white font-alexandria line-clamp-1 drop-shadow-md">
+              {/* Floating Slide Details Content at the Bottom */}
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 z-20 space-y-2 text-right">
+                <div className="space-y-1">
+                  <h3 className="text-xl sm:text-2xl font-black font-alexandria text-white drop-shadow-md">
                     {slide.title}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-300">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span>{slide.subtitle}</span>
-                  </div>
+                  <p className="text-xs sm:text-sm font-semibold text-emerald-300 drop-shadow">
+                    {slide.subtitle}
+                  </p>
                 </div>
 
-                {/* Highlight Tag & Dot Indicators Row */}
-                <div className="flex items-center justify-between pt-2 border-t border-white/15">
-                  <span className="text-[11px] font-bold text-amber-300 bg-slate-950/80 px-2.5 py-1 rounded-xl border border-slate-700/80 backdrop-blur-md">
+                <div className="pt-1 flex items-center justify-between border-t border-white/15 text-xs text-slate-200">
+                  <span className="text-[11px] text-slate-300 font-medium truncate">
                     {slide.highlightTag}
                   </span>
 
-                  {/* Dot Indicators */}
-                  <div className="flex items-center gap-1.5">
-                    {heroSlides.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setCurrentSlide(i)}
-                        className={`rounded-full transition-all duration-300 ${
-                          i === currentSlide
-                            ? 'w-6 h-1.5 bg-emerald-400'
-                            : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
-                        }`}
-                        title={`الانتقال إلى ${heroSlides[i].title}`}
-                      />
-                    ))}
+                  {/* Navigation Arrows */}
+                  <div className="flex items-center gap-1.5 shrink-0 mr-2">
+                    <button
+                      type="button"
+                      onClick={goToPrev}
+                      className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white border border-slate-700 backdrop-blur-md shadow transition-transform hover:scale-110 active:scale-95"
+                      title="السابق"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goToNext}
+                      className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white border border-slate-700 backdrop-blur-md shadow transition-transform hover:scale-110 active:scale-95"
+                      title="التالي"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
+              </div>
+
+              {/* Slider Progress Bar */}
+              <div className="absolute bottom-1 inset-x-5 flex gap-1 z-30">
+                {heroSlides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentSlide(idx)}
+                    className="flex-1 h-1 rounded-full overflow-hidden bg-white/30"
+                  >
+                    <div
+                      className={`h-full bg-emerald-400 transition-all duration-300 ${
+                        idx === currentSlide ? 'w-full' : 'w-0'
+                      }`}
+                    />
+                  </button>
+                ))}
               </div>
 
             </div>
           </div>
 
-        </div>
-      </div>
-
-      {/* ================= BOTTOM: Trust Stats Counter Bar ================= */}
-      <div className="relative z-20 border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-xl mt-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            {trustStats.map((stat) => {
-              const IconComp = stat.icon;
-              return (
-                <div
-                  key={stat.value}
-                  className="flex items-center gap-3 p-2.5 sm:p-3 rounded-2xl bg-slate-900/60 border border-slate-800/60"
-                >
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
-                    <IconComp className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
-                  </div>
-                  <div>
-                    <span className="text-xs sm:text-sm font-black font-alexandria text-white block">
-                      {stat.value}
-                    </span>
-                    <span className="text-[10px] sm:text-[11px] text-slate-400 block leading-tight">
-                      {stat.label}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
     </section>

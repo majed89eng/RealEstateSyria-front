@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Home, Building2 } from 'lucide-react';
 import { propertyService } from '@/services/propertyService';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -137,7 +137,7 @@ export default async function SinglePropertyPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
       {/* Schema.org RealEstateListing JSON-LD */}
       <script
         type="application/ld+json"
@@ -151,23 +151,23 @@ export default async function SinglePropertyPage({ params }: Props) {
 
       <Header />
 
-      <main className="flex-grow pt-24 pb-16">
+      <main className="flex-grow pt-28 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs Navigation */}
-          <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6 font-medium overflow-x-auto py-1">
-            <Link href="/" className="hover:text-emerald-600 transition-colors">
+          <nav className="flex items-center gap-2 text-xs text-slate-400 mb-6 font-medium overflow-x-auto py-1">
+            <Link href="/" className="hover:text-emerald-400 transition-colors shrink-0">
               الرئيسية
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-400" />
-            <Link href="/properties" className="hover:text-emerald-600 transition-colors">
+            <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-600 shrink-0" />
+            <Link href="/properties" className="hover:text-emerald-400 transition-colors shrink-0">
               العقارات
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-400" />
-            <Link href="/provinces" className="hover:text-emerald-600 transition-colors">
+            <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-600 shrink-0" />
+            <Link href="/provinces" className="hover:text-emerald-400 transition-colors shrink-0">
               {property.governorate}
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-400" />
-            <span className="text-slate-800 font-bold truncate max-w-xs">{property.title}</span>
+            <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-600 shrink-0" />
+            <span className="text-emerald-400 font-bold truncate max-w-xs">{property.title}</span>
           </nav>
 
           {/* Client-Interactive Section (Gallery, Currency Converter, Lead Form, WhatsApp) */}

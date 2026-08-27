@@ -22,7 +22,14 @@ function getAllProperties(): Property[] {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const customProps: Property[] = JSON.parse(stored);
-        list = [...customProps, ...list];
+        if (Array.isArray(customProps)) {
+          // Merge custom items with mock items by ID
+          const customMap = new Map(customProps.map((p) => [p.id, p]));
+          const merged = list.map((p) => (customMap.has(p.id) ? customMap.get(p.id)! : p));
+          const mockIds = new Set(list.map((p) => p.id));
+          const newlyAdded = customProps.filter((p) => !mockIds.has(p.id));
+          list = [...newlyAdded, ...merged];
+        }
       }
     } catch {
       // ignore
@@ -189,7 +196,13 @@ export const propertyService = {
    */
   async getPropertyBySlug(slug: string): Promise<Property | null> {
     const list = getAllProperties();
-    const property = list.find((p) => p.slug === slug || p.id === slug);
+    const cleanSlug = decodeURIComponent(slug || '').toLowerCase().trim();
+    const property = list.find((p) => {
+      const pSlug = (p.slug || '').toLowerCase().trim();
+      const pId = (p.id || '').toLowerCase().trim();
+      const pCode = (p.propertyCode || '').toLowerCase().trim();
+      return pSlug === cleanSlug || pId === cleanSlug || pCode === cleanSlug;
+    });
     return property || null;
   },
 
@@ -496,6 +509,70 @@ export const propertyService = {
         return true;
       } catch (e) {
         console.error('Error approving property:', e);
+      }
+    }
+    return false;
+  },
+
+  /**
+   * Fetch a batch of properties by their unique IDs
+   */
+  async getPropertiesByIds(ids: string[]): Promise<Property[]> {
+    if (!ids || ids.length === 0) return [];
+    const all = getAllProperties();
+    return all.filter((p) => ids.includes(p.id));
+  },
+
+  /**
+   * Update availability status of any property in custom storage
+   */
+  async updatePropertyStatus(
+    propertyId: string,
+    status: Property['availabilityStatus']
+  ): Promise<boolean> {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        let customProps: Property[] = stored ? JSON.parse(stored) : [];
+        
+        // Check if property is in customProps
+        const existingIdx = customProps.findIndex((p) => p.id === propertyId);
+        if (existingIdx !== -1) {
+          customProps[existingIdx].availabilityStatus = status;
+          customProps[existingIdx].updatedAt = new Date().toISOString();
+        } else {
+          // If it was in mock data, clone it into customProps with new status
+          const mockProp = (mockPropertiesData as unknown as Property[]).find((p) => p.id === propertyId);
+          if (mockProp) {
+            customProps.unshift({
+              ...mockProp,
+              availabilityStatus: status,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(customProps));
+        return true;
+      } catch (e) {
+        console.error('Error updating property status:', e);
+      }
+    }
+    return false;
+  },
+
+  /**
+   * Delete or soft-delete a property
+   */
+  async deleteProperty(propertyId: string): Promise<boolean> {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        let customProps: Property[] = stored ? JSON.parse(stored) : [];
+        customProps = customProps.filter((p) => p.id !== propertyId);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(customProps));
+        return true;
+      } catch (e) {
+        console.error('Error deleting property:', e);
       }
     }
     return false;

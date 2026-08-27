@@ -80,10 +80,12 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   };
 
   const handleCopyLink = () => {
-    const fullUrl = `${window.location.origin}/properties/${property.slug}`;
-    navigator.clipboard.writeText(fullUrl);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
+    if (typeof window !== 'undefined') {
+      const url = `${window.location.origin}/properties/${property.slug}`;
+      navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    }
   };
 
   const handleLeadSubmit = (e: React.FormEvent) => {
@@ -111,11 +113,11 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
       {/* Modal Container */}
-      <div className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-200 my-8">
+      <div className="relative w-full max-w-4xl bg-slate-900 text-slate-100 rounded-3xl overflow-hidden shadow-2xl border border-slate-800 my-8">
         {/* Top Header Bar */}
-        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="sticky top-0 z-30 bg-slate-950/90 backdrop-blur-md px-6 py-4 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-xs px-3 py-1 rounded-full font-mono font-bold bg-slate-900 text-amber-300 border border-slate-700">
               {property.propertyCode}
@@ -123,12 +125,12 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             <span
               className={`text-xs px-3 py-1 rounded-full font-extrabold ${
                 isSold
-                  ? 'bg-red-100 text-red-800'
+                  ? 'bg-red-600 text-white'
                   : isRented
-                  ? 'bg-amber-100 text-amber-800'
+                  ? 'bg-amber-600 text-white'
                   : property.contractType === 'sale'
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-blue-100 text-blue-800'
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-teal-600 text-white'
               }`}
             >
               {isSold
@@ -144,7 +146,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           <div className="flex items-center gap-2">
             <Link
               href={`/properties/${property.slug}`}
-              className="flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-800 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 transition-colors"
+              className="flex items-center gap-1 text-xs font-bold text-emerald-300 hover:text-emerald-200 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/30 transition-colors"
               title="فتح في صفحة مستقلة"
             >
               <ExternalLink className="w-3.5 h-3.5" />
@@ -154,7 +156,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+              className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -166,7 +168,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           {/* Gallery / Lightbox Section */}
           <div className="space-y-3">
             {/* Active Big Image Preview */}
-            <div className="relative aspect-[16/9] bg-slate-900 rounded-2xl overflow-hidden group">
+            <div className="relative aspect-[16/9] bg-slate-950 rounded-2xl overflow-hidden group border border-slate-800 shadow-xl">
               <img
                 src={images[activeImageIndex]}
                 alt={`${property.title} - صورة ${activeImageIndex + 1}`}
@@ -179,14 +181,14 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   <button
                     type="button"
                     onClick={prevImage}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-sm transition-all"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-sm transition-all"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
                   <button
                     type="button"
                     onClick={nextImage}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-sm transition-all"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-sm transition-all"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -197,14 +199,14 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsFullscreenLightbox(true)}
-                className="absolute bottom-3 left-3 px-3 py-1.5 rounded-xl bg-slate-900/70 text-white text-xs font-semibold backdrop-blur-md hover:bg-slate-900 transition-colors flex items-center gap-1.5"
+                className="absolute bottom-3 left-3 px-3 py-1.5 rounded-xl bg-slate-900/80 text-white text-xs font-semibold backdrop-blur-md hover:bg-slate-900 transition-colors flex items-center gap-1.5"
               >
                 <Maximize className="w-3.5 h-3.5" />
                 <span>تكبير الصورة</span>
               </button>
 
               {/* Counter */}
-              <div className="absolute bottom-3 right-3 px-3 py-1 rounded-xl bg-slate-900/70 text-white text-xs font-semibold backdrop-blur-md">
+              <div className="absolute bottom-3 right-3 px-3 py-1 rounded-xl bg-slate-900/80 text-white text-xs font-semibold backdrop-blur-md font-mono">
                 {activeImageIndex + 1} / {images.length}
               </div>
             </div>
@@ -219,8 +221,8 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                     onClick={() => setActiveImageIndex(idx)}
                     className={`relative w-24 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all ${
                       activeImageIndex === idx
-                        ? 'border-emerald-600 ring-2 ring-emerald-500/30'
-                        : 'border-transparent opacity-70 hover:opacity-100'
+                        ? 'border-emerald-500 ring-2 ring-emerald-500/30'
+                        : 'border-slate-800 opacity-60 hover:opacity-100'
                     }`}
                   >
                     <img src={img} alt="مصغرة" className="w-full h-full object-cover" />
@@ -231,24 +233,24 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
           </div>
 
           {/* Title & Location & Price */}
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-6 border-b border-slate-200">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-6 border-b border-slate-800/80">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900 font-alexandria leading-normal">
+              <h2 className="text-xl sm:text-2xl font-black text-white font-alexandria leading-snug">
                 {property.title}
               </h2>
-              <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
-                <MapPin className="w-4 h-4 text-emerald-600" />
+              <div className="flex items-center gap-2 text-slate-400 text-xs sm:text-sm font-medium">
+                <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>
                   {property.locationDetails} ({property.region} - {property.governorate})
                 </span>
               </div>
             </div>
 
-            <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex flex-col items-start md:items-end min-w-[220px]">
-              <span className="text-xs text-emerald-800 font-semibold">
+            <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex flex-col items-start md:items-end min-w-[220px] shadow-lg">
+              <span className="text-xs text-slate-400 font-semibold">
                 {property.contractType === 'rent' ? 'الإيجار المطلوب' : 'السعر المطلوب'}
               </span>
-              <span className="text-2xl font-black text-emerald-700 font-alexandria">
+              <span className="text-2xl font-black text-emerald-400 font-alexandria">
                 {formatPrice(property.priceUsd)}
               </span>
             </div>
@@ -256,73 +258,73 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
           {/* Technical Specs Table Grid */}
           <div className="space-y-3">
-            <h3 className="text-base font-bold text-slate-900 font-alexandria flex items-center gap-2">
-              <Building className="w-5 h-5 text-emerald-600" />
+            <h3 className="text-base font-bold text-white font-alexandria flex items-center gap-2">
+              <Building className="w-5 h-5 text-emerald-400" />
               <span>المواصفات الفنية والقانونية</span>
             </h3>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-slate-800 text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950 p-4 rounded-2xl border border-slate-800 text-slate-200 text-sm">
               <div className="space-y-1">
-                <span className="text-xs text-slate-500 block">المساحة الإجمالية</span>
-                <span className="font-bold flex items-center gap-1">
-                  <Maximize2 className="w-4 h-4 text-emerald-600" />
+                <span className="text-xs text-slate-400 block">المساحة الإجمالية</span>
+                <span className="font-bold flex items-center gap-1 text-white">
+                  <Maximize2 className="w-4 h-4 text-emerald-400" />
                   {property.area} م²
                 </span>
               </div>
 
               <div className="space-y-1">
-                <span className="text-xs text-slate-500 block">عدد الغرف</span>
-                <span className="font-bold flex items-center gap-1">
-                  <Bed className="w-4 h-4 text-emerald-600" />
+                <span className="text-xs text-slate-400 block">عدد الغرف</span>
+                <span className="font-bold flex items-center gap-1 text-white">
+                  <Bed className="w-4 h-4 text-emerald-400" />
                   {property.bedrooms} غرف نوم
                 </span>
               </div>
 
               <div className="space-y-1">
-                <span className="text-xs text-slate-500 block">عدد الحمامات</span>
-                <span className="font-bold flex items-center gap-1">
-                  <Bath className="w-4 h-4 text-emerald-600" />
+                <span className="text-xs text-slate-400 block">عدد الحمامات</span>
+                <span className="font-bold flex items-center gap-1 text-white">
+                  <Bath className="w-4 h-4 text-emerald-400" />
                   {property.bathrooms} حمام
                 </span>
               </div>
 
               <div className="space-y-1">
-                <span className="text-xs text-slate-500 block">الطابق</span>
-                <span className="font-bold flex items-center gap-1">
-                  <Layers className="w-4 h-4 text-emerald-600" />
+                <span className="text-xs text-slate-400 block">الطابق</span>
+                <span className="font-bold flex items-center gap-1 text-white">
+                  <Layers className="w-4 h-4 text-emerald-400" />
                   {property.floor}
                 </span>
               </div>
 
-              <div className="space-y-1 pt-2 border-t border-slate-200">
-                <span className="text-xs text-slate-500 block">الاتجاه</span>
-                <span className="font-bold flex items-center gap-1">
-                  <Compass className="w-4 h-4 text-emerald-600" />
+              <div className="space-y-1 pt-2 border-t border-slate-800">
+                <span className="text-xs text-slate-400 block">الاتجاه</span>
+                <span className="font-bold flex items-center gap-1 text-white">
+                  <Compass className="w-4 h-4 text-emerald-400" />
                   {property.direction}
                 </span>
               </div>
 
-              <div className="space-y-1 pt-2 border-t border-slate-200 col-span-2">
-                <span className="text-xs text-slate-500 block">سند الملكية</span>
-                <span className="font-bold text-emerald-700 flex items-center gap-1">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <div className="space-y-1 pt-2 border-t border-slate-800 col-span-2">
+                <span className="text-xs text-slate-400 block">سند الملكية</span>
+                <span className="font-bold text-emerald-400 flex items-center gap-1">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   {property.ownershipType}
                 </span>
               </div>
 
-              <div className="space-y-1 pt-2 border-t border-slate-200">
-                <span className="text-xs text-slate-500 block">المحافظة</span>
-                <span className="font-bold">{property.governorate}</span>
+              <div className="space-y-1 pt-2 border-t border-slate-800">
+                <span className="text-xs text-slate-400 block">المحافظة</span>
+                <span className="font-bold text-white">{property.governorate}</span>
               </div>
             </div>
           </div>
 
           {/* Off-Plan Project Investment Section */}
           {property.isOffPlan && (
-            <div className="bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent rounded-2xl p-4 sm:p-5 border border-amber-500/30 space-y-3.5">
+            <div className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 rounded-2xl p-4 sm:p-5 border border-amber-500/30 space-y-3.5">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm sm:text-base font-bold text-amber-950 font-alexandria flex items-center gap-2">
-                  <HardHat className="w-5 h-5 text-amber-600" />
+                <h3 className="text-sm sm:text-base font-bold text-amber-300 font-alexandria flex items-center gap-2">
+                  <HardHat className="w-5 h-5 text-amber-400" />
                   <span>تفاصيل الشراء على المخطط وخطة التقسيط</span>
                 </h3>
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-500 text-slate-950 shadow-sm">
@@ -331,21 +333,21 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl bg-white/90 border border-amber-200/80 space-y-0.5">
-                  <span className="text-[11px] text-amber-800 font-bold block">موعد التسليم المتوقع</span>
-                  <span className="text-sm font-extrabold text-slate-900 flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-amber-600" />
+                <div className="p-3 rounded-xl bg-slate-950 border border-amber-500/20 space-y-0.5">
+                  <span className="text-[11px] text-amber-400 font-bold block">موعد التسليم المتوقع</span>
+                  <span className="text-sm font-extrabold text-white flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-amber-400" />
                     {property.handoverDate || 'قريباً'}
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/90 border border-amber-200/80 space-y-1">
-                  <span className="text-[11px] text-amber-800 font-bold block">نسبة الإنجاز الفعلي</span>
-                  <div className="flex justify-between text-[11px] font-black text-slate-800">
+                <div className="p-3 rounded-xl bg-slate-950 border border-amber-500/20 space-y-1">
+                  <span className="text-[11px] text-amber-400 font-bold block">نسبة الإنجاز الفعلي</span>
+                  <div className="flex justify-between text-[11px] font-black text-slate-200">
                     <span>مرحلة التشييد</span>
-                    <span className="text-amber-700">{property.constructionProgress || 35}%</span>
+                    <span className="text-amber-400">{property.constructionProgress || 35}%</span>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
                     <div
                       className="bg-amber-500 h-1.5 rounded-full"
                       style={{ width: `${property.constructionProgress || 35}%` }}
@@ -353,9 +355,9 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/90 border border-amber-200/80 space-y-0.5">
-                  <span className="text-[11px] text-amber-800 font-bold block">تسهيلات السداد</span>
-                  <span className="text-xs font-bold text-slate-900 leading-snug block">
+                <div className="p-3 rounded-xl bg-slate-950 border border-amber-500/20 space-y-0.5">
+                  <span className="text-[11px] text-amber-400 font-bold block">تسهيلات السداد</span>
+                  <span className="text-xs font-bold text-white leading-snug block">
                     {property.paymentPlan || 'متوفر خطط دفع ميسرة'}
                   </span>
                 </div>
@@ -365,8 +367,8 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
           {/* Features Badges */}
           <div className="space-y-3">
-            <h3 className="text-base font-bold text-slate-900 font-alexandria flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            <h3 className="text-base font-bold text-white font-alexandria flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
               <span>المميزات والخدمات المتوفرة</span>
             </h3>
 
@@ -374,9 +376,9 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               {property.features.map((feat, i) => (
                 <span
                   key={i}
-                  className="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-xl bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5"
                 >
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
                   {feat}
                 </span>
               ))}
@@ -385,10 +387,10 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
           {/* Description */}
           <div className="space-y-2">
-            <h3 className="text-base font-bold text-slate-900 font-alexandria">
+            <h3 className="text-base font-bold text-white font-alexandria">
               الوصف الكامل والتفاصيل
             </h3>
-            <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line bg-slate-950 p-4 rounded-2xl border border-slate-800">
               {property.description}
             </p>
           </div>
@@ -401,7 +403,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
           {/* Quick Lead Form Drawer in Modal */}
           {showLeadForm && (
-            <div className="p-5 rounded-2xl bg-slate-900 text-white space-y-4 animate-in fade-in duration-200">
+            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800 text-white space-y-4 animate-in fade-in duration-200">
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-sm flex items-center gap-2 text-emerald-400">
                   <Calendar className="w-4 h-4" />
@@ -429,7 +431,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                       placeholder="الاسم الكامل *"
                       value={leadName}
                       onChange={(e) => setLeadName(e.target.value)}
-                      className="px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                      className="px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-emerald-500 outline-none"
                     />
                     <input
                       type="tel"
@@ -437,7 +439,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                       placeholder="رقم الهاتف / الواتساب *"
                       value={leadPhone}
                       onChange={(e) => setLeadPhone(e.target.value)}
-                      className="px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-emerald-500 outline-none"
+                      className="px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-emerald-500 outline-none"
                     />
                   </div>
                   <textarea
@@ -445,11 +447,11 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                     placeholder="ملاحظات أو الوقت المفضل للمعاينة (اختياري)..."
                     value={leadMsg}
                     onChange={(e) => setLeadMsg(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:ring-2 focus:ring-emerald-500 outline-none resize-none"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:border-emerald-500 outline-none resize-none"
                   />
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors"
+                    className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-lg shadow-emerald-600/30"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>تأكيد إرسال الطلب</span>
@@ -461,17 +463,17 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
         </div>
 
         {/* Modal Bottom Action Bar */}
-        <div className="sticky bottom-0 bg-white border-t border-slate-200 px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="sticky bottom-0 bg-slate-950/90 backdrop-blur-md border-t border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             {/* WhatsApp Video Walkthrough Request */}
             <a
               href={propertyService.generateVideoRequestWhatsAppUrl(property)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 text-xs font-bold transition-all shadow-sm"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-bold transition-all shadow-sm"
               title="طلب فيديو مصور للعقار عبر واتساب"
             >
-              <Video className="w-4 h-4 text-amber-600" />
+              <Video className="w-4 h-4 text-amber-400" />
               <span>طلب فيديو عبر واتساب</span>
             </a>
 
@@ -481,9 +483,9 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             <button
               type="button"
               onClick={handleCopyLink}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors border border-slate-700"
             >
-              {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
+              {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
               <span>{copiedLink ? 'تم النسخ' : 'مشاركة'}</span>
             </button>
 
@@ -491,7 +493,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               <button
                 type="button"
                 onClick={() => setShowLeadForm(true)}
-                className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors"
+                className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors border border-slate-700"
               >
                 <Calendar className="w-4 h-4 text-emerald-400" />
                 <span>حجز معاينة</span>
@@ -505,8 +507,8 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             rel="noopener noreferrer"
             className={`w-full sm:w-auto flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl text-white font-extrabold text-sm transition-all shadow-xl ${
               isUnavailable
-                ? 'bg-slate-800 hover:bg-slate-900'
-                : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30 hover:scale-[1.01]'
+                ? 'bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-300'
+                : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-600/30 hover:scale-[1.01]'
             }`}
           >
             <MessageCircle className="w-5 h-5" />

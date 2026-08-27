@@ -8,7 +8,7 @@ import { SYRIAN_LOCATIONS } from '@/data/locations';
 import { propertyService } from '@/services/propertyService';
 import { PropertyCard } from '@/components/PropertyCard';
 import { FloatingActionHub } from '@/components/FloatingActionHub';
-import { MapPin, Building2, ChevronRight } from 'lucide-react';
+import { MapPin, Building2, ChevronRight, Sparkles, Filter, Home } from 'lucide-react';
 
 interface Props {
   params: {
@@ -79,7 +79,7 @@ export default async function SingleProvincePage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
       {/* Breadcrumb Schema.org */}
       <script
         type="application/ld+json"
@@ -88,119 +88,111 @@ export default async function SingleProvincePage({ params }: Props) {
 
       <Header />
 
-      <main className="flex-grow pt-24 pb-16">
+      <main className="flex-grow">
         {/* Banner */}
-        <div className="bg-slate-900 text-white py-12 mb-10 border-b border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative pt-28 pb-14 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-b border-slate-800/80 overflow-hidden">
+          <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4">
             <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
               <Link href="/" className="hover:text-emerald-400 transition-colors">
                 الرئيسية
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-500" />
+              <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-600" />
               <Link href="/provinces" className="hover:text-emerald-400 transition-colors">
                 المحافظات
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-500" />
+              <ChevronRight className="w-3.5 h-3.5 rotate-180 text-slate-600" />
               <span className="text-emerald-400 font-bold">{loc.provinceNameAr}</span>
             </nav>
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-bold border border-emerald-500/30">
                   <MapPin className="w-3.5 h-3.5" />
-                  <span>دليل المحافظات</span>
+                  <span>دليل العقارات في {loc.provinceNameAr}</span>
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-extrabold font-alexandria">
-                  عقارات محافظة {loc.provinceNameAr}
+                <h1 className="text-3xl sm:text-5xl font-black font-alexandria text-white tracking-tight">
+                  عقارات محافظة <span className="text-emerald-400">{loc.provinceNameAr}</span>
                 </h1>
-                <p className="text-slate-300 text-sm max-w-2xl">
-                  استكشف أفضل الفرص العقارية السكنية والتجارية في محافظة {loc.provinceNameAr} مع تسعير حقيقي وتواصل مباشر.
+                <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+                  تصفح كافة الشقق والفيلات والمكاتب المعروضة للبيع وللإيجار في مختلف أحياء ومناطق {loc.provinceNameAr}.
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 text-center min-w-[180px]">
-                <span className="text-xs text-slate-400 block mb-1">إجمالي العقارات المتاحة</span>
-                <span className="text-3xl font-black text-emerald-400 font-alexandria">
+              {/* Counter Badge */}
+              <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-3xl text-center shrink-0 min-w-[150px] shadow-xl">
+                <span className="text-[11px] text-slate-400 block mb-1">إجمالي العقارات المتاحة</span>
+                <span className="text-3xl font-black font-alexandria text-emerald-400">
                   {properties.length}
                 </span>
+                <span className="text-xs text-slate-400 font-bold block mt-0.5">عقار معروض</span>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          {/* Cities & Regions Explorer Card */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 font-alexandria flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-emerald-600" />
-              <span>المدن والمناطق الرئيسية التابعة لـ {loc.provinceNameAr}</span>
-            </h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {loc.cities.map((city) => (
-                <div
-                  key={city.cityId}
-                  className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm text-slate-900">{city.cityNameAr}</span>
-                    <span className="text-[11px] text-slate-400 font-mono">{city.cityNameEn}</span>
-                  </div>
-
-                  {city.neighborhoods.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {city.neighborhoods.map((n) => (
-                        <span
-                          key={n.neighborhoodId}
-                          className="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] text-slate-600"
-                        >
-                          {n.neighborhoodNameAr}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Properties Listing */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-extrabold text-slate-900 font-alexandria">
-                العقارات المعروضة في {loc.provinceNameAr}
-              </h2>
-              <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                {properties.length} نتائج
-              </span>
-            </div>
-
-            {properties.length === 0 ? (
-              <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 space-y-3">
-                <Building2 className="w-12 h-12 text-slate-400 mx-auto" />
-                <h3 className="text-lg font-bold text-slate-800">لا توجد عقارات منشورة حالياً في هذه المحافظة</h3>
-                <p className="text-xs text-slate-500">سيتم إضافة عروض جديدة قريباً من قبل فريق الإدارة.</p>
+            {/* Quick Filter by City/Region Chips */}
+            <div className="pt-4 border-t border-slate-800/80">
+              <span className="text-xs text-slate-400 font-bold block mb-2">تصفية حسب المنطقة أو الحي:</span>
+              <div className="flex flex-wrap gap-2">
                 <Link
-                  href="/properties"
-                  className="inline-block px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors mt-2"
+                  href={`/properties?gov=${encodeURIComponent(loc.provinceNameAr)}`}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-sm"
                 >
-                  تصفح عقارات المحافظات الأخرى
+                  كافة مناطق {loc.provinceNameAr}
                 </Link>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {properties.map((property) => (
-                  <PropertyCard key={property.id} property={property} />
+                {loc.cities.map((city) => (
+                  <Link
+                    key={city.cityId}
+                    href={`/properties?gov=${encodeURIComponent(loc.provinceNameAr)}&region=${encodeURIComponent(city.cityNameAr)}`}
+                    className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium transition-colors"
+                  >
+                    {city.cityNameAr}
+                  </Link>
                 ))}
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* Floating Action Hub */}
-        <FloatingActionHub allProperties={properties} />
+        {/* Properties Grid */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {properties.length === 0 ? (
+            <div className="bg-slate-900/90 rounded-3xl p-12 text-center border border-slate-800 space-y-4 max-w-lg mx-auto shadow-xl">
+              <div className="w-16 h-16 rounded-3xl bg-slate-800 flex items-center justify-center text-slate-500 mx-auto">
+                <Building2 className="w-8 h-8" />
+              </div>
+              <h2 className="text-lg font-bold text-white font-alexandria">
+                لا توجد عقارات منشورة حالياً في محافظة {loc.provinceNameAr}
+              </h2>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                يتم تحديث العروض العقارية باستمرار. يمكنك إرسال طلب عقار خاص وسيقوم فريق الإدارة بالبحث لك فوراً.
+              </p>
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link
+                  href="/request-property"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg"
+                >
+                  اطلب عقارك الخاص في {loc.provinceNameAr}
+                </Link>
+                <Link
+                  href="/properties"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-bold"
+                >
+                  تصفح باقي المحافظات
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {properties.map((prop) => (
+                <PropertyCard key={prop.id} property={prop} />
+              ))}
+            </div>
+          )}
+        </section>
       </main>
 
+      <FloatingActionHub allProperties={properties} />
       <Footer />
     </div>
   );

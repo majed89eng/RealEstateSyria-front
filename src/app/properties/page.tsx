@@ -50,9 +50,9 @@ export default function PropertiesCatalogPage() {
     <div className="min-h-screen bg-slate-950 text-white font-cairo flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
       <Header />
 
-      <main className="flex-grow pt-24 pb-16">
+      <main className="flex-grow">
         {/* Page Banner Header */}
-        <div className="bg-slate-900 text-white py-10 mb-6 border-b border-slate-800">
+        <section className="relative pt-28 pb-10 mb-6 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-b border-slate-800/80 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 text-right">
             <div className="flex items-center gap-2 text-xs text-slate-400">
               <Link href="/" className="hover:text-emerald-400 transition-colors">
@@ -113,7 +113,7 @@ export default function PropertiesCatalogPage() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Sticky Filters Section */}
         <FilterSection
