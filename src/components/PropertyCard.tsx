@@ -58,7 +58,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 
   const whatsappUrl = propertyService.generateWhatsAppUrl(property, undefined, currency);
 
-  // Calculate Price per Square Meter
+  // Calculate Estimated Price per Square Meter
   const pricePerSqm =
     property.area > 0 && property.contractType === 'sale'
       ? Math.round(property.priceUsd / property.area)

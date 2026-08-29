@@ -126,6 +126,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAI }) => {
               المكاتب المعتمدة
             </Link>
             <Link
+              href="/market-index"
+              className="transition-colors text-slate-200 hover:text-emerald-400 font-medium flex items-center gap-1"
+            >
+              <span>مؤشر الأسعار</span>
+              <span className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-300 text-[10px] rounded-full border border-emerald-500/30">📊</span>
+            </Link>
+            <Link
               href="/request-property"
               className="transition-colors text-slate-200 hover:text-emerald-400 font-medium flex items-center gap-1"
             >
@@ -454,6 +461,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAI }) => {
               className="py-2.5 px-3.5 rounded-xl hover:bg-slate-900 text-slate-200 font-bold text-sm transition-colors"
             >
               دليل المكاتب والشركات المعتمدة
+            </Link>
+
+            <Link
+              href="/market-index"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2.5 px-3.5 rounded-xl bg-slate-900 border border-slate-800 text-emerald-300 font-bold text-sm transition-colors flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <span>📊</span>
+                <span>مؤشر أسعار العقارات والمتر</span>
+              </div>
+              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">بيانات حية</span>
             </Link>
 
             <Link

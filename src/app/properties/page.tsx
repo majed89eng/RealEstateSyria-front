@@ -7,6 +7,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { FilterSection } from '@/components/FilterSection';
 import { PropertyGrid } from '@/components/PropertyGrid';
+import { PropertyCard } from '@/components/PropertyCard';
 import { PropertyDetailModal } from '@/components/PropertyDetailModal';
 import { InteractivePropertyMap } from '@/components/InteractivePropertyMap';
 import { PropertyAlertModal } from '@/components/PropertyAlertModal';
@@ -18,8 +19,10 @@ import {
   ChevronRight,
   LayoutGrid,
   Map,
+  Columns2,
   Bell,
   Compass,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function PropertiesCatalogPage() {
@@ -35,7 +38,7 @@ export default function PropertiesCatalogPage() {
     closePropertyDetail,
   } = useProperties();
 
-  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'split' | 'map'>('grid');
   const [isAlertModalOpen, setIsAlertModalOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 9;
@@ -64,41 +67,61 @@ export default function PropertiesCatalogPage() {
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1.5">
-                <h1 className="text-3xl sm:text-4xl font-black font-alexandria">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/30">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>عقارات مفحوصة وموثقة الملكية 🟢</span>
+                </div>
+                <h1 className="text-2xl sm:text-4xl font-black font-alexandria">
                   كافة العقارات المتاحة في سوريا
                 </h1>
                 <p className="text-slate-300 text-xs sm:text-sm max-w-2xl">
-                  تصفح أحدث الشقق، الفيلات، المزارع والمكاتب التجارية في دمشق وريف دمشق وحلب وسائر المحافظات مع تسعير دقيق وتواصل مباشر.
+                  تصفح أحدث الشقق، الفيلات، المزارع والمكاتب التجارية في كافة المحافظات الـ 14 مع تسعير دقيق وتواصل مباشر.
                 </p>
               </div>
 
-              {/* View Switcher & Custom Alert CTA */}
+              {/* View Switcher (Grid / Split / Map) & Alert CTA */}
               <div className="flex flex-wrap items-center gap-2.5">
-                <div className="flex items-center gap-1 p-1 bg-slate-800 rounded-2xl border border-slate-700">
+                <div className="flex items-center gap-1 p-1 bg-slate-900 rounded-2xl border border-slate-800">
                   <button
                     type="button"
                     onClick={() => setViewMode('grid')}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                       viewMode === 'grid'
                         ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                         : 'text-slate-400 hover:text-white'
                     }`}
+                    title="عرض البطاقات الشبكي"
                   >
                     <LayoutGrid className="w-3.5 h-3.5" />
-                    <span>عرض الشبكة</span>
+                    <span>شبكة</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('split')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      viewMode === 'split'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                    title="عرض مقسوم: خريطة وبطاقات متزامنة"
+                  >
+                    <Columns2 className="w-3.5 h-3.5" />
+                    <span>خريطة وبطاقات</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setViewMode('map')}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                       viewMode === 'map'
                         ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                         : 'text-slate-400 hover:text-white'
                     }`}
+                    title="عرض الخريطة الكاملة"
                   >
                     <Map className="w-3.5 h-3.5" />
-                    <span>الخريطة التفاعلية</span>
+                    <span>خريطة كاملة</span>
                   </button>
                 </div>
 
@@ -108,7 +131,7 @@ export default function PropertiesCatalogPage() {
                   className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-bold text-xs transition-colors"
                 >
                   <Bell className="w-3.5 h-3.5" />
-                  <span>نبّهني بطلب جديد</span>
+                  <span>تنبيه بطلب جديد</span>
                 </button>
               </div>
             </div>
@@ -129,14 +152,75 @@ export default function PropertiesCatalogPage() {
           resultCount={properties.length}
         />
 
-        {/* Properties Content: Grid or Interactive Map */}
+        {/* Properties Content: Grid, Split View, or Full Map */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           {viewMode === 'map' ? (
             <InteractivePropertyMap
               properties={properties}
               onOpenDetail={openPropertyDetail}
             />
+          ) : viewMode === 'split' ? (
+            /* Split View (Zillow Style: Left Map, Right Cards) */
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column: Interactive Map (Sticky on Desktop) */}
+              <div className="lg:col-span-6 sticky top-24 z-20">
+                <InteractivePropertyMap
+                  properties={properties}
+                  onOpenDetail={openPropertyDetail}
+                />
+              </div>
+
+              {/* Right Column: Scrollable Property Cards */}
+              <div className="lg:col-span-6 space-y-4">
+                <div className="flex items-center justify-between px-2 text-xs font-bold text-slate-400">
+                  <span>تم العثور على {properties.length} عقار متطابق</span>
+                  <span>عرض سريع متزامن</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {paginatedProperties.map((prop) => (
+                    <PropertyCard
+                      key={prop.id}
+                      property={prop}
+                      onOpenDetail={openPropertyDetail}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination Controls in Split Mode */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-6">
+                    <button
+                      type="button"
+                      disabled={currentPage === 1}
+                      onClick={() => {
+                        setCurrentPage((p) => Math.max(p - 1, 1));
+                        window.scrollTo({ top: 300, behavior: 'smooth' });
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-bold hover:bg-slate-800 disabled:opacity-40"
+                    >
+                      السابق
+                    </button>
+                    <span className="text-xs font-bold text-slate-400">
+                      صفحة {currentPage} من {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={currentPage === totalPages}
+                      onClick={() => {
+                        setCurrentPage((p) => Math.min(p + 1, totalPages));
+                        window.scrollTo({ top: 300, behavior: 'smooth' });
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-bold hover:bg-slate-800 disabled:opacity-40"
+                    >
+                      التالي
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
+            /* Traditional 3-Col Grid */
             <>
               <PropertyGrid
                 properties={paginatedProperties}

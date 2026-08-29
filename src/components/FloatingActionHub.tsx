@@ -216,7 +216,7 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                       <td className="p-3 font-bold text-slate-400">سعر المتر التقديري</td>
                       {comparisonList.map((p) => (
                         <td key={p.id} className="p-3 font-mono font-bold text-slate-200">
-                          {formatPrice(Math.round(p.priceUsd / p.area))} / م²
+                          {p.area > 0 ? `${formatPrice(Math.round(p.priceUsd / p.area))} / م²` : '-'}
                         </td>
                       ))}
                     </tr>

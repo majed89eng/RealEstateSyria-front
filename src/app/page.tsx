@@ -9,6 +9,7 @@ import { PropertyGrid } from '@/components/PropertyGrid';
 import { PropertyDetailModal } from '@/components/PropertyDetailModal';
 import { AIAssistant } from '@/components/AIAssistant';
 import { GovernoratesSection } from '@/components/GovernoratesSection';
+import { MarketPriceIndexSection } from '@/components/MarketPriceIndexSection';
 import { WhyUsSection } from '@/components/WhyUsSection';
 import { Footer } from '@/components/Footer';
 import { FloatingActionHub } from '@/components/FloatingActionHub';
@@ -90,6 +91,9 @@ export default function HomePage() {
 
         {/* Regional Governorates Explorer */}
         <GovernoratesSection onSelectGovernorateAndRegion={handleRegionSelect} />
+
+        {/* Syrian Real Estate Market Price Index */}
+        <MarketPriceIndexSection />
 
         {/* Why Choose Us Trust Signals */}
         <WhyUsSection />

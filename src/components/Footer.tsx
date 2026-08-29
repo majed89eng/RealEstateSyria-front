@@ -88,6 +88,11 @@ export const Footer: React.FC<FooterProps> = ({ onSelectRegion }) => {
                 </Link>
               </li>
               <li>
+                <Link href="/market-index" className="text-emerald-400 font-bold hover:text-emerald-300 transition-colors flex items-center gap-1">
+                  <span>📊 مؤشر أسعار العقارات والمتر</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/request-property" className="text-amber-400 font-bold hover:text-amber-300 transition-colors flex items-center gap-1">
                   <span>✨ اطلب عقارك الخاص (خدمة الإدارة)</span>
                 </Link>

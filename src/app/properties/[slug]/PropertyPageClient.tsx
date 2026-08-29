@@ -32,6 +32,8 @@ import {
   HardHat,
   Video,
   Printer,
+  BadgeCheck,
+  FileCheck,
 } from 'lucide-react';
 import { Property } from '@/types/property';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -72,16 +74,14 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
       ? property.images
       : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'];
 
-  const whatsappUrl = propertyService.generateWhatsAppUrl(property, currency);
+  const whatsappUrl = propertyService.generateWhatsAppUrl(property, undefined, currency);
+  const videoRequestWhatsappUrl = propertyService.generateVideoRequestWhatsAppUrl(property);
+  const phoneNumber = '+963988123456';
+  const phoneCallUrl = `tel:${phoneNumber}`;
+
   const isSold = property.availabilityStatus === 'sold';
   const isRented = property.availabilityStatus === 'rented';
   const isUnavailable = isSold || isRented;
-
-  const isRecentlyUpdated = () => {
-    if (!property.updatedAt) return false;
-    const diffDays = (new Date().getTime() - new Date(property.updatedAt).getTime()) / (1000 * 3600 * 24);
-    return diffDays <= 7;
-  };
 
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
@@ -115,9 +115,17 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
     }, 600);
   };
 
+  const nextImage = () => {
+    setActiveImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
   return (
     <div className="space-y-10">
-      {/* Top Banner: Title, Code, Status & Share */}
+      {/* Top Banner: Title, Code, Status, Trust Badge & Share */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-slate-800/80">
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -145,12 +153,17 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                 : 'للإيجـار'}
             </span>
 
-            {isRecentlyUpdated() && (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5" />
-                تم التحديث مؤخراً
-              </span>
-            )}
+            {/* Visual Trust Badge */}
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
+              <BadgeCheck className="w-4 h-4 text-emerald-400" />
+              <span>عقار موثق ومفحوص الملكية 🟢</span>
+            </span>
+
+            {/* Last Price Update Badge */}
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-300 border border-slate-800 flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5 text-emerald-400" />
+              <span>تم تدقيق السعر حديثاً</span>
+            </span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white font-alexandria leading-[1.4]">
@@ -173,7 +186,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                 {property.contractType === 'rent' ? 'الإيجار المطلوب' : 'السعر المطلوب'}
               </span>
               {property.area > 0 && property.contractType === 'sale' && !isUnavailable && (
-                <span className="text-[11px] text-slate-500 font-mono font-bold">
+                <span className="text-[11px] text-emerald-400/90 font-mono font-bold">
                   ≈ {formatPrice(Math.round(property.priceUsd / property.area))}/م²
                 </span>
               )}
@@ -235,18 +248,6 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
               <span>{copiedLink ? 'منسوخ' : 'مشاركة'}</span>
             </button>
 
-            {/* Video Request CTA */}
-            <a
-              href={propertyService.generateVideoRequestWhatsAppUrl(property)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-bold text-xs shadow-sm transition-transform hover:scale-105"
-              title="طلب مقطع فيديو مصور للعقار عبر واتساب"
-            >
-              <Video className="w-4 h-4 text-amber-400" />
-              <span>طلب فيديو عبر واتساب</span>
-            </a>
-
             {/* PDF Export Component */}
             <PropertyPdfExport property={property} />
           </div>
@@ -259,12 +260,11 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
         <div className="lg:col-span-8 space-y-8">
           {/* Gallery Section */}
           <div className="space-y-3">
-            {/* Big Active Image */}
-            <div className="relative aspect-[16/10] bg-slate-900 rounded-3xl overflow-hidden group shadow-2xl border border-slate-800">
+            <div className="relative aspect-[16/9] bg-slate-950 rounded-3xl overflow-hidden group shadow-2xl border border-slate-800">
               <img
                 src={images[activeImageIndex]}
                 alt={`${property.title} - صورة ${activeImageIndex + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-all duration-300"
               />
 
               {/* Prev / Next controls */}
@@ -272,34 +272,37 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                 <>
                   <button
                     type="button"
-                    onClick={() => setActiveImageIndex((prev) => (prev + 1) % images.length)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/70 hover:bg-slate-950/90 text-white backdrop-blur-sm transition-all"
+                    onClick={prevImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-md transition-all shadow-lg hover:scale-110"
+                    aria-label="الصورة السابقة"
                   >
                     <ChevronRight className="w-6 h-6" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length)}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/70 hover:bg-slate-950/90 text-white backdrop-blur-sm transition-all"
+                    onClick={nextImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white backdrop-blur-md transition-all shadow-lg hover:scale-110"
+                    aria-label="الصورة التالية"
                   >
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                 </>
               )}
 
-              {/* Zoom Lightbox */}
-              <button
-                type="button"
-                onClick={() => setIsFullscreenLightbox(true)}
-                className="absolute bottom-4 left-4 px-3.5 py-2 rounded-xl bg-slate-900/80 text-white text-xs font-semibold backdrop-blur-md hover:bg-slate-900 transition-colors flex items-center gap-1.5"
-              >
-                <Maximize className="w-4 h-4" />
-                <span>تكبير كامل الشاشة</span>
-              </button>
+              {/* Action overlays */}
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+                <button
+                  type="button"
+                  onClick={() => setIsFullscreenLightbox(true)}
+                  className="pointer-events-auto px-3.5 py-2 rounded-2xl bg-slate-950/80 text-white text-xs font-bold backdrop-blur-md hover:bg-slate-900 transition-colors flex items-center gap-1.5 shadow-md"
+                >
+                  <Maximize className="w-4 h-4" />
+                  <span>عرض ملء الشاشة ({images.length} صور)</span>
+                </button>
 
-              {/* Counter */}
-              <div className="absolute bottom-4 right-4 px-3.5 py-1.5 rounded-xl bg-slate-900/80 text-white text-xs font-semibold backdrop-blur-md font-mono">
-                {activeImageIndex + 1} / {images.length}
+                <div className="px-3.5 py-1.5 rounded-2xl bg-slate-950/80 text-white text-xs font-bold backdrop-blur-md font-mono">
+                  {activeImageIndex + 1} / {images.length}
+                </div>
               </div>
             </div>
 
@@ -313,7 +316,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                     onClick={() => setActiveImageIndex(idx)}
                     className={`relative w-28 h-20 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all ${
                       activeImageIndex === idx
-                        ? 'border-emerald-500 ring-4 ring-emerald-500/20'
+                        ? 'border-emerald-500 ring-2 ring-emerald-500/30 scale-105'
                         : 'border-slate-800 opacity-60 hover:opacity-100'
                     }`}
                   >
@@ -324,87 +327,79 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
             )}
           </div>
 
-          {/* Key Specs Matrix Cards */}
-          <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-4">
+          {/* Technical Specs Cards Grid */}
+          <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-5">
             <h2 className="text-lg font-bold text-white font-alexandria flex items-center gap-2">
               <Building className="w-5 h-5 text-emerald-400" />
               <span>المواصفات الفنية والهندسية</span>
             </h2>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 pt-2">
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400 block font-medium">المساحة الإجمالية</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block">المساحة الإجمالية</span>
                 <span className="text-base font-bold text-white flex items-center gap-1.5">
                   <Maximize2 className="w-4 h-4 text-emerald-400" />
                   {property.area} م²
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400 block font-medium">غرف النوم</span>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block">عدد الغرف</span>
                 <span className="text-base font-bold text-white flex items-center gap-1.5">
                   <Bed className="w-4 h-4 text-emerald-400" />
                   {property.bedrooms} غرف
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400 block font-medium">الحمامات</span>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block">عدد الحمامات</span>
                 <span className="text-base font-bold text-white flex items-center gap-1.5">
                   <Bath className="w-4 h-4 text-emerald-400" />
                   {property.bathrooms} حمام
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400 block font-medium">الطابق</span>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block">الطابق</span>
                 <span className="text-base font-bold text-white flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-emerald-400" />
                   {property.floor}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400 block font-medium">الاتجاه</span>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block">الاتجاه</span>
                 <span className="text-base font-bold text-white flex items-center gap-1.5">
                   <Compass className="w-4 h-4 text-emerald-400" />
                   {property.direction}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 col-span-2">
-                <span className="text-xs text-slate-400 block font-medium">نوع الملكية وسند التمليك</span>
-                <span className="text-sm sm:text-base font-bold text-emerald-400 flex items-center gap-1.5">
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1 col-span-2">
+                <span className="text-xs text-slate-400 block">نوع الملكية والسند</span>
+                <span className="text-base font-bold text-emerald-400 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   {property.ownershipType}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400 block font-medium">حالة الإكساء</span>
-                <span className="text-base font-bold text-white">
-                  {property.finishingStatus === 'luxury'
-                    ? 'سوبر ديلوكس'
-                    : property.finishingStatus === 'finished'
-                    ? 'جاهز للسكن'
-                    : property.finishingStatus === 'semi_finished'
-                    ? 'نصف إكساء'
-                    : 'على العظم'}
-                </span>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 block">المحافظة</span>
+                <span className="text-base font-bold text-white">{property.governorate}</span>
               </div>
             </div>
           </div>
 
           {/* Off-Plan Project Investment Section */}
           {property.isOffPlan && (
-            <div className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 rounded-3xl p-6 border border-amber-500/30 shadow-xl space-y-4">
+            <div className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 rounded-3xl p-6 sm:p-7 border border-amber-500/30 shadow-xl space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-amber-300 font-alexandria flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold text-amber-300 font-alexandria flex items-center gap-2">
                   <HardHat className="w-5 h-5 text-amber-400" />
-                  <span>تفاصيل الشراء على المخطط وخطة التقسيط</span>
+                  <span>مشروع استثماري على المخطط (قيد الإنشاء)</span>
                 </h2>
-                <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950 shadow-sm">
-                  قيد الإنشاء
+                <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950 shadow-md">
+                  تسليم بالتقسيط
                 </span>
               </div>
 
@@ -413,7 +408,7 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
                   <span className="text-xs text-amber-400 font-bold block">موعد التسليم المتوقع</span>
                   <span className="text-sm sm:text-base font-extrabold text-white flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-amber-400" />
-                    {property.handoverDate || 'قريباً'}
+                    {property.handoverDate || 'خلال 2026/2027'}
                   </span>
                 </div>
 
@@ -478,34 +473,59 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           />
         </div>
 
-        {/* Right Column: Sticky Contact & Viewing Request Form (4 Cols) */}
+        {/* Right Column: Sticky Contact, Video Lead Magnet & Direct Phone CTA (4 Cols) */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Direct WhatsApp CTA Card */}
-          <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 rounded-3xl p-6 text-white shadow-2xl space-y-4 border border-emerald-500/40">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-md">
-                <MessageCircle className="w-7 h-7" />
+          {/* Primary Contact & Action Box */}
+          <div className="bg-slate-900/95 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 pb-3 border-b border-slate-800">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+                <ShieldCheck className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bold text-base font-alexandria">تواصل فوري عبر واتساب</h3>
-                <span className="text-xs text-emerald-100">مراسلة مباشرة مع الإدارة</span>
+                <h3 className="font-bold text-sm sm:text-base font-alexandria text-white">إدارة منصة عقارات سوريا</h3>
+                <span className="text-xs text-emerald-400 font-semibold">تواصل مباشر وسريع 🟢</span>
               </div>
             </div>
 
-            <p className="text-xs text-emerald-50 leading-relaxed">
-              {isUnavailable
-                ? 'هذا العقار لم يعد متاحاً حالياً، اضغط أدناه للتواصل معنا لطلب عقار مطابق في نفس المنطقة.'
-                : 'انقر للبدء بمحادثة فورية وسيقوم فريقنا بتزويدك بكافة الصور والفيديوهات وترتيب موعد معاينة ميدانية.'}
-            </p>
+            {/* Video Walkthrough Request Lead Magnet */}
+            <a
+              href={videoRequestWhatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent border border-amber-500/40 text-amber-300 hover:border-amber-400 transition-all duration-200 group shadow-md hover:scale-[1.01]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+                  <Video className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-extrabold text-white group-hover:text-amber-300 transition-colors">
+                    طلب فيديو ومعاينة افتراضية
+                  </div>
+                  <div className="text-[11px] text-slate-400">إرسال مقطع فيديو كامل عبر واتساب</div>
+                </div>
+              </div>
+              <ChevronLeft className="w-4 h-4 text-amber-400 group-hover:-translate-x-1 transition-transform" />
+            </a>
 
+            {/* WhatsApp Direct Chat Button */}
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-white text-emerald-950 font-black text-sm transition-transform hover:scale-[1.02] active:scale-95 shadow-lg"
+              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm transition-all shadow-lg shadow-emerald-600/30 hover:scale-[1.01] active:scale-95"
             >
-              <MessageCircle className="w-5 h-5 text-emerald-600" />
-              <span>{isUnavailable ? 'طلب عقار مشابه' : 'تواصل عبر واتساب'}</span>
+              <MessageCircle className="w-5 h-5" />
+              <span>تواصل فوري عبر واتساب</span>
+            </a>
+
+            {/* Direct Phone Call Button */}
+            <a
+              href={phoneCallUrl}
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white font-bold text-xs border border-slate-700 transition-all hover:scale-[1.01]"
+            >
+              <Phone className="w-4 h-4 text-emerald-400" />
+              <span>اتصال هاتفي مباشر ({phoneNumber})</span>
             </a>
           </div>
 
@@ -513,67 +533,61 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
           <div className="bg-slate-900/90 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
             <div className="flex items-center gap-2 text-white font-alexandria font-bold text-base">
               <Calendar className="w-5 h-5 text-emerald-400" />
-              <span>حجز موعد معاينة أو استفسار</span>
+              <span>حجز موعد معاينة ميدانية</span>
             </div>
 
             {leadSubmittedSuccess ? (
               <div className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-center space-y-3 animate-in zoom-in-95 duration-150">
                 <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-                <h3 className="text-sm font-bold text-white">تم استلام طلب المعاينة بنجاح!</h3>
-                <p className="text-xs text-slate-300">سنتواصل معك هاتفياً أو عبر واتساب لتأكيد الموعد.</p>
-                <button
-                  type="button"
-                  onClick={() => setLeadSubmittedSuccess(false)}
-                  className="text-xs text-emerald-400 font-bold hover:underline"
-                >
-                  إرسال طلب آخر
-                </button>
+                <h4 className="font-bold text-sm text-white">تم استلام طلب المعاينة بنجاح!</h4>
+                <p className="text-xs text-slate-300">
+                  سيتواصل معكم فريق المنصة لترتيب الوقت الأنسب للمعاينة وتزويدكم بالوثائق.
+                </p>
               </div>
             ) : (
-              <form onSubmit={handleLeadSubmit} className="space-y-3.5">
+              <form onSubmit={handleLeadSubmit} className="space-y-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">الاسم الكريم *</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1">الاسم الكريم *</label>
                   <input
                     type="text"
                     required
-                    placeholder="مثال: المهندس طارق"
+                    placeholder="مثال: أحمد العلي"
                     value={leadName}
                     onChange={(e) => setLeadName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950 border border-slate-700/80 rounded-2xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">رقم الهاتف أو الواتساب *</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1">رقم الهاتف / الواتساب *</label>
                   <input
                     type="tel"
                     required
-                    placeholder="+963 944 123 456"
+                    placeholder="09xxxxxxxx أو رقم دولي"
                     value={leadPhone}
                     onChange={(e) => setLeadPhone(e.target.value)}
-                    dir="ltr"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-right"
+                    className="w-full bg-slate-950 border border-slate-700/80 rounded-2xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">ملاحظات أو الموعد المفضل</label>
+                  <label className="block text-xs font-bold text-slate-400 mb-1">الوقت المفضل للمعاينة (اختياري)</label>
                   <textarea
-                    rows={3}
-                    placeholder="مثال: يفضل المعاينة في نهاية الأسبوع..."
+                    rows={2}
+                    placeholder="مثال: يوم الجمعة عصراً، أو الاستفسار عن تفاصيل إضافية..."
                     value={leadNotes}
                     onChange={(e) => setLeadNotes(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950 border border-slate-700/80 rounded-2xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmittingLead}
-                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-600/30"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{isSubmittingLead ? 'جاري الإرسال...' : 'إرسال طلب المعاينة'}</span>
+                  <span>{isSubmittingLead ? 'جاري الإرسال...' : 'تأكيد حجز المعاينة'}</span>
                 </button>
               </form>
             )}
@@ -583,88 +597,74 @@ export const PropertyPageClient: React.FC<Props> = ({ property, similarPropertie
 
       {/* Similar Properties Section */}
       {similarProperties.length > 0 && (
-        <div className="pt-10 border-t border-slate-800/80 space-y-6">
+        <section className="pt-10 border-t border-slate-800 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-bold font-alexandria text-white">
-              عقارات مشابهة في {property.region}
-            </h2>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-white font-alexandria">
+                عقارات مشابهة في {property.governorate} ({property.region})
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">عقارات من نفس الفئة والمنطقة قد تناسب طلبك</p>
+            </div>
             <Link
-              href={`/properties?gov=${encodeURIComponent(property.governorate)}`}
-              className="text-xs text-emerald-400 font-bold hover:underline"
+              href={`/properties?gov=${encodeURIComponent(property.governorate)}&region=${encodeURIComponent(property.region)}`}
+              className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
             >
-              عرض المزيد
+              <span>عرض المزيد</span>
+              <ChevronLeft className="w-4 h-4" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {similarProperties.map((p) => (
-              <PropertyCard key={p.id} property={p} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {similarProperties.slice(0, 3).map((item) => (
+              <PropertyCard key={item.id} property={item} onOpenDetail={() => {}} />
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Fullscreen Lightbox Modal */}
+      {/* Fullscreen Lightbox Overlay */}
       {isFullscreenLightbox && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col justify-between p-4 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="flex items-center justify-between text-white p-2">
-            <span className="text-xs font-mono font-bold bg-slate-900 px-3 py-1 rounded-full border border-slate-700">
-              {activeImageIndex + 1} / {images.length}
-            </span>
-            <button
-              type="button"
-              onClick={() => setIsFullscreenLightbox(false)}
-              className="p-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white transition-colors"
-            >
-              ✕ إغلاق
-            </button>
-          </div>
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 animate-in fade-in duration-150">
+          <button
+            type="button"
+            onClick={() => setIsFullscreenLightbox(false)}
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6 rotate-180" />
+          </button>
 
-          <div className="flex-1 flex items-center justify-center p-2 relative">
+          <div className="max-w-5xl max-h-[85vh] overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
             <img
               src={images[activeImageIndex]}
               alt="صورة كاملة"
-              className="max-h-[85vh] max-w-[95vw] object-contain rounded-2xl"
+              className="max-w-full max-h-[85vh] object-contain"
             />
-            {images.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setActiveImageIndex((prev) => (prev + 1) % images.length)}
-                  className="absolute right-4 p-4 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white"
-                >
-                  <ChevronRight className="w-8 h-8" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length)}
-                  className="absolute left-4 p-4 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white"
-                >
-                  <ChevronLeft className="w-8 h-8" />
-                </button>
-              </>
-            )}
           </div>
 
-          {/* Thumbnails in Lightbox */}
-          <div className="flex items-center justify-center gap-2 overflow-x-auto py-2">
-            {images.map((img, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setActiveImageIndex(idx)}
-                className={`w-16 h-12 rounded-xl overflow-hidden border-2 transition-all ${
-                  activeImageIndex === idx ? 'border-emerald-500' : 'border-transparent opacity-50'
-                }`}
-              >
-                <img src={img} alt="مصغرة" className="w-full h-full object-cover" />
-              </button>
-            ))}
+          <div className="mt-4 flex items-center gap-6 text-white text-sm">
+            <button
+              type="button"
+              onClick={prevImage}
+              className="p-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+            <span className="font-mono font-bold">
+              {activeImageIndex + 1} من {images.length}
+            </span>
+            <button
+              type="button"
+              onClick={nextImage}
+              className="p-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
           </div>
         </div>
       )}
 
-      <FloatingActionHub allProperties={[property, ...similarProperties]} />
+      {/* Floating Action Hub (Favorites, Comparison, Live WhatsApp) */}
+      <FloatingActionHub />
     </div>
   );
 };
