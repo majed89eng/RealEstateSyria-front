@@ -15,6 +15,7 @@ import {
   Compass,
 } from 'lucide-react';
 import { ContractType, Governorate } from '../types/property';
+import { SYRIAN_LOCATIONS } from '../data/locations';
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -199,12 +200,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     onChange={(e) => onGovernorateChange(e.target.value as Governorate)}
                     className="w-full bg-slate-950/80 text-white border border-slate-700/80 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-semibold transition-all appearance-none cursor-pointer"
                   >
-                    <option value="الكل">كل المحافظات</option>
-                    <option value="دمشق">محافظة دمشق</option>
-                    <option value="ريف دمشق">محافظة ريف دمشق</option>
-                    <option value="حلب">محافظة حلب</option>
-                    <option value="حمص">محافظة حمص</option>
-                    <option value="حماة">محافظة حماة</option>
+                    <option value="الكل">كل المحافظات (14 محافظة)</option>
+                    {SYRIAN_LOCATIONS.map((loc) => (
+                      <option key={loc.provinceId} value={loc.provinceNameAr}>
+                        محافظة {loc.provinceNameAr}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

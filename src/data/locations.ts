@@ -164,6 +164,16 @@ export const SYRIAN_LOCATIONS: LocationHierarchy[] = [
         neighborhoods: [
           { neighborhoodId: 'university-neighborhood', neighborhoodNameAr: 'حي الجامعة', neighborhoodNameEn: 'University District', neighborhoodSlug: 'university-neighborhood' }
         ]
+      },
+      {
+        cityId: 'new-aleppo',
+        cityNameAr: 'حلب الجديدة',
+        cityNameEn: 'New Aleppo',
+        citySlug: 'new-aleppo',
+        neighborhoods: [
+          { neighborhoodId: 'new-aleppo-north', neighborhoodNameAr: 'حلب الجديدة الشمالية', neighborhoodNameEn: 'North New Aleppo', neighborhoodSlug: 'new-aleppo-north' },
+          { neighborhoodId: 'new-aleppo-south', neighborhoodNameAr: 'حلب الجديدة الجنوبية', neighborhoodNameEn: 'South New Aleppo', neighborhoodSlug: 'new-aleppo-south' }
+        ]
       }
     ]
   },
@@ -199,6 +209,15 @@ export const SYRIAN_LOCATIONS: LocationHierarchy[] = [
         neighborhoods: [
           { neighborhoodId: 'hamra-gardens', neighborhoodNameAr: 'بساتين الحمراء', neighborhoodNameEn: 'Hamra Gardens', neighborhoodSlug: 'hamra-gardens' }
         ]
+      },
+      {
+        cityId: 'al-waer',
+        cityNameAr: 'الوعر',
+        cityNameEn: 'Al Waer',
+        citySlug: 'al-waer',
+        neighborhoods: [
+          { neighborhoodId: 'new-waer', neighborhoodNameAr: 'الوعر الجديد', neighborhoodNameEn: 'New Waer', neighborhoodSlug: 'new-waer' }
+        ]
       }
     ]
   },
@@ -224,6 +243,15 @@ export const SYRIAN_LOCATIONS: LocationHierarchy[] = [
         citySlug: 'al-dabbagha',
         neighborhoods: [
           { neighborhoodId: 'nawaeer-park', neighborhoodNameAr: 'محيط النواعير والعاصي', neighborhoodNameEn: 'Nawaeer Park', neighborhoodSlug: 'nawaeer-park' }
+        ]
+      },
+      {
+        cityId: 'al-hadir',
+        cityNameAr: 'الحاضر',
+        cityNameEn: 'Al Hadir',
+        citySlug: 'al-hadir',
+        neighborhoods: [
+          { neighborhoodId: 'hadir-center', neighborhoodNameAr: 'مركز الحاضر القديم', neighborhoodNameEn: 'Hadir Center', neighborhoodSlug: 'hadir-center' }
         ]
       }
     ]
@@ -251,6 +279,15 @@ export const SYRIAN_LOCATIONS: LocationHierarchy[] = [
         neighborhoods: [
           { neighborhoodId: 'chalets-area', neighborhoodNameAr: 'منطقة الشاليهات والمنتجعات', neighborhoodNameEn: 'Chalets Area', neighborhoodSlug: 'chalets-area' }
         ]
+      },
+      {
+        cityId: 'mashrou-al-sabea',
+        cityNameAr: 'المشروع السابع',
+        cityNameEn: '7th Project',
+        citySlug: 'mashrou-al-sabea',
+        neighborhoods: [
+          { neighborhoodId: 'sabea-villas', neighborhoodNameAr: 'فيلات المشروع السابع', neighborhoodNameEn: '7th Project Villas', neighborhoodSlug: 'sabea-villas' }
+        ]
       }
     ]
   },
@@ -267,6 +304,299 @@ export const SYRIAN_LOCATIONS: LocationHierarchy[] = [
         citySlug: 'tartus-corniche',
         neighborhoods: [
           { neighborhoodId: 'marina', neighborhoodNameAr: 'محيط المارينا والميناء', neighborhoodNameEn: 'Marina', neighborhoodSlug: 'marina' }
+        ]
+      },
+      {
+        cityId: 'safita',
+        cityNameAr: 'صافيتا',
+        cityNameEn: 'Safita',
+        citySlug: 'safita',
+        neighborhoods: [
+          { neighborhoodId: 'safita-tower', neighborhoodNameAr: 'محيط برج صافيتا', neighborhoodNameEn: 'Safita Tower Area', neighborhoodSlug: 'safita-tower' }
+        ]
+      },
+      {
+        cityId: 'baniyas',
+        cityNameAr: 'بانياس',
+        cityNameEn: 'Baniyas',
+        citySlug: 'baniyas',
+        neighborhoods: [
+          { neighborhoodId: 'baniyas-corniche', neighborhoodNameAr: 'كورنيش بانياس', neighborhoodNameEn: 'Baniyas Corniche', neighborhoodSlug: 'baniyas-corniche' }
+        ]
+      }
+    ]
+  },
+  {
+    provinceId: 'daraa',
+    provinceNameAr: 'درعا',
+    provinceNameEn: 'Daraa',
+    provinceSlug: 'daraa',
+    cities: [
+      {
+        cityId: 'daraa-mahata',
+        cityNameAr: 'درعا المحطة',
+        cityNameEn: 'Daraa Al-Mahata',
+        citySlug: 'daraa-mahata',
+        neighborhoods: [
+          { neighborhoodId: 'al-shuhada-square', neighborhoodNameAr: 'محيط ساحة الشهداء', neighborhoodNameEn: 'Shuhada Square', neighborhoodSlug: 'al-shuhada-square' },
+          { neighborhoodId: 'al-qusoor-daraa', neighborhoodNameAr: 'حي القصور', neighborhoodNameEn: 'Al Qusoor', neighborhoodSlug: 'al-qusoor-daraa' }
+        ]
+      },
+      {
+        cityId: 'daraa-balad',
+        cityNameAr: 'درعا البلد',
+        cityNameEn: 'Daraa Al-Balad',
+        citySlug: 'daraa-balad',
+        neighborhoods: [
+          { neighborhoodId: 'al-manshiya', neighborhoodNameAr: 'حي المنشية', neighborhoodNameEn: 'Al Manshiya', neighborhoodSlug: 'al-manshiya' }
+        ]
+      },
+      {
+        cityId: 'izra',
+        cityNameAr: 'إزرع',
+        cityNameEn: 'Izra',
+        citySlug: 'izra',
+        neighborhoods: [
+          { neighborhoodId: 'izra-center', neighborhoodNameAr: 'وسط إزرع', neighborhoodNameEn: 'Izra Center', neighborhoodSlug: 'izra-center' }
+        ]
+      },
+      {
+        cityId: 'sanamein',
+        cityNameAr: 'الصنمين',
+        cityNameEn: 'Al-Sanamayn',
+        citySlug: 'sanamein',
+        neighborhoods: [
+          { neighborhoodId: 'sanamein-main', neighborhoodNameAr: 'شارع السوق الرئيسي', neighborhoodNameEn: 'Main Souq', neighborhoodSlug: 'sanamein-main' }
+        ]
+      }
+    ]
+  },
+  {
+    provinceId: 'suwayda',
+    provinceNameAr: 'السويداء',
+    provinceNameEn: 'As-Suwayda',
+    provinceSlug: 'suwayda',
+    cities: [
+      {
+        cityId: 'suwayda-city',
+        cityNameAr: 'مدينة السويداء',
+        cityNameEn: 'Suwayda City',
+        citySlug: 'suwayda-city',
+        neighborhoods: [
+          { neighborhoodId: 'al-mashnaqa', neighborhoodNameAr: 'ساحة المشنقة والمتحف', neighborhoodNameEn: 'Museum Area', neighborhoodSlug: 'al-mashnaqa' },
+          { neighborhoodId: 'dahr-al-jabal', neighborhoodNameAr: 'طريق ظهر الجبل (فيلات ومزارع)', neighborhoodNameEn: 'Dahr Al Jabal', neighborhoodSlug: 'dahr-al-jabal' },
+          { neighborhoodId: 'al-masaken', neighborhoodNameAr: 'حي المساكن', neighborhoodNameEn: 'Al Masaken', neighborhoodSlug: 'al-masaken' }
+        ]
+      },
+      {
+        cityId: 'shahba',
+        cityNameAr: 'شهبا',
+        cityNameEn: 'Shahba',
+        citySlug: 'shahba',
+        neighborhoods: [
+          { neighborhoodId: 'roman-ruins', neighborhoodNameAr: 'محيط الآثار الرومانية', neighborhoodNameEn: 'Roman Ruins Area', neighborhoodSlug: 'roman-ruins' }
+        ]
+      },
+      {
+        cityId: 'salkhad',
+        cityNameAr: 'صلخد',
+        cityNameEn: 'Salkhad',
+        citySlug: 'salkhad',
+        neighborhoods: [
+          { neighborhoodId: 'castle-salkhad', neighborhoodNameAr: 'محيط قلعة صلخد', neighborhoodNameEn: 'Castle Area', neighborhoodSlug: 'castle-salkhad' }
+        ]
+      }
+    ]
+  },
+  {
+    provinceId: 'quneitra',
+    provinceNameAr: 'القنيطرة',
+    provinceNameEn: 'Quneitra',
+    provinceSlug: 'quneitra',
+    cities: [
+      {
+        cityId: 'madinat-al-baath',
+        cityNameAr: 'مدينة البعث',
+        cityNameEn: 'Madinat Al-Baath',
+        citySlug: 'madinat-al-baath',
+        neighborhoods: [
+          { neighborhoodId: 'baath-center', neighborhoodNameAr: 'المركز الإداري والخدمي', neighborhoodNameEn: 'Civic Center', neighborhoodSlug: 'baath-center' }
+        ]
+      },
+      {
+        cityId: 'khan-arnabeh',
+        cityNameAr: 'خان أرنبة',
+        cityNameEn: 'Khan Arnabeh',
+        citySlug: 'khan-arnabeh',
+        neighborhoods: [
+          { neighborhoodId: 'main-market', neighborhoodNameAr: 'سوق خان أرنبة', neighborhoodNameEn: 'Main Market', neighborhoodSlug: 'main-market' }
+        ]
+      }
+    ]
+  },
+  {
+    provinceId: 'idlib',
+    provinceNameAr: 'إدلب',
+    provinceNameEn: 'Idlib',
+    provinceSlug: 'idlib',
+    cities: [
+      {
+        cityId: 'idlib-city',
+        cityNameAr: 'مدينة إدلب',
+        cityNameEn: 'Idlib City',
+        citySlug: 'idlib-city',
+        neighborhoods: [
+          { neighborhoodId: 'al-saaha-idlib', neighborhoodNameAr: 'ساحة الساعة والمركز', neighborhoodNameEn: 'Clock Square', neighborhoodSlug: 'al-saaha-idlib' },
+          { neighborhoodId: 'al-thawra-idlib', neighborhoodNameAr: 'شارع الثورة', neighborhoodNameEn: 'Al Thawra', neighborhoodSlug: 'al-thawra-idlib' },
+          { neighborhoodId: 'al-dbeit', neighborhoodNameAr: 'حي الضبيط', neighborhoodNameEn: 'Al Dbeit', neighborhoodSlug: 'al-dbeit' }
+        ]
+      },
+      {
+        cityId: 'ariha',
+        cityNameAr: 'أريحا',
+        cityNameEn: 'Ariha',
+        citySlug: 'ariha',
+        neighborhoods: [
+          { neighborhoodId: 'arbaeen-mountain', neighborhoodNameAr: 'سفح جبل الأربعين', neighborhoodNameEn: 'Arbaeen Mountain', neighborhoodSlug: 'arbaeen-mountain' }
+        ]
+      },
+      {
+        cityId: 'sarmada',
+        cityNameAr: 'سرمدا والدانا',
+        cityNameEn: 'Sarmada & Al-Dana',
+        citySlug: 'sarmada',
+        neighborhoods: [
+          { neighborhoodId: 'commercial-crossing', neighborhoodNameAr: 'المنطقة التجارية ومحيط المعبر', neighborhoodNameEn: 'Commercial Area', neighborhoodSlug: 'commercial-crossing' }
+        ]
+      },
+      {
+        cityId: 'jisr-al-shughur',
+        cityNameAr: 'جسر الشغور',
+        cityNameEn: 'Jisr al-Shughur',
+        citySlug: 'jisr-al-shughur',
+        neighborhoods: [
+          { neighborhoodId: 'orontes-bridge', neighborhoodNameAr: 'محيط الجسر الروماني والعاصي', neighborhoodNameEn: 'Orontes Bridge', neighborhoodSlug: 'orontes-bridge' }
+        ]
+      }
+    ]
+  },
+  {
+    provinceId: 'raqqa',
+    provinceNameAr: 'الرقة',
+    provinceNameEn: 'Ar-Raqqah',
+    provinceSlug: 'raqqa',
+    cities: [
+      {
+        cityId: 'raqqa-city',
+        cityNameAr: 'مدينة الرقة',
+        cityNameEn: 'Raqqa City',
+        citySlug: 'raqqa-city',
+        neighborhoods: [
+          { neighborhoodId: 'al-thawra-raqqa', neighborhoodNameAr: 'شارع 23 شباط والوادي', neighborhoodNameEn: 'Al Wadi Street', neighborhoodSlug: 'al-thawra-raqqa' },
+          { neighborhoodId: 'al-fardous', neighborhoodNameAr: 'حي الفردوس والحديقة البيضاء', neighborhoodNameEn: 'Al Fardous', neighborhoodSlug: 'al-fardous' }
+        ]
+      },
+      {
+        cityId: 'al-thawrah-tabqa',
+        cityNameAr: 'الطبقة (الثورة)',
+        cityNameEn: 'Al-Thawrah (Tabqa)',
+        citySlug: 'al-thawrah-tabqa',
+        neighborhoods: [
+          { neighborhoodId: 'euphrates-dam', neighborhoodNameAr: 'محيط بحيرة الأسد وسد الفرات', neighborhoodNameEn: 'Euphrates Lake Area', neighborhoodSlug: 'euphrates-dam' }
+        ]
+      },
+      {
+        cityId: 'tal-abyad',
+        cityNameAr: 'تل أبيض',
+        cityNameEn: 'Tal Abyad',
+        citySlug: 'tal-abyad',
+        neighborhoods: [
+          { neighborhoodId: 'border-souq', neighborhoodNameAr: 'السوق المركزي', neighborhoodNameEn: 'Central Souq', neighborhoodSlug: 'border-souq' }
+        ]
+      }
+    ]
+  },
+  {
+    provinceId: 'deir-ez-zor',
+    provinceNameAr: 'دير الزور',
+    provinceNameEn: 'Deir ez-Zor',
+    provinceSlug: 'deir-ez-zor',
+    cities: [
+      {
+        cityId: 'deir-ez-zor-city',
+        cityNameAr: 'مدينة دير الزور',
+        cityNameEn: 'Deir ez-Zor City',
+        citySlug: 'deir-ez-zor-city',
+        neighborhoods: [
+          { neighborhoodId: 'al-qusoor-deir', neighborhoodNameAr: 'حي القصور', neighborhoodNameEn: 'Al Qusoor', neighborhoodSlug: 'al-qusoor-deir' },
+          { neighborhoodId: 'al-joura', neighborhoodNameAr: 'حي الجورة', neighborhoodNameEn: 'Al Joura', neighborhoodSlug: 'al-joura' },
+          { neighborhoodId: 'hanging-bridge', neighborhoodNameAr: 'محيط الجسر المعلق والكورنيش', neighborhoodNameEn: 'Hanging Bridge Area', neighborhoodSlug: 'hanging-bridge' }
+        ]
+      },
+      {
+        cityId: 'al-mayadin',
+        cityNameAr: 'الميادين',
+        cityNameEn: 'Al-Mayadin',
+        citySlug: 'al-mayadin',
+        neighborhoods: [
+          { neighborhoodId: 'rahba-castle', neighborhoodNameAr: 'محيط قلعة الرحبة', neighborhoodNameEn: 'Rahba Area', neighborhoodSlug: 'rahba-castle' }
+        ]
+      },
+      {
+        cityId: 'al-bukamal',
+        cityNameAr: 'البوكمال',
+        cityNameEn: 'Al-Bukamal',
+        citySlug: 'al-bukamal',
+        neighborhoods: [
+          { neighborhoodId: 'border-market', neighborhoodNameAr: 'المنطقة التجارية الحدودية', neighborhoodNameEn: 'Commercial Area', neighborhoodSlug: 'border-market' }
+        ]
+      }
+    ]
+  },
+  {
+    provinceId: 'hasakah',
+    provinceNameAr: 'الحسكة',
+    provinceNameEn: 'Al-Hasakah',
+    provinceSlug: 'hasakah',
+    cities: [
+      {
+        cityId: 'qamishli',
+        cityNameAr: 'القامشلي',
+        cityNameEn: 'Qamishli',
+        citySlug: 'qamishli',
+        neighborhoods: [
+          { neighborhoodId: 'al-siyahi', neighborhoodNameAr: 'الحي السياحي', neighborhoodNameEn: 'Siyahi District', neighborhoodSlug: 'al-siyahi' },
+          { neighborhoodId: 'al-gharbi', neighborhoodNameAr: 'الحي الغربي', neighborhoodNameEn: 'West District', neighborhoodSlug: 'al-gharbi' },
+          { neighborhoodId: 'al-wusta', neighborhoodNameAr: 'حي الوسطى', neighborhoodNameEn: 'Al Wusta', neighborhoodSlug: 'al-wusta' }
+        ]
+      },
+      {
+        cityId: 'hasakah-city',
+        cityNameAr: 'مدينة الحسكة',
+        cityNameEn: 'Hasakah City',
+        citySlug: 'hasakah-city',
+        neighborhoods: [
+          { neighborhoodId: 'al-mufti', neighborhoodNameAr: 'حي المفتي', neighborhoodNameEn: 'Al Mufti', neighborhoodSlug: 'al-mufti' },
+          { neighborhoodId: 'al-aziziya-hasakah', neighborhoodNameAr: 'حي العزيزية', neighborhoodNameEn: 'Al Aziziya', neighborhoodSlug: 'al-aziziya-hasakah' },
+          { neighborhoodId: 'khabour-river', neighborhoodNameAr: 'محيط نهر الخابور', neighborhoodNameEn: 'Khabour River Area', neighborhoodSlug: 'khabour-river' }
+        ]
+      },
+      {
+        cityId: 'amuda',
+        cityNameAr: 'عامودا',
+        cityNameEn: 'Amuda',
+        citySlug: 'amuda',
+        neighborhoods: [
+          { neighborhoodId: 'amuda-center', neighborhoodNameAr: 'مركز مدينة عامودا', neighborhoodNameEn: 'Amuda Center', neighborhoodSlug: 'amuda-center' }
+        ]
+      },
+      {
+        cityId: 'al-malikiyah',
+        cityNameAr: 'المالكية (ديريك)',
+        cityNameEn: 'Al-Malikiyah',
+        citySlug: 'al-malikiyah',
+        neighborhoods: [
+          { neighborhoodId: 'malikiyah-market', neighborhoodNameAr: 'السوق التجاري', neighborhoodNameEn: 'Commercial Market', neighborhoodSlug: 'malikiyah-market' }
         ]
       }
     ]

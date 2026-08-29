@@ -32,7 +32,7 @@ import { SYRIAN_LOCATIONS } from '../../data/locations';
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 
-const GOVERNORATES = ['دمشق', 'ريف دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 'طرطوس'];
+const GOVERNORATES = SYRIAN_LOCATIONS.map((l) => l.provinceNameAr);
 
 const PROPERTY_TYPES = [
   { id: 'apartment', label: 'شقة سكنية', icon: Building2 },

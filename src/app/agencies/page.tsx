@@ -88,7 +88,7 @@ export default function AgenciesDirectoryPage() {
             {/* Governorate Filter Pills */}
             <div className="pt-3 flex flex-wrap items-center gap-1.5 border-t border-slate-800/80">
               <span className="text-xs text-slate-400 font-bold ml-2">المحافظة:</span>
-              {(['الكل', 'دمشق', 'ريف دمشق', 'حلب', 'حمص'] as Governorate[]).map((gov) => (
+              {(['الكل', 'دمشق', 'ريف دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 'طرطوس', 'درعا', 'السويداء'] as Governorate[]).map((gov) => (
                 <button
                   key={gov}
                   type="button"

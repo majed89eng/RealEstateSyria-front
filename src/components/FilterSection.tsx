@@ -36,6 +36,7 @@ import {
 } from '../types/property';
 import { propertyService } from '../services/propertyService';
 import { useCurrency } from '../context/CurrencyContext';
+import { SYRIAN_LOCATIONS } from '../data/locations';
 
 interface FilterSectionProps {
   filters: FilterOptions;
@@ -260,11 +261,11 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
                 className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-200 text-xs font-bold rounded-xl px-3 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer appearance-none pl-6 pr-3 transition-colors"
               >
                 <option value="الكل">كل المحافظات</option>
-                <option value="دمشق">دمشق</option>
-                <option value="ريف دمشق">ريف دمشق</option>
-                <option value="حلب">حلب</option>
-                <option value="حمص">حمص</option>
-                <option value="حماة">حماة</option>
+                {SYRIAN_LOCATIONS.map((loc) => (
+                  <option key={loc.provinceId} value={loc.provinceNameAr}>
+                    {loc.provinceNameAr}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -372,12 +373,12 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
                       onChange={(e) => onUpdateFilter('governorate', e.target.value as Governorate)}
                       className="w-full bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded-2xl p-3 focus:outline-none focus:border-emerald-500"
                     >
-                      <option value="الكل">كافة المحافظات</option>
-                      <option value="دمشق">محافظة دمشق</option>
-                      <option value="ريف دمشق">محافظة ريف دمشق</option>
-                      <option value="حلب">محافظة حلب</option>
-                      <option value="حمص">محافظة حمص</option>
-                      <option value="حماة">محافظة حماة</option>
+                      <option value="الكل">كافة المحافظات (14 محافظة)</option>
+                      {SYRIAN_LOCATIONS.map((loc) => (
+                        <option key={loc.provinceId} value={loc.provinceNameAr}>
+                          محافظة {loc.provinceNameAr}
+                        </option>
+                      ))}
                     </select>
                   </div>
 

@@ -28,7 +28,14 @@ export type Governorate =
   | 'حمص'
   | 'حماة'
   | 'اللاذقية'
-  | 'طرطوس';
+  | 'طرطوس'
+  | 'درعا'
+  | 'السويداء'
+  | 'القنيطرة'
+  | 'إدلب'
+  | 'الرقة'
+  | 'دير الزور'
+  | 'الحسكة';
 
 export interface LocationHierarchy {
   provinceId: string;

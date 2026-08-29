@@ -427,13 +427,11 @@ export default function AddPropertyPage() {
                         }}
                         className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 text-xs sm:text-sm text-white font-bold focus:outline-none focus:border-emerald-500"
                       >
-                        <option value="دمشق">دمشق</option>
-                        <option value="ريف دمشق">ريف دمشق</option>
-                        <option value="حلب">حلب</option>
-                        <option value="حمص">حمص</option>
-                        <option value="حماة">حماة</option>
-                        <option value="اللاذقية">اللاذقية</option>
-                        <option value="طرطوس">طرطوس</option>
+                        {SYRIAN_LOCATIONS.map((loc) => (
+                          <option key={loc.provinceId} value={loc.provinceNameAr}>
+                            محافظة {loc.provinceNameAr}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
