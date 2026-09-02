@@ -18,19 +18,18 @@ import {
   LogOut,
   Settings,
   CheckCircle2,
-  Clock,
   Trash2,
   ExternalLink,
   Edit3,
   Award,
   Sparkles,
-  Share2,
-  Filter,
-  Search,
-  Check,
-  AlertCircle,
-  Tag,
   Layers,
+  Rocket,
+  RefreshCw,
+  DollarSign,
+  X,
+  Check,
+  Search,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
@@ -53,6 +52,9 @@ export default function DashboardPage() {
   const [favoritePropertiesList, setFavoritePropertiesList] = useState<Property[]>([]);
   const [loadingProperties, setLoadingProperties] = useState<boolean>(true);
   const [statusNotification, setStatusNotification] = useState<string | null>(null);
+  // Price Editing state
+  const [editingPriceProp, setEditingPriceProp] = useState<{ id: string; title: string; priceUsd: number } | null>(null);
+  const [newPriceInput, setNewPriceInput] = useState<string>('');
 
   // Settings form states
   const [editName, setEditName] = useState('');
@@ -135,6 +137,47 @@ export default function DashboardPage() {
       removeMyListing(propertyId);
       setMyPropertiesList((prev) => prev.filter((p) => p.id !== propertyId));
       showNotification('تم حذف العقار بنجاح.');
+    }
+  };
+
+  const handleOpenPriceModal = (prop: Property) => {
+    setEditingPriceProp({ id: prop.id, title: prop.title, priceUsd: prop.priceUsd });
+    setNewPriceInput(prop.priceUsd.toString());
+  };
+
+  const handleSavePrice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPriceProp || !newPriceInput) return;
+    const numPrice = Number(newPriceInput);
+    if (isNaN(numPrice) || numPrice <= 0) return;
+
+    const success = await propertyService.updatePropertyPrice(editingPriceProp.id, numPrice);
+    if (success) {
+      setMyPropertiesList((prev) =>
+        prev.map((p) => (p.id === editingPriceProp.id ? { ...p, priceUsd: numPrice } : p))
+      );
+      showNotification('تم تعديل السعر المطلوب للعقار بنجاح 💵');
+      setEditingPriceProp(null);
+    }
+  };
+
+  const handleBumpProperty = async (propertyId: string) => {
+    const success = await propertyService.bumpPropertyToTop(propertyId);
+    if (success) {
+      setMyPropertiesList((prev) => {
+        const item = prev.find((p) => p.id === propertyId);
+        if (!item) return prev;
+        const rest = prev.filter((p) => p.id !== propertyId);
+        return [{ ...item, createdAt: new Date().toISOString() }, ...rest];
+      });
+      showNotification('تم رفع الإعلان إلى أعلى نتائج البحث 🚀');
+    }
+  };
+
+  const handleRenewProperty = async (propertyId: string) => {
+    const success = await propertyService.renewPropertyListing(propertyId);
+    if (success) {
+      showNotification('تم تجديد الإعلان بنجاح وتحديث تاريخ النشر 🔄');
     }
   };
 
@@ -632,7 +675,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Status Toggle & Actions */}
-                    <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-slate-700">
+                    <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-slate-700">
                       {/* Availability Selector */}
                       <select
                         value={property.availabilityStatus}
@@ -650,6 +693,38 @@ export default function DashboardPage() {
                         <option value="sold">🔴 تم البيع</option>
                         <option value="rented">🔴 تم التأجير</option>
                       </select>
+
+                      {/* Edit Price Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenPriceModal(property)}
+                        className="flex items-center gap-1 py-1.5 px-2.5 rounded-xl bg-slate-750 hover:bg-slate-700 text-slate-200 hover:text-emerald-400 text-xs font-bold transition-colors border border-slate-600"
+                        title="تعديل وتحديث السعر المطلوب"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>السعر</span>
+                      </button>
+
+                      {/* Bump to Top Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleBumpProperty(property.id)}
+                        className="flex items-center gap-1 py-1.5 px-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold transition-colors border border-amber-500/30"
+                        title="رفع الإعلان إلى أعلى نتائج البحث"
+                      >
+                        <Rocket className="w-3.5 h-3.5 text-amber-400" />
+                        <span>رفع 🚀</span>
+                      </button>
+
+                      {/* Renew Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleRenewProperty(property.id)}
+                        className="p-2 rounded-xl bg-slate-700/80 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 transition-colors border border-slate-600"
+                        title="تجديد الإعلان وتحديث تاريخ النشر"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                      </button>
 
                       {/* View Link */}
                       <Link
@@ -911,6 +986,68 @@ export default function DashboardPage() {
                 )}
               </button>
             </form>
+          </div>
+        )}
+
+        {/* Quick Price Edit Modal */}
+        {editingPriceProp && (
+          <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150 text-right">
+            <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-2 text-white font-bold font-alexandria text-sm sm:text-base">
+                  <DollarSign className="w-5 h-5 text-emerald-400" />
+                  <span>تعديل السعر المطلوب للعقار</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditingPriceProp(null)}
+                  className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <p className="text-xs text-slate-300 font-medium">
+                {editingPriceProp.title}
+              </p>
+
+              <form onSubmit={handleSavePrice} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 mb-1.5">
+                    السعر الجديد بالدولار الأمريكي ($) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min="100"
+                    value={newPriceInput}
+                    onChange={(e) => setNewPriceInput(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-2xl p-3 text-base text-white font-mono font-bold focus:outline-none focus:border-emerald-500"
+                  />
+                  {newPriceInput && !isNaN(Number(newPriceInput)) && (
+                    <span className="text-[11px] text-emerald-400 font-mono mt-1 block">
+                      ≈ {exchangeRateService.formatPrice(Number(newPriceInput), 'SYP')} بالليرة السورية
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="submit"
+                    className="flex-1 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm transition-colors shadow-lg shadow-emerald-600/30 cursor-pointer"
+                  >
+                    حفظ وتحديث السعر
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingPriceProp(null)}
+                    className="py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs cursor-pointer"
+                  >
+                    إلغاء
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </main>

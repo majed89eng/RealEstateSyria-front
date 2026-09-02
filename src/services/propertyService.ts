@@ -561,6 +561,77 @@ export const propertyService = {
   },
 
   /**
+   * Update property price in USD
+   */
+  async updatePropertyPrice(propertyId: string, newPriceUsd: number): Promise<boolean> {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        let customProps: Property[] = stored ? JSON.parse(stored) : [];
+        const existingIdx = customProps.findIndex((p) => p.id === propertyId);
+        if (existingIdx !== -1) {
+          customProps[existingIdx].priceUsd = newPriceUsd;
+          customProps[existingIdx].updatedAt = new Date().toISOString();
+        } else {
+          const mockProp = (mockPropertiesData as unknown as Property[]).find((p) => p.id === propertyId);
+          if (mockProp) {
+            customProps.unshift({
+              ...mockProp,
+              priceUsd: newPriceUsd,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(customProps));
+        return true;
+      } catch (e) {
+        console.error('Error updating property price:', e);
+      }
+    }
+    return false;
+  },
+
+  /**
+   * Bump / Boost property listing to the top
+   */
+  async bumpPropertyToTop(propertyId: string): Promise<boolean> {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        let customProps: Property[] = stored ? JSON.parse(stored) : [];
+        const existingIdx = customProps.findIndex((p) => p.id === propertyId);
+        if (existingIdx !== -1) {
+          const prop = customProps.splice(existingIdx, 1)[0];
+          prop.createdAt = new Date().toISOString();
+          prop.updatedAt = new Date().toISOString();
+          customProps.unshift(prop);
+        } else {
+          const mockProp = (mockPropertiesData as unknown as Property[]).find((p) => p.id === propertyId);
+          if (mockProp) {
+            customProps.unshift({
+              ...mockProp,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(customProps));
+        return true;
+      } catch (e) {
+        console.error('Error bumping property:', e);
+      }
+    }
+    return false;
+  },
+
+  /**
+   * Renew property listing (refresh active date and view stats)
+   */
+  async renewPropertyListing(propertyId: string): Promise<boolean> {
+    return this.bumpPropertyToTop(propertyId);
+  },
+
+  /**
    * Delete or soft-delete a property
    */
   async deleteProperty(propertyId: string): Promise<boolean> {
