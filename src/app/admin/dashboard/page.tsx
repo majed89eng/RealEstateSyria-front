@@ -43,6 +43,7 @@ import { Property, Governorate, PropertyType, FinishingStatus, AvailabilityStatu
 import { Lead, LeadStatus } from '@/types/lead';
 import { PropertyRequest, PropertyRequestStatus } from '@/types/propertyRequest';
 import { propertyService } from '@/services/propertyService';
+import { imageOptimizerService } from '@/services/imageOptimizerService';
 import { exchangeRateService } from '@/services/exchangeRateService';
 import { leadService } from '@/services/leadService';
 import { propertyRequestService } from '@/services/propertyRequestService';
@@ -101,6 +102,8 @@ export default function AdminDashboardPage() {
   const [formDescription, setFormDescription] = useState<string>('');
   const [formImages, setFormImages] = useState<string[]>([]);
   const [formFeatured, setFormFeatured] = useState<boolean>(false);
+  const [isCompressingAdminImages, setIsCompressingAdminImages] = useState<boolean>(false);
+  const [adminCompressionFeedback, setAdminCompressionFeedback] = useState<string | null>(null);
 
   // File Upload Ref
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -215,24 +218,51 @@ export default function AdminDashboardPage() {
     setIsModalOpen(true);
   };
 
-  // Handle Local Image Upload via File Reader
-  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle Local Image Upload via Auto Optimizer
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setFormImages((prev) => [...prev, reader.result as string]);
+    setIsCompressingAdminImages(true);
+    setAdminCompressionFeedback(null);
+
+    try {
+      let totalOrig = 0;
+      let totalOpt = 0;
+
+      const optimized = await imageOptimizerService.optimizeMultiple(
+        Array.from(files),
+        (current, total) => {
+          setAdminCompressionFeedback(`جاري ضغط وتحسين الصور تلقائياً (${current}/${total})... ⚡`);
         }
-      };
-      reader.readAsDataURL(file);
-    });
+      );
+
+      const newUrls: string[] = [];
+      optimized.forEach((res) => {
+        newUrls.push(res.dataUrl);
+        totalOrig += res.originalSize;
+        totalOpt += res.optimizedSize;
+      });
+
+      setFormImages((prev) => [...prev, ...newUrls]);
+
+      const savings = totalOrig > 0 ? Math.round(((totalOrig - totalOpt) / totalOrig) * 100) : 0;
+      setAdminCompressionFeedback(
+        `تم تحسين ${optimized.length} صور بدقة عالية وتوفير ${savings}% من الحجم (${imageOptimizerService.formatBytes(totalOpt)}) 🚀`
+      );
+    } catch (err) {
+      console.error('Error optimizing admin images:', err);
+    } finally {
+      setIsCompressingAdminImages(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleRemoveImage = (indexToRemove: number) => {
     setFormImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+    setAdminCompressionFeedback(null);
   };
 
   const handleAddImageUrlPrompt = () => {
@@ -1919,17 +1949,19 @@ export default function AdminDashboardPage() {
                 </div>
               )}
 
-              {/* Local Image Upload & Dropzone */}
-              <div className="space-y-2">
+              {/* Local Image Upload & Dropzone with Auto Optimizer */}
+              <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-slate-300">
-                    معرض صور العقار ({formImages.length})
+                  <label className="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>معرض صور العقار ({formImages.length})</span>
                   </label>
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 hover:text-emerald-300"
+                      disabled={isCompressingAdminImages}
+                      className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer disabled:opacity-50"
                     >
                       <UploadCloud className="w-3.5 h-3.5" />
                       <span>رفع من الجهاز</span>
@@ -1937,7 +1969,7 @@ export default function AdminDashboardPage() {
                     <button
                       type="button"
                       onClick={handleAddImageUrlPrompt}
-                      className="flex items-center gap-1 text-[11px] font-bold text-slate-400 hover:text-slate-300"
+                      className="flex items-center gap-1 text-[11px] font-bold text-slate-400 hover:text-slate-300 cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>إضافة رابط URL</span>
@@ -1951,8 +1983,17 @@ export default function AdminDashboardPage() {
                   onChange={handleImageFileUpload}
                   multiple
                   accept="image/*"
+                  disabled={isCompressingAdminImages}
                   className="hidden"
                 />
+
+                {/* Auto-compression Feedback Banner */}
+                {adminCompressionFeedback && (
+                  <div className="p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in duration-200">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>{adminCompressionFeedback}</span>
+                  </div>
+                )}
 
                 {/* Thumbnails preview strip */}
                 {formImages.length > 0 ? (
@@ -1963,21 +2004,36 @@ export default function AdminDashboardPage() {
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(idx)}
-                          className="absolute top-1 right-1 p-1 rounded-full bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 p-1 rounded-full bg-red-600/90 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-md"
                         >
                           <X className="w-3 h-3" />
                         </button>
+                        <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-slate-950/80 text-[10px] text-slate-300 font-mono">
+                          #{idx + 1}
+                        </span>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="p-6 rounded-2xl border-2 border-dashed border-slate-700 hover:border-emerald-500/50 text-center cursor-pointer transition-colors space-y-1"
+                    onClick={() => {
+                      if (!isCompressingAdminImages) {
+                        fileInputRef.current?.click();
+                      }
+                    }}
+                    className={`p-6 rounded-2xl border-2 border-dashed text-center transition-colors space-y-1 ${
+                      isCompressingAdminImages
+                        ? 'border-emerald-500/80 bg-emerald-950/20 cursor-wait animate-pulse'
+                        : 'border-slate-700 hover:border-emerald-500/50 cursor-pointer bg-slate-850/40 hover:bg-slate-850/80'
+                    }`}
                   >
-                    <UploadCloud className="w-7 h-7 text-slate-500 mx-auto" />
-                    <p className="text-xs text-slate-300 font-bold">انقر لرفع صور العقار من جهازك</p>
-                    <p className="text-[10px] text-slate-500">يدعم صيغ JPG, PNG, WEBP</p>
+                    <UploadCloud className={`w-7 h-7 text-emerald-400 mx-auto ${isCompressingAdminImages ? 'animate-bounce' : ''}`} />
+                    <p className="text-xs text-slate-200 font-bold">
+                      {isCompressingAdminImages ? 'جاري تحسين وضغط الصور...' : 'انقر لرفع صور العقار من جهازك'}
+                    </p>
+                    <p className="text-[10px] text-slate-400">
+                      محرك تحسين فوري: يضغط الصور الكبيرة تلقائياً لأعلى دقة وسرعة (WebP/JPEG)
+                    </p>
                   </div>
                 )}
               </div>

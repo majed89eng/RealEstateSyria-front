@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { Governorate, PropertyType, FinishingStatus, ContractType } from '@/types/property';
 import { propertyService } from '@/services/propertyService';
+import { imageOptimizerService } from '@/services/imageOptimizerService';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useAuth } from '@/context/AuthContext';
 import { SYRIAN_LOCATIONS } from '@/data/locations';
@@ -43,6 +44,8 @@ export default function AddPropertyPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [generatedRefCode, setGeneratedRefCode] = useState<string>('');
+  const [isCompressing, setIsCompressing] = useState<boolean>(false);
+  const [compressionFeedback, setCompressionFeedback] = useState<string | null>(null);
 
   // Form State
   const [title, setTitle] = useState<string>('');
@@ -101,24 +104,59 @@ export default function AddPropertyPage() {
     ? currentProvinceData.cities.map((c) => c.cityNameAr)
     : ['المزة', 'أبو رمانة', 'المالكي', 'كفرسوسة', 'مشروع دمر', 'يعفور'];
 
-  // Handle Local Image Upload via FileReader
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle Local Image Upload with Automatic Client-side Compression
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          setImages((prev) => [...prev, reader.result as string]);
+    const remainingSlots = Math.max(0, 10 - images.length);
+    if (remainingSlots === 0) {
+      alert('تم الوصول إلى الحد الأقصى (10 صور للعقار الواحد).');
+      return;
+    }
+
+    const filesToProcess = Array.from(files).slice(0, remainingSlots);
+    setIsCompressing(true);
+    setCompressionFeedback(null);
+
+    try {
+      let totalOrig = 0;
+      let totalOpt = 0;
+
+      const optimized = await imageOptimizerService.optimizeMultiple(
+        filesToProcess,
+        (current, total) => {
+          setCompressionFeedback(`جاري تحسين وضغط الصور تلقائياً (${current}/${total})... ⚡`);
         }
-      };
-      reader.readAsDataURL(file);
-    });
+      );
+
+      const newUrls: string[] = [];
+      optimized.forEach((res) => {
+        newUrls.push(res.dataUrl);
+        totalOrig += res.originalSize;
+        totalOpt += res.optimizedSize;
+      });
+
+      setImages((prev) => [...prev, ...newUrls]);
+
+      const savings = totalOrig > 0 ? Math.round(((totalOrig - totalOpt) / totalOrig) * 100) : 0;
+      setCompressionFeedback(
+        `تم تحسين ${optimized.length} صور بدقة عالية وتوفير ${savings}% من الحجم (${imageOptimizerService.formatBytes(totalOpt)}) 🚀`
+      );
+    } catch (err) {
+      console.error('Error during image optimization:', err);
+    } finally {
+      setIsCompressing(false);
+      // Reset input value so same files can be re-selected if needed
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleRemoveImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
+    setCompressionFeedback(null);
   };
 
   const handleAddSamplePhotos = () => {
@@ -686,16 +724,17 @@ export default function AddPropertyPage() {
                     </div>
                   </div>
 
-                  {/* Photo Upload Dropzone */}
-                  <div className="space-y-2">
+                  {/* Photo Upload Dropzone with Auto Optimizer */}
+                  <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <label className="block text-xs font-bold text-slate-300">
-                        صور العقار ({images.length} صور مضافة)
+                      <label className="block text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>صور العقار ({images.length}/10)</span>
                       </label>
                       <button
                         type="button"
                         onClick={handleAddSamplePhotos}
-                        className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300"
+                        className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 cursor-pointer"
                       >
                         + إضافة صور نموذجية سريعة
                       </button>
@@ -707,40 +746,71 @@ export default function AddPropertyPage() {
                       multiple
                       accept="image/*"
                       onChange={handleImageUpload}
+                      disabled={isCompressing || images.length >= 10}
                       className="hidden"
                     />
 
                     <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="border-2 border-dashed border-slate-700 hover:border-emerald-500/60 rounded-3xl p-6 text-center cursor-pointer bg-slate-800/40 hover:bg-slate-800/80 transition-all space-y-2"
+                      onClick={() => {
+                        if (!isCompressing && images.length < 10) {
+                          fileInputRef.current?.click();
+                        }
+                      }}
+                      className={`border-2 border-dashed rounded-3xl p-6 text-center transition-all space-y-2.5 ${
+                        isCompressing
+                          ? 'border-emerald-500/80 bg-emerald-950/20 cursor-wait animate-pulse'
+                          : images.length >= 10
+                          ? 'border-slate-800 bg-slate-900/50 opacity-60 cursor-not-allowed'
+                          : 'border-slate-700 hover:border-emerald-500/60 cursor-pointer bg-slate-800/40 hover:bg-slate-800/80'
+                      }`}
                     >
                       <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto">
-                        <UploadCloud className="w-6 h-6" />
+                        <UploadCloud className={`w-6 h-6 ${isCompressing ? 'animate-bounce' : ''}`} />
                       </div>
-                      <p className="text-xs sm:text-sm font-bold text-slate-200">
-                        انقر لرفع صور العقار من جهازك أو اسحب الصور إلى هنا
-                      </p>
-                      <span className="text-[11px] text-slate-500 block">
-                        يدعم JPG, PNG بجودة عالية (الحد الأقصى 10 صور)
-                      </span>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-200">
+                          {isCompressing
+                            ? 'جاري ضغط وتحسين الصور تلقائياً...'
+                            : images.length >= 10
+                            ? 'تم الوصول للحد الأقصى (10 صور)'
+                            : 'انقر لرفع صور العقار أو اسحب الصور إلى هنا'}
+                        </p>
+                        <span className="text-[11px] text-slate-400 block mt-1">
+                          يدعم كافة الأحجام والصيغ • يتم تحسين وضغط الصور تلقائياً لأعلى سرعة وجودة ⚡
+                        </span>
+                      </div>
                     </div>
+
+                    {/* Auto-Compression Feedback Notification */}
+                    {compressionFeedback && (
+                      <div className="p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in duration-200">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>{compressionFeedback}</span>
+                      </div>
+                    )}
 
                     {/* Previews Grid */}
                     {images.length > 0 && (
-                      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 pt-2">
+                      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 pt-1">
                         {images.map((imgUrl, idx) => (
-                          <div key={idx} className="relative aspect-4/3 rounded-xl overflow-hidden border border-slate-700 group">
+                          <div key={idx} className="relative aspect-4/3 rounded-xl overflow-hidden border border-slate-700 group bg-slate-900 shadow-md">
                             <img src={imgUrl} alt={`صورة ${idx + 1}`} className="w-full h-full object-cover" />
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveImage(idx);
-                              }}
-                              className="absolute top-1 right-1 p-1 rounded-full bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
+                            <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveImage(idx);
+                                }}
+                                className="p-1.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white shadow-lg transition-transform hover:scale-110 cursor-pointer"
+                                title="حذف الصورة"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-slate-950/80 text-[10px] text-slate-300 font-mono">
+                              #{idx + 1}
+                            </span>
                           </div>
                         ))}
                       </div>

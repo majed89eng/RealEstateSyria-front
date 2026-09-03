@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import {
   Heart,
@@ -19,6 +19,7 @@ import {
   Layers,
   Sparkles,
   ArrowRight,
+  Plus,
 } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
 import { useCurrency } from '../context/CurrencyContext';
@@ -47,6 +48,46 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
 
   const favoriteProperties = allProperties.filter((p) => favorites.includes(p.id));
   const favoritesWhatsAppUrl = generateFavoritesWhatsAppUrl(allProperties, currency);
+
+  // Lock background body scroll when comparison modal or favorites drawer is open
+  useEffect(() => {
+    if (isComparisonModalOpen || isFavoritesDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isComparisonModalOpen, isFavoritesDrawerOpen]);
+
+  // Focus table container when modal opens so arrow keys scroll the modal immediately
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (isComparisonModalOpen) {
+      const timer = setTimeout(() => {
+        scrollContainerRef.current?.focus();
+      }, 60);
+      return () => clearTimeout(timer);
+    }
+  }, [isComparisonModalOpen]);
+
+  // Close modals on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isComparisonModalOpen) setIsComparisonModalOpen(false);
+        if (isFavoritesDrawerOpen) setIsFavoritesDrawerOpen(false);
+      }
+    };
+    if (isComparisonModalOpen || isFavoritesDrawerOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isComparisonModalOpen, isFavoritesDrawerOpen, setIsComparisonModalOpen, setIsFavoritesDrawerOpen]);
 
   return (
     <>
@@ -128,11 +169,19 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
           role="dialog"
           aria-modal="true"
           aria-labelledby="comparison-modal-title"
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsComparisonModalOpen(false);
+            }
+          }}
+          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-5xl bg-slate-900 text-slate-100 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden my-8">
-            {/* Modal Header */}
-            <div className="px-6 py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between">
+          <div
+            className="relative w-full max-w-5xl bg-slate-900 text-slate-100 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden max-h-[88vh] flex flex-col my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header (Fixed) */}
+            <div className="px-6 py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
                   <Scale className="w-4 h-4" />
@@ -146,36 +195,73 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
               </div>
 
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={clearComparison}
-                  className="text-xs text-red-400 hover:text-red-300 font-bold px-3 py-1.5 rounded-xl hover:bg-red-500/10 transition-colors"
-                >
-                  إفراغ المقارنة
-                </button>
+                {comparisonList.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearComparison}
+                    className="text-xs text-rose-400 hover:text-rose-300 font-bold px-3 py-1.5 rounded-xl hover:bg-rose-500/10 transition-colors cursor-pointer"
+                  >
+                    إفراغ المقارنة
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => setIsComparisonModalOpen(false)}
-                  className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white"
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  title="إغلاق النافذة"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
-            {/* Modal Table Body */}
+            {/* Hint Banner when exactly 1 property is in comparison (Fixed) */}
+            {comparisonList.length === 1 && (
+              <div className="mx-6 mt-4 p-3.5 rounded-2xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>لقد أضفت عقاراً واحداً. يمكنك اختيار حتى 3 عقارات أخرى من الموقع للمقارنة بينها جنباً إلى جنب.</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsComparisonModalOpen(false)}
+                  className="px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs whitespace-nowrap transition-colors cursor-pointer shrink-0"
+                >
+                  + تصفح لإضافة عقار آخر
+                </button>
+              </div>
+            )}
+
+            {/* Modal Table Body (Scrollable container with direct focus) */}
             {comparisonList.length === 0 ? (
-              <div className="p-12 text-center space-y-3">
-                <Scale className="w-12 h-12 text-slate-600 mx-auto" />
-                <p className="text-sm text-slate-400 font-bold">لم تختر أي عقارات للمقارنة بعد.</p>
-                <p className="text-xs text-slate-500">اضغط على زر (مقارنة ⚖️) في بطاقة أي عقار لإضافته هنا.</p>
+              <div className="p-12 text-center space-y-4 flex-1 flex flex-col items-center justify-center">
+                <div className="w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center mx-auto text-slate-500">
+                  <Scale className="w-8 h-8" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-base text-slate-200 font-bold">لم تختر أي عقارات للمقارنة بعد.</p>
+                  <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
+                    اضغط على أيقونة الميزان ⚖️ في بطاقة أي عقار لإضافته إلى قائمة المقارنة الفورية.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsComparisonModalOpen(false)}
+                  className="px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+                >
+                  إغلاق والعودة لتصفح العقارات
+                </button>
               </div>
             ) : (
-              <div className="p-6 overflow-x-auto">
+              <div
+                ref={scrollContainerRef}
+                tabIndex={0}
+                className="p-4 sm:p-6 overflow-y-auto overflow-x-auto flex-1 focus:outline-none scrollbar-thin select-text"
+              >
                 <table className="w-full text-right text-xs">
                   <thead>
                     <tr className="border-b border-slate-800">
-                      <th className="p-3 text-slate-400 font-bold w-40">العقار</th>
+                      <th className="p-3 text-slate-400 font-bold w-40 sticky right-0 bg-slate-900 z-10">العقار</th>
                       {comparisonList.map((p) => (
                         <th key={p.id} className="p-3 min-w-[200px] text-slate-100">
                           <div className="space-y-2">
@@ -188,7 +274,7 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                               <button
                                 type="button"
                                 onClick={() => removeFromComparison(p.id)}
-                                className="absolute top-1.5 right-1.5 p-1 rounded-full bg-slate-950/80 text-rose-400 hover:bg-rose-600 hover:text-white transition-colors"
+                                className="absolute top-1.5 right-1.5 p-1 rounded-full bg-slate-950/80 text-rose-400 hover:bg-rose-600 hover:text-white transition-colors cursor-pointer"
                                 title="إزالة من المقارنة"
                               >
                                 <X className="w-3.5 h-3.5" />
@@ -201,6 +287,28 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           </div>
                         </th>
                       ))}
+
+                      {/* Add Slot Placeholder when only 1 property is added */}
+                      {comparisonList.length === 1 && (
+                        <th className="p-3 min-w-[200px] text-slate-100 align-top">
+                          <div className="border-2 border-dashed border-slate-700 hover:border-emerald-500/50 rounded-2xl p-4 text-center space-y-3 bg-slate-950/40 transition-colors">
+                            <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+                              <Plus className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <span className="text-xs font-bold text-slate-300 block">العقار الثاني</span>
+                              <span className="text-[10px] text-slate-500">اختر عقاراً من الكتالوج</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setIsComparisonModalOpen(false)}
+                              className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-emerald-400 border border-slate-700 text-xs font-bold transition-all cursor-pointer"
+                            >
+                              + تصفح العقارات
+                            </button>
+                          </div>
+                        </th>
+                      )}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80 text-slate-300">
@@ -211,6 +319,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           {formatPrice(p.priceUsd)}
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">سعر المتر التقديري</td>
@@ -219,6 +330,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           {p.area > 0 ? `${formatPrice(Math.round(p.priceUsd / p.area))} / م²` : '-'}
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">الموقع</td>
@@ -227,6 +341,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           {p.region} ({p.governorate})
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">المساحة</td>
@@ -235,6 +352,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           {p.area} م²
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">الغرف والحمامات</td>
@@ -243,6 +363,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           {p.bedrooms} غرف • {p.bathrooms} حمامات
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">الطابق والاتجاه</td>
@@ -251,6 +374,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           {p.floor} ({p.direction})
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">طاقة شمسية</td>
@@ -263,6 +389,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           )}
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">سند الملكية</td>
@@ -271,6 +400,9 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           {p.ownershipType}
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                     <tr>
                       <td className="p-3 font-bold text-slate-400">رابط وتفاصيل</td>
@@ -286,11 +418,40 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                           </Link>
                         </td>
                       ))}
+                      {comparisonList.length === 1 && (
+                        <td className="p-3 text-slate-500 text-center font-mono">-</td>
+                      )}
                     </tr>
                   </tbody>
                 </table>
               </div>
             )}
+
+            {/* Modal Footer with Clear Close Button */}
+            <div className="px-6 py-4 bg-slate-850 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-xs text-slate-400 flex items-center gap-1.5">
+                <Scale className="w-3.5 h-3.5 text-emerald-400" />
+                <span>يمكنك مقارنة حتى 4 عقارات في وقت واحد</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {comparisonList.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearComparison}
+                    className="px-4 py-2 rounded-xl text-xs text-rose-400 hover:text-rose-300 font-bold hover:bg-rose-500/10 transition-colors border border-rose-500/20"
+                  >
+                    مسح المقارنة
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsComparisonModalOpen(false)}
+                  className="px-6 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all shadow-md shadow-emerald-600/20 cursor-pointer"
+                >
+                  إغلاق ومتابعة التصفح
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -301,6 +462,11 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
           role="dialog"
           aria-modal="true"
           aria-labelledby="favorites-drawer-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsFavoritesDrawerOpen(false);
+            }
+          }}
           className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex justify-end animate-in fade-in duration-200"
         >
           <div className="w-full max-w-md bg-slate-900 text-slate-100 h-full p-6 flex flex-col justify-between shadow-2xl border-r border-slate-800 overflow-y-auto animate-in slide-in-from-left duration-300">
