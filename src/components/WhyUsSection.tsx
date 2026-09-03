@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShieldCheck, Sun, MessageCircle, Clock, Award, Sparkles } from 'lucide-react';
+import { Tilt3DCard } from './ui/Tilt3DCard';
 
 export const WhyUsSection: React.FC = () => {
   const features = [
@@ -38,7 +39,7 @@ export const WhyUsSection: React.FC = () => {
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-bold border border-emerald-500/30 backdrop-blur-md shimmer-badge-wrapper">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-bold border border-emerald-500/30 backdrop-blur-md shimmer-badge-wrapper shadow-lg">
             <Award className="w-4 h-4 text-amber-400" />
             <span>مزايـا وثقـة المنصـة</span>
           </div>
@@ -55,20 +56,28 @@ export const WhyUsSection: React.FC = () => {
           {features.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div
+              <Tilt3DCard
                 key={idx}
-                className="glass-panel p-6 sm:p-7 rounded-3xl space-y-4 group glass-card-hover"
+                maxTilt={8}
+                scale={1.03}
+                glare={true}
+                glareOpacity={0.12}
+                className="h-full"
               >
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg border border-white/10`}>
-                  <Icon className="w-6 h-6" />
+                <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-4 group h-full border border-slate-800/80 hover:border-emerald-500/40 shadow-3d-card hover:shadow-3d-card-hover transition-all duration-300 preserve-3d flex flex-col justify-between">
+                  <div className="space-y-4 preserve-3d">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform shadow-lg border border-white/10 translate-z-lg group-hover:scale-110`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-bold font-alexandria text-white group-hover:text-emerald-400 transition-colors translate-z-md">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed translate-z-sm">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-base sm:text-lg font-bold font-alexandria text-white group-hover:text-emerald-400 transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+              </Tilt3DCard>
             );
           })}
         </div>

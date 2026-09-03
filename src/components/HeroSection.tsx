@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { ContractType, Governorate } from '../types/property';
 import { SYRIAN_LOCATIONS } from '../data/locations';
+import { Tilt3DCard } from './ui/Tilt3DCard';
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -165,10 +166,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </p>
             </div>
 
-            {/* Frosted Glass Search Card */}
-            <div className="glass-panel rounded-3xl p-5 space-y-4">
+            {/* Frosted Glass Search Card with 2.5D Elevation */}
+            <div className="glass-panel rounded-3xl p-5 space-y-4 shadow-3d-card border border-slate-800/90 hover:border-emerald-500/30 transition-all duration-300">
               {/* Contract Type Tabs */}
-              <div className="flex items-center gap-1.5 p-1 bg-slate-950/90 rounded-2xl w-fit border border-slate-800">
+              <div className="flex items-center gap-1.5 p-1 bg-slate-950/90 rounded-2xl w-fit border border-slate-800 shadow-inner">
                 {[
                   { val: 'all', label: 'كافة العروض' },
                   { val: 'sale', label: 'عقارات للبيع' },
@@ -198,7 +199,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <select
                     value={governorate}
                     onChange={(e) => onGovernorateChange(e.target.value as Governorate)}
-                    className="w-full bg-slate-950/80 text-white border border-slate-700/80 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-semibold transition-all appearance-none cursor-pointer"
+                    className="w-full bg-slate-950/80 text-white border border-slate-700/80 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-semibold transition-all appearance-none cursor-pointer shadow-inner"
                   >
                     <option value="الكل">كل المحافظات (14 محافظة)</option>
                     {SYRIAN_LOCATIONS.map((loc) => (
@@ -218,7 +219,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
                     placeholder="ابحث بالحي، المنطقة أو الرمز..."
-                    className="w-full bg-slate-950/80 text-white placeholder-slate-500 border border-slate-700/80 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-medium transition-all"
+                    className="w-full bg-slate-950/80 text-white placeholder-slate-500 border border-slate-700/80 rounded-2xl pr-10 pl-3 py-3 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm font-medium transition-all shadow-inner"
                     onKeyDown={(e) => e.key === 'Enter' && onSearchSubmit()}
                   />
                 </div>
@@ -258,98 +259,100 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           {/* ================= LEFT COLUMN: General Lifestyle / Category Showcase Frame (lg:col-span-5) ================= */}
           <div className="lg:col-span-5 order-1 lg:order-2">
-            <div className="relative group rounded-3xl sm:rounded-4xl overflow-hidden border border-slate-700/80 shadow-2xl shadow-emerald-950/40 bg-slate-900 aspect-[4/3] sm:aspect-[16/11] select-none ring-1 ring-white/15">
-              
-              {/* Full-Bright Category Image with Smooth Cross-Fade Transition */}
-              {heroSlides.map((s, i) => (
-                <div
-                  key={s.id}
-                  className="absolute inset-0 transition-opacity duration-700 ease-out"
-                  style={{ opacity: i === currentSlide ? 1 : 0 }}
-                >
-                  <img
-                    src={s.image}
-                    alt={s.title}
-                    className="w-full h-full object-cover transform transition-transform duration-7000 ease-out group-hover:scale-105"
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                  />
-                </div>
-              ))}
+            <Tilt3DCard maxTilt={5} scale={1.01} glare={true} glareOpacity={0.1}>
+              <div className="relative group rounded-3xl sm:rounded-4xl overflow-hidden border border-slate-700/80 shadow-2xl shadow-emerald-950/40 bg-slate-900 aspect-[4/3] sm:aspect-[16/11] select-none ring-1 ring-white/15 preserve-3d">
+                
+                {/* Full-Bright Category Image with Smooth Cross-Fade Transition */}
+                {heroSlides.map((s, i) => (
+                  <div
+                    key={s.id}
+                    className="absolute inset-0 transition-opacity duration-700 ease-out"
+                    style={{ opacity: i === currentSlide ? 1 : 0 }}
+                  >
+                    <img
+                      src={s.image}
+                      alt={s.title}
+                      className="w-full h-full object-cover transform transition-transform duration-7000 ease-out group-hover:scale-105"
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                    />
+                  </div>
+                ))}
 
-              {/* Glass Dark Vignette for Crisp Contrast */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
+                {/* Glass Dark Vignette for Crisp Contrast */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
 
-              {/* Top Glass Category Pill Banner */}
-              <div className="absolute top-4 right-4 z-20">
-                <span className="px-3.5 py-1.5 rounded-2xl bg-slate-950/80 text-white text-xs font-black backdrop-blur-md border border-slate-700/80 shadow-lg flex items-center gap-1.5">
-                  {slide.categoryBadge}
-                </span>
-              </div>
-
-              {/* Top Left Total Count Badge */}
-              <div className="absolute top-4 left-4 z-20">
-                <span className="px-3 py-1 rounded-xl bg-emerald-600/90 text-white text-[11px] font-black backdrop-blur-md shadow-md">
-                  {slide.countBadge}
-                </span>
-              </div>
-
-              {/* Floating Slide Details Content at the Bottom */}
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 z-20 space-y-2 text-right">
-                <div className="space-y-1">
-                  <h3 className="text-xl sm:text-2xl font-black font-alexandria text-white drop-shadow-md">
-                    {slide.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm font-semibold text-emerald-300 drop-shadow">
-                    {slide.subtitle}
-                  </p>
-                </div>
-
-                <div className="pt-1 flex items-center justify-between border-t border-white/15 text-xs text-slate-200">
-                  <span className="text-[11px] text-slate-300 font-medium truncate">
-                    {slide.highlightTag}
+                {/* Top Glass Category Pill Banner with 3D Elevation */}
+                <div className="absolute top-4 right-4 z-20 translate-z-md">
+                  <span className="px-3.5 py-1.5 rounded-2xl bg-slate-950/80 text-white text-xs font-black backdrop-blur-md border border-slate-700/80 shadow-lg flex items-center gap-1.5">
+                    {slide.categoryBadge}
                   </span>
+                </div>
 
-                  {/* Navigation Arrows */}
-                  <div className="flex items-center gap-1.5 shrink-0 mr-2">
-                    <button
-                      type="button"
-                      onClick={goToPrev}
-                      className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white border border-slate-700 backdrop-blur-md shadow transition-transform hover:scale-110 active:scale-95"
-                      title="السابق"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={goToNext}
-                      className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white border border-slate-700 backdrop-blur-md shadow transition-transform hover:scale-110 active:scale-95"
-                      title="التالي"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
+                {/* Top Left Total Count Badge with 3D Elevation */}
+                <div className="absolute top-4 left-4 z-20 translate-z-md">
+                  <span className="px-3 py-1 rounded-xl bg-emerald-600/90 text-white text-[11px] font-black backdrop-blur-md shadow-md">
+                    {slide.countBadge}
+                  </span>
+                </div>
+
+                {/* Floating Slide Details Content at the Bottom with 3D Elevation */}
+                <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 z-20 space-y-2 text-right translate-z-lg">
+                  <div className="space-y-1">
+                    <h3 className="text-xl sm:text-2xl font-black font-alexandria text-white drop-shadow-md">
+                      {slide.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm font-semibold text-emerald-300 drop-shadow">
+                      {slide.subtitle}
+                    </p>
+                  </div>
+
+                  <div className="pt-1 flex items-center justify-between border-t border-white/15 text-xs text-slate-200">
+                    <span className="text-[11px] text-slate-300 font-medium truncate">
+                      {slide.highlightTag}
+                    </span>
+
+                    {/* Navigation Arrows */}
+                    <div className="flex items-center gap-1.5 shrink-0 mr-2">
+                      <button
+                        type="button"
+                        onClick={goToPrev}
+                        className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white border border-slate-700 backdrop-blur-md shadow transition-transform hover:scale-110 active:scale-95"
+                        title="السابق"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={goToNext}
+                        className="p-1.5 rounded-full bg-slate-950/70 hover:bg-slate-950 text-white border border-slate-700 backdrop-blur-md shadow transition-transform hover:scale-110 active:scale-95"
+                        title="التالي"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Slider Progress Bar */}
-              <div className="absolute bottom-1 inset-x-5 flex gap-1 z-30">
-                {heroSlides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setCurrentSlide(idx)}
-                    className="flex-1 h-1 rounded-full overflow-hidden bg-white/30"
-                  >
-                    <div
-                      className={`h-full bg-emerald-400 transition-all duration-300 ${
-                        idx === currentSlide ? 'w-full' : 'w-0'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
+                {/* Slider Progress Bar */}
+                <div className="absolute bottom-1 inset-x-5 flex gap-1 z-30 translate-z-sm">
+                  {heroSlides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentSlide(idx)}
+                      className="flex-1 h-1 rounded-full overflow-hidden bg-white/30"
+                    >
+                      <div
+                        className={`h-full bg-emerald-400 transition-all duration-300 ${
+                          idx === currentSlide ? 'w-full' : 'w-0'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
 
-            </div>
+              </div>
+            </Tilt3DCard>
           </div>
 
         </div>

@@ -113,7 +113,7 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
     },
     {
       id: 'off_plan',
-      label: 'على المخطط 🏗️',
+      label: 'على المخطط',
       icon: HardHat,
       iconColor: 'text-amber-400',
       activeBg: 'bg-amber-600 text-white shadow-amber-600/30',
@@ -140,7 +140,7 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
     },
     {
       id: 'solar',
-      label: 'طاقة شمسية ☀️',
+      label: 'طاقة شمسية',
       icon: Sun,
       iconColor: 'text-amber-400',
       activeBg: 'bg-amber-600 text-white shadow-amber-600/30',
@@ -394,14 +394,9 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
               <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400 stroke-[2.2]" />
               <span>{isExpanded ? 'طي الفلاتر' : 'توسيع الفلاتر'}</span>
               {activeFiltersCount > 0 && (
-                <span className="w-4 h-4 rounded-full bg-emerald-500 text-slate-950 text-[10px] flex items-center justify-center font-black">
+                <span className="w-4 h-4 rounded-full bg-emerald-500 text-slate-950 text-[10px] flex items-center justify-center font-black mr-1">
                   {activeFiltersCount}
                 </span>
-              )}
-              {isExpanded ? (
-                <ChevronUp className="w-3.5 h-3.5 text-emerald-400" />
-              ) : (
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               )}
             </button>
 

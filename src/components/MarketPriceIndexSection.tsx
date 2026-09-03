@@ -22,6 +22,7 @@ import marketIndexData from '../data/marketPriceIndex.json';
 import { NeighborhoodPriceData } from '../types/marketIndex';
 import { Governorate } from '../types/property';
 import { useCurrency } from '../context/CurrencyContext';
+import { Tilt3DCard } from './ui/Tilt3DCard';
 
 interface Props {
   isStandalonePage?: boolean;
@@ -142,96 +143,102 @@ export const MarketPriceIndexSection: React.FC<Props> = ({ isStandalonePage = fa
         {/* Neighborhood Price Index Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredNeighborhoods.map((item) => (
-            <div
+            <Tilt3DCard
               key={item.id}
+              maxTilt={6}
+              scale={1.02}
+              glare={true}
+              glareOpacity={0.12}
+              className="h-full cursor-pointer"
               onClick={() => setSelectedNeighborhood(item)}
-              className="glass-panel p-6 rounded-3xl space-y-4 group glass-card-hover cursor-pointer relative overflow-hidden"
             >
-              {/* Top Row: Governorate & Growth Rate */}
-              <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-950 border border-slate-800 text-slate-300">
-                  {item.governorate}
-                </span>
+              <div className="glass-panel p-6 rounded-3xl space-y-4 group h-full border border-slate-800/80 hover:border-emerald-500/40 shadow-3d-card hover:shadow-3d-card-hover transition-all duration-300 relative overflow-hidden preserve-3d flex flex-col justify-between">
+                {/* Top Row: Governorate & Growth Rate */}
+                <div className="flex items-center justify-between translate-z-md">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-950 border border-slate-800 text-slate-300 shadow-sm">
+                    {item.governorate}
+                  </span>
 
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold shadow-sm font-mono">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                  <span>+{item.sixMonthChangePercent}% خلال 6 أشهر</span>
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold shadow-sm font-mono">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    <span>+{item.sixMonthChangePercent}% خلال 6 أشهر</span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Title & Description */}
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold font-alexandria text-white group-hover:text-emerald-400 transition-colors flex items-center justify-between">
-                  <span>{item.neighborhoodName}</span>
-                  <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors" />
-                </h3>
-                <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
+                {/* Title & Description */}
+                <div className="space-y-1 translate-z-sm">
+                  <h3 className="text-lg font-bold font-alexandria text-white group-hover:text-emerald-400 transition-colors flex items-center justify-between">
+                    <span>{item.neighborhoodName}</span>
+                    <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                  </h3>
+                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
 
-              {/* Price Stats Box */}
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-semibold">متوسط سعر المتر:</span>
-                  <span className="text-base font-black font-alexandria text-emerald-400">
-                    {formatPrice(item.avgPricePerSqmUsd)} / م²
+                {/* Price Stats Box with 3D Elevation */}
+                <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800/80 space-y-2 translate-z-md shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-400 font-semibold">متوسط سعر المتر:</span>
+                    <span className="text-base font-black font-alexandria text-emerald-400 drop-shadow">
+                      {formatPrice(item.avgPricePerSqmUsd)} / م²
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800/80">
+                    <span>نطاق الأسعار:</span>
+                    <span className="font-mono font-medium text-slate-200">
+                      {formatPrice(item.minPricePerSqmUsd)} - {formatPrice(item.maxPricePerSqmUsd)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
+                    <span>متوسط سعر الشقة:</span>
+                    <span className="font-bold text-slate-200">
+                      {formatPrice(item.avgApartmentPriceUsd)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Metrics Pills: Rental Yield & Demand */}
+                <div className="flex items-center justify-between pt-1 text-xs translate-z-sm">
+                  <div className="flex items-center gap-1 text-slate-300">
+                    <Percent className="w-3.5 h-3.5 text-amber-400" />
+                    <span>العائد الإيجاري التقديري:</span>
+                    <strong className="text-amber-300 font-bold">{item.rentalYieldPercent}%</strong>
+                  </div>
+
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    item.demandLevel === 'very_high'
+                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                      : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                  }`}>
+                    {item.demandLevel === 'very_high' ? 'طلب مرتفع جداً 🔥' : 'طلب نشط ⚡'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800/80">
-                  <span>نطاق الأسعار:</span>
-                  <span className="font-mono font-medium text-slate-200">
-                    {formatPrice(item.minPricePerSqmUsd)} - {formatPrice(item.maxPricePerSqmUsd)}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
-                  <span>متوسط سعر الشقة:</span>
-                  <span className="font-bold text-slate-200">
-                    {formatPrice(item.avgApartmentPriceUsd)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Metrics Pills: Rental Yield & Demand */}
-              <div className="flex items-center justify-between pt-1 text-xs">
-                <div className="flex items-center gap-1 text-slate-300">
-                  <Percent className="w-3.5 h-3.5 text-amber-400" />
-                  <span>العائد الإيجاري التقديري:</span>
-                  <strong className="text-amber-300 font-bold">{item.rentalYieldPercent}%</strong>
-                </div>
-
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  item.demandLevel === 'very_high'
-                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                    : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                }`}>
-                  {item.demandLevel === 'very_high' ? 'طلب مرتفع جداً 🔥' : 'طلب نشط ⚡'}
-                </span>
-              </div>
-
-              {/* Historical Trend Micro-Visualizer */}
-              <div className="pt-2 border-t border-slate-800/80 space-y-1">
-                <span className="text-[10px] font-semibold text-slate-400 block">حركة متوسط المتر (آخر 6 أشهر):</span>
-                <div className="flex items-end gap-1.5 h-8 pt-1">
-                  {item.historicalTrends.map((t, idx) => {
-                    const minP = Math.min(...item.historicalTrends.map((h) => h.avgPriceUsd));
-                    const maxP = Math.max(...item.historicalTrends.map((h) => h.avgPriceUsd));
-                    const heightPercent = Math.max(25, ((t.avgPriceUsd - minP) / (maxP - minP || 1)) * 100);
-                    return (
-                      <div key={idx} className="flex-1 flex flex-col items-center gap-0.5 group/bar relative">
-                        <div
-                          className="w-full bg-emerald-500/40 group-hover/bar:bg-emerald-400 rounded-t transition-all"
-                          style={{ height: `${heightPercent}%` }}
-                        />
-                        <span className="text-[9px] text-slate-400">{t.month[0]}</span>
-                      </div>
-                    );
-                  })}
+                {/* Historical Trend Micro-Visualizer */}
+                <div className="pt-2 border-t border-slate-800/80 space-y-1 translate-z-sm">
+                  <span className="text-[10px] font-semibold text-slate-400 block">حركة متوسط المتر (آخر 6 أشهر):</span>
+                  <div className="flex items-end gap-1.5 h-8 pt-1">
+                    {item.historicalTrends.map((t, idx) => {
+                      const minP = Math.min(...item.historicalTrends.map((h) => h.avgPriceUsd));
+                      const maxP = Math.max(...item.historicalTrends.map((h) => h.avgPriceUsd));
+                      const heightPercent = Math.max(25, ((t.avgPriceUsd - minP) / (maxP - minP || 1)) * 100);
+                      return (
+                        <div key={idx} className="flex-1 flex flex-col items-center gap-0.5 group/bar relative">
+                          <div
+                            className="w-full bg-emerald-500/40 group-hover/bar:bg-emerald-400 rounded-t transition-all"
+                            style={{ height: `${heightPercent}%` }}
+                          />
+                          <span className="text-[9px] text-slate-400">{t.month[0]}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
+            </Tilt3DCard>
           ))}
         </div>
 

@@ -25,6 +25,7 @@ import { Property } from '../types/property';
 import { propertyService } from '../services/propertyService';
 import { useCurrency } from '../context/CurrencyContext';
 import { useFavorites } from '../context/FavoritesContext';
+import { Tilt3DCard } from './ui/Tilt3DCard';
 
 interface PropertyCardProps {
   property: Property;
@@ -99,259 +100,267 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   };
 
   return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group bg-slate-900/90 rounded-3xl overflow-hidden border border-slate-800 hover:border-slate-700 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between relative"
+    <Tilt3DCard
+      maxTilt={6}
+      scale={1.015}
+      glare={true}
+      glareOpacity={0.12}
+      className="h-full"
     >
-      {/* Top Media Section with Interactive Carousel */}
-      <div className="relative aspect-4/3 overflow-hidden bg-slate-950 select-none">
-        {/* Main Active Image */}
-        <img
-          src={images[activeImageIdx]}
-          alt={property.title}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 cursor-pointer"
-          onClick={handleCardClick}
-          loading="lazy"
-        />
-
-        {/* Ambient Dark Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-black/40 pointer-events-none" />
-
-        {/* Carousel Navigation Arrows (visible on hover) */}
-        {images.length > 1 && (
-          <div
-            className={`absolute inset-x-2 top-1/2 -translate-y-1/2 flex items-center justify-between pointer-events-none transition-opacity duration-200 ${
-              isHovered ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <button
-              type="button"
-              onClick={handlePrevImage}
-              className="p-1.5 rounded-full bg-slate-950/80 hover:bg-slate-950 text-white backdrop-blur-md shadow-lg pointer-events-auto transition-transform hover:scale-110 active:scale-95"
-              title="الصورة السابقة"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-
-            <button
-              type="button"
-              onClick={handleNextImage}
-              className="p-1.5 rounded-full bg-slate-950/80 hover:bg-slate-950 text-white backdrop-blur-md shadow-lg pointer-events-auto transition-transform hover:scale-110 active:scale-95"
-              title="الصورة التالية"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
-        {/* Carousel Dot Indicators */}
-        {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 z-10">
-            {images.slice(0, 5).map((_, idx) => (
-              <span
-                key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  activeImageIdx === idx ? 'w-4 bg-emerald-400' : 'w-1.5 bg-white/40'
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Top Right Badges (Contract Type, Off-Plan & Featured) */}
-        <div className="absolute top-3 right-3 flex flex-wrap items-center gap-1.5 z-10">
-          {property.isOffPlan && (
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-500 text-slate-950 shadow-md flex items-center gap-1">
-              <HardHat className="w-3.5 h-3.5" />
-              على المخطط
-            </span>
-          )}
-
-          {isSold ? (
-            <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-red-600 text-white shadow-md">
-              تم البيع
-            </span>
-          ) : isRented ? (
-            <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-600 text-white shadow-md">
-              تم التأجير
-            </span>
-          ) : isReserved ? (
-            <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-purple-600 text-white shadow-md">
-              محجوز
-            </span>
-          ) : property.contractType === 'sale' ? (
-            <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-600 text-white shadow-md">
-              للبيـع
-            </span>
-          ) : (
-            <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-teal-600 text-white shadow-md">
-              للإيجـار
-            </span>
-          )}
-
-          {property.featured && !isUnavailable && (
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-400 text-slate-950 shadow-md flex items-center gap-1">
-              <Star className="w-3 h-3 fill-slate-950" />
-              مميز
-            </span>
-          )}
-        </div>
-
-        {/* Top Left: Quick Action Icons (Favorite Heart & Compare Scale & Code) */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
-          {/* Compare Button */}
-          <button
-            type="button"
-            onClick={handleToggleCompare}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-md shadow-md ${
-              inCompare
-                ? 'bg-emerald-600 text-white ring-2 ring-emerald-400/50'
-                : 'bg-slate-950/70 hover:bg-slate-950 text-slate-300 hover:text-emerald-400'
-            }`}
-            title={inCompare ? 'مدرج بالمقارنة' : 'إضافة إلى المقارنة'}
-          >
-            <Scale className="w-3.5 h-3.5" />
-          </button>
-
-          {/* Favorite Heart Button */}
-          <button
-            type="button"
-            onClick={handleToggleFavorite}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-md shadow-md ${
-              favorited
-                ? 'bg-rose-600 text-white ring-2 ring-rose-400/50 scale-105'
-                : 'bg-slate-950/70 hover:bg-slate-950 text-slate-300 hover:text-rose-400'
-            }`}
-            title={favorited ? 'إزالة من المفضلة' : 'حفظ في المفضلة'}
-          >
-            <Heart className={`w-4 h-4 ${favorited ? 'fill-white' : ''}`} />
-          </button>
-        </div>
-
-        {/* Bottom Right: Location Badge */}
-        <div className="absolute bottom-3 right-3 flex items-center gap-1 text-white text-xs font-semibold drop-shadow z-10">
-          <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-          <span>
-            {property.region} • {property.governorate}
-          </span>
-        </div>
-
-        {/* Bottom Left: Property Code */}
-        <div className="absolute bottom-3 left-3 z-10">
-          <span className="px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-slate-950/90 text-amber-300 border border-slate-700 backdrop-blur-md shadow">
-            {property.propertyCode}
-          </span>
-        </div>
-      </div>
-
-      {/* Body Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-3.5">
-        <div className="space-y-1.5">
-          {/* Title */}
-          <h3
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="group h-full bg-slate-900/90 rounded-3xl overflow-hidden border border-slate-800 hover:border-emerald-500/40 shadow-3d-card hover:shadow-3d-card-hover transition-all duration-300 flex flex-col justify-between relative preserve-3d"
+      >
+        {/* Top Media Section with Interactive Carousel */}
+        <div className="relative aspect-4/3 overflow-hidden bg-slate-950 select-none preserve-3d">
+          {/* Main Active Image */}
+          <img
+            src={images[activeImageIdx]}
+            alt={property.title}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 cursor-pointer"
             onClick={handleCardClick}
-            className="text-sm sm:text-base font-extrabold text-white group-hover:text-emerald-400 transition-colors line-clamp-2 leading-snug cursor-pointer font-alexandria"
-          >
-            {property.title}
-          </h3>
+            loading="lazy"
+          />
 
-          <p className="text-xs text-slate-400 line-clamp-1 leading-normal">
-            {property.locationDetails}
-          </p>
-        </div>
+          {/* Ambient Dark Gradient Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-black/40 pointer-events-none" />
 
-        {/* Key Specs Grid Pills */}
-        <div className="grid grid-cols-3 gap-2 py-2 border-y border-slate-800 text-slate-300 text-xs">
-          <div className="flex items-center gap-1.5 bg-slate-950 p-2 rounded-xl border border-slate-800/80 justify-center">
-            <Maximize2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="font-bold">{property.area} م²</span>
-          </div>
+          {/* Carousel Navigation Arrows (visible on hover) */}
+          {images.length > 1 && (
+            <div
+              className={`absolute inset-x-2 top-1/2 -translate-y-1/2 flex items-center justify-between pointer-events-none transition-opacity duration-200 translate-z-md ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={handlePrevImage}
+                className="p-1.5 rounded-full bg-slate-950/80 hover:bg-slate-950 text-white backdrop-blur-md shadow-lg pointer-events-auto transition-transform hover:scale-110 active:scale-95"
+                title="الصورة السابقة"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
 
-          <div className="flex items-center gap-1.5 bg-slate-950 p-2 rounded-xl border border-slate-800/80 justify-center">
-            <Bed className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="font-bold">{property.bedrooms > 0 ? `${property.bedrooms} غرف` : property.floor}</span>
-          </div>
+              <button
+                type="button"
+                onClick={handleNextImage}
+                className="p-1.5 rounded-full bg-slate-950/80 hover:bg-slate-950 text-white backdrop-blur-md shadow-lg pointer-events-auto transition-transform hover:scale-110 active:scale-95"
+                title="الصورة التالية"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
+          )}
 
-          <div className="flex items-center gap-1.5 bg-slate-950 p-2 rounded-xl border border-slate-800/80 justify-center">
-            {property.hasSolar ? (
-              <span className="font-bold text-amber-400 flex items-center gap-1">
-                <Sun className="w-3.5 h-3.5 text-amber-400" />
-                طاقة ☀️
+          {/* Carousel Dot Indicators */}
+          {images.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 z-10 translate-z-sm">
+              {images.slice(0, 5).map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    activeImageIdx === idx ? 'w-4 bg-emerald-400' : 'w-1.5 bg-white/40'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Top Right Badges with 3D Elevation */}
+          <div className="absolute top-3 right-3 flex flex-wrap items-center gap-1.5 z-10 translate-z-md">
+            {property.isOffPlan && (
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-black bg-amber-500 text-slate-950 shadow-lg flex items-center gap-1">
+                <HardHat className="w-3.5 h-3.5" />
+                على المخطط
+              </span>
+            )}
+
+            {isSold ? (
+              <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-red-600 text-white shadow-lg">
+                تم البيع
+              </span>
+            ) : isRented ? (
+              <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-amber-600 text-white shadow-lg">
+                تم التأجير
+              </span>
+            ) : isReserved ? (
+              <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-purple-600 text-white shadow-lg">
+                محجوز
+              </span>
+            ) : property.contractType === 'sale' ? (
+              <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-600 text-white shadow-lg">
+                للبيـع
               </span>
             ) : (
-              <span className="font-bold truncate text-slate-400">{property.direction || 'قبلي'}</span>
+              <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-teal-600 text-white shadow-lg">
+                للإيجـار
+              </span>
             )}
+
+            {property.featured && !isUnavailable && (
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-400 text-slate-950 shadow-lg flex items-center gap-1">
+                <Star className="w-3 h-3 fill-slate-950" />
+                مميز
+              </span>
+            )}
+          </div>
+
+          {/* Top Left: Quick Action Icons with 3D Elevation */}
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10 translate-z-md">
+            {/* Compare Button */}
+            <button
+              type="button"
+              onClick={handleToggleCompare}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-md shadow-lg ${
+                inCompare
+                  ? 'bg-emerald-600 text-white ring-2 ring-emerald-400/50'
+                  : 'bg-slate-950/70 hover:bg-slate-950 text-slate-300 hover:text-emerald-400'
+              }`}
+              title={inCompare ? 'مدرج بالمقارنة' : 'إضافة إلى المقارنة'}
+            >
+              <Scale className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Favorite Heart Button */}
+            <button
+              type="button"
+              onClick={handleToggleFavorite}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-md shadow-lg ${
+                favorited
+                  ? 'bg-rose-600 text-white ring-2 ring-rose-400/50 scale-105'
+                  : 'bg-slate-950/70 hover:bg-slate-950 text-slate-300 hover:text-rose-400'
+              }`}
+              title={favorited ? 'إزالة من المفضلة' : 'حفظ في المفضلة'}
+            >
+              <Heart className={`w-4 h-4 ${favorited ? 'fill-white' : ''}`} />
+            </button>
+          </div>
+
+          {/* Bottom Right: Location Badge with 3D Elevation */}
+          <div className="absolute bottom-3 right-3 flex items-center gap-1 text-white text-xs font-semibold drop-shadow z-10 translate-z-sm">
+            <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span>
+              {property.region} • {property.governorate}
+            </span>
+          </div>
+
+          {/* Bottom Left: Property Code */}
+          <div className="absolute bottom-3 left-3 z-10 translate-z-sm">
+            <span className="px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-slate-950/90 text-amber-300 border border-slate-700 backdrop-blur-md shadow">
+              {property.propertyCode}
+            </span>
           </div>
         </div>
 
-        {/* Off-Plan Project Investment Strip */}
-        {property.isOffPlan && (
-          <div className="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-2.5 space-y-1.5 text-xs">
-            <div className="flex items-center justify-between font-bold text-amber-300">
-              <span className="flex items-center gap-1 text-[11px]">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                تسليم: {property.handoverDate || 'قريباً'}
-              </span>
-              <span className="text-[10px] bg-amber-500/20 px-2 py-0.5 rounded-full text-amber-300 font-black border border-amber-500/30">
-                {property.constructionProgress || 30}% إنجاز
-              </span>
+        {/* Body Content with 3D Preservation */}
+        <div className="p-5 flex-1 flex flex-col justify-between space-y-3.5 preserve-3d">
+          <div className="space-y-1.5 translate-z-sm">
+            {/* Title */}
+            <h3
+              onClick={handleCardClick}
+              className="text-sm sm:text-base font-extrabold text-white group-hover:text-emerald-400 transition-colors line-clamp-2 leading-snug cursor-pointer font-alexandria"
+            >
+              {property.title}
+            </h3>
+
+            <p className="text-xs text-slate-400 line-clamp-1 leading-normal">
+              {property.locationDetails}
+            </p>
+          </div>
+
+          {/* Key Specs Grid Pills */}
+          <div className="grid grid-cols-3 gap-2 py-2 border-y border-slate-800 text-slate-300 text-xs translate-z-sm">
+            <div className="flex items-center gap-1.5 bg-slate-950/90 p-2 rounded-xl border border-slate-800 justify-center shadow-inner">
+              <Maximize2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="font-bold">{property.area} م²</span>
             </div>
-            {property.paymentPlan && (
-              <p className="text-[11px] text-amber-200/90 font-semibold truncate">
-                💳 {property.paymentPlan}
-              </p>
-            )}
-          </div>
-        )}
 
-        {/* Footer: Price, Price/m² & Actions */}
-        <div className="flex items-center justify-between gap-2 pt-1">
-          {/* Price & Price/m² */}
-          <div className="flex flex-col">
-            <span className="text-[10px] font-semibold text-slate-400 block">
-              {property.contractType === 'rent' ? 'الإيجار المطلوب' : 'السعر المطلوب'}
-            </span>
-            <span
-              className={`text-lg font-black font-alexandria tracking-tight ${
-                isUnavailable ? 'text-slate-500 line-through' : 'text-emerald-400'
-              }`}
-            >
-              {formatPrice(property.priceUsd)}
-            </span>
-            {pricePerSqm && !isUnavailable && (
-              <span className="text-[10px] text-slate-400 font-mono font-medium">
-                ≈ {formatPrice(pricePerSqm)}/م²
+            <div className="flex items-center gap-1.5 bg-slate-950/90 p-2 rounded-xl border border-slate-800 justify-center shadow-inner">
+              <Bed className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="font-bold">{property.bedrooms > 0 ? `${property.bedrooms} غرف` : property.floor}</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 bg-slate-950/90 p-2 rounded-xl border border-slate-800 justify-center shadow-inner">
+              {property.hasSolar ? (
+                <span className="font-bold text-amber-400 flex items-center gap-1">
+                  <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  طاقة شمسية
+                </span>
+              ) : (
+                <span className="font-bold truncate text-slate-400">{property.direction || 'قبلي'}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Off-Plan Project Investment Strip */}
+          {property.isOffPlan && (
+            <div className="bg-amber-950/40 border border-amber-500/30 rounded-2xl p-2.5 space-y-1.5 text-xs translate-z-sm shadow-md">
+              <div className="flex items-center justify-between font-bold text-amber-300">
+                <span className="flex items-center gap-1 text-[11px]">
+                  <Clock className="w-3.5 h-3.5 text-amber-400" />
+                  تسليم: {property.handoverDate || 'قريباً'}
+                </span>
+                <span className="text-[10px] bg-amber-500/20 px-2 py-0.5 rounded-full text-amber-300 font-black border border-amber-500/30">
+                  {property.constructionProgress || 30}% إنجاز
+                </span>
+              </div>
+              {property.paymentPlan && (
+                <p className="text-[11px] text-amber-200/90 font-semibold truncate">
+                  💳 {property.paymentPlan}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Footer: Price, Price/m² & Actions with 3D Elevation */}
+          <div className="flex items-center justify-between gap-2 pt-1 translate-z-md">
+            {/* Price & Price/m² */}
+            <div className="flex flex-col">
+              <span className="text-[10px] font-semibold text-slate-400 block">
+                {property.contractType === 'rent' ? 'الإيجار المطلوب' : 'السعر المطلوب'}
               </span>
-            )}
-          </div>
+              <span
+                className={`text-lg font-black font-alexandria tracking-tight ${
+                  isUnavailable ? 'text-slate-500 line-through' : 'text-emerald-400 drop-shadow'
+                }`}
+              >
+                {formatPrice(property.priceUsd)}
+              </span>
+              {pricePerSqm && !isUnavailable && (
+                <span className="text-[10px] text-slate-400 font-mono font-medium">
+                  ≈ {formatPrice(pricePerSqm)}/م²
+                </span>
+              )}
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-1.5">
-            <Link
-              href={`/properties/${property.slug}`}
-              className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white transition-colors border border-slate-700"
-              title="تفاصيل العقار"
-            >
-              <Eye className="w-4 h-4" />
-            </Link>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-1.5">
+              <Link
+                href={`/properties/${property.slug}`}
+                className="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white transition-all border border-slate-700 shadow-md hover:scale-105 active:scale-95"
+                title="تفاصيل العقار"
+              >
+                <Eye className="w-4 h-4" />
+              </Link>
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-1 px-3 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 shadow-md ${
-                isUnavailable
-                  ? 'bg-slate-800 hover:bg-slate-750 text-slate-400 border border-slate-700'
-                  : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30 hover:scale-105 active:scale-95'
-              }`}
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>{isUnavailable ? 'طلب مماثل' : 'واتساب'}</span>
-            </a>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-1 px-3 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 shadow-lg ${
+                  isUnavailable
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 border border-slate-700'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/40 hover:scale-105 active:scale-95'
+                }`}
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>{isUnavailable ? 'طلب مماثل' : 'واتساب'}</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Tilt3DCard>
   );
 };

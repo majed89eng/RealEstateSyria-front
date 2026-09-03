@@ -257,7 +257,7 @@ export const FloatingActionHub: React.FC<Props> = ({ allProperties = [] }) => {
                       {comparisonList.map((p) => (
                         <td key={p.id} className="p-3">
                           {p.hasSolar ? (
-                            <span className="text-amber-400 font-bold">متوفرة ☀️</span>
+                            <span className="text-amber-400 font-bold">متوفرة</span>
                           ) : (
                             <span className="text-slate-500">غير متوفرة</span>
                           )}
